@@ -1,0 +1,26 @@
+const EmptyStr = '';
+
+
+const ERR_STR_MISSING_Q = 1;
+const ERR_ILLEGAL_NUMBER = 2;
+const ERR_ILLEGAL_CHAR = 3;
+const ERR_INVALID_NAME = 4;
+const ERR_INVALID_REF = 5;
+const ERR_QUOTED_NAME_MISSING_Q = 6;
+const REGX_NAME_CHAR = /[a-zA-Z0-9_]/;
+
+const ERROR_FORMULA_STR = 'The formula is incorrect';
+
+
+export {
+  EmptyStr,
+  ERR_STR_MISSING_Q,
+  ERR_ILLEGAL_NUMBER,
+  ERR_ILLEGAL_CHAR,
+  ERR_INVALID_NAME,
+  ERR_INVALID_REF,
+  ERR_QUOTED_NAME_MISSING_Q,
+
+  REGX_NAME_CHAR,
+  ERROR_FORMULA_STR,
+};
