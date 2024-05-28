@@ -18,7 +18,7 @@ class FormulaParam extends FormulaValue implements IFormulaParam {
     // if (!dataSource) {
     //   throw new Error('param must have a dataSource!');
     // }
-    return dataSource.getParam(this.name);
+    return dataSource.getParam(this.name, options);
   }
 
 }

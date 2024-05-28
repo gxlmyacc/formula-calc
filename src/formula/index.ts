@@ -105,14 +105,14 @@ class Formula {
           continue;
         }
 
-        // 如果是函数名，直接入符号栈；
+        // if it is a function name, directly put it into the symbol stack;
         if (tokenType === TokenType.ttFunc) {
           const func = createFormulaFunction(tokenItem.token, options, {
             customFunctions,
           });
           formulas.push(func);
 
-          // 如果上一个是操作符；
+          // check the nearest operator;
           if (operatorLast) {
             if (operatorLast.operatorType === FormulaOperatorType.fotUnaryLeft) {
               operatorLast.params.push(func);
@@ -127,7 +127,7 @@ class Formula {
           }
 
           operatorLast = null;
-        } else  if (tokenType === TokenType.ttParenR) { // 如果是右括号
+        } else  if (tokenType === TokenType.ttParenR) { // if it is a right parenthesis
           if (operatorLast && ([FormulaOperatorType.fotBinary, FormulaOperatorType.fotUnaryLeft].includes(operatorLast.operatorType))) {
             throw new Error(ERROR_FORMULA_STR + '!');
           }
@@ -262,7 +262,7 @@ class Formula {
 
           operatorLast = operator;
         } else
-        // 如果是运算量
+        // If it is a literal value
         if (TokenValues.includes(tokenType)) {
           item = null;
           if (tokenType === TokenType.ttNull) {

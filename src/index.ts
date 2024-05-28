@@ -19,10 +19,11 @@ function formulaCalc(
 
   if (!dataSource) {
     dataSource = {
-      getParam(name) {
+      getParam(name, options) {
         if (!params) throw new Error('options require params!');
         if (isFunction(params)) return params(name);
         return getValueByPath(params, name, (path, paresedPath) => {
+          if (options.nullAsZero) return 0;
           throw new Error(`param "${paresedPath}${paresedPath ? '.' : ''}${path}" is not exist!`);
         });
       },

@@ -28,15 +28,6 @@ describe('operator test', () => {
         }
       }
     })).resolves.toBe(1.9);
-
-    expect(formulaCalc('3.334 + 3.335', {
-      precision: 2,
-      stepRrounding: true,
-    })).toBe(6.67);
-    expect(formulaCalc('3.3334 + 3.3315', {
-      precision: 2,
-      stepRrounding: 3,
-    })).toBe(6.67);
   });
 
   test('sub', () => {

@@ -36,6 +36,9 @@ abstract class FormulaValue implements IFormulaValue {
         } else if (options.stepRrounding && isNumber(value)) {
           value = toRound(value, stepPrecision, options.rounding);
         }
+        if (options.nullAsZero && (value == null || isNaN(value))) {
+          value = 0;
+        }
         this.value = value;
         this.state = FormulaExecuteState.fesExecuted;
         return value;

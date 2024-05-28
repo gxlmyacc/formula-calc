@@ -77,7 +77,7 @@ function getValueByPath(
     }
     value = undefined;
     if (onNotFind) {
-      onNotFind(path, paresedPath, pre);
+      value = onNotFind(path, paresedPath, pre);
     }
     return true;
   });

@@ -34,11 +34,10 @@ enum TokenType {
 }
 
 
-// 操作符类型
 enum FormulaOperatorType {
-  fotBinary,          // 二元
-  fotUnaryLeft,       // 一元
-  fotUnaryRight,       // 一元
+  fotBinary,
+  fotUnaryLeft,
+  fotUnaryRight,
   fotQuote
 }
 
@@ -129,7 +128,7 @@ const TokenValues = [
 ];
 
 interface IFormulaDataSource {
-  getParam(name: string) : any;
+  getParam(name: string, options: FormulaValueOptions) : any;
 }
 
 type RoundingType = 'UP'|'DOWN'|'CEIL'|'FLOOR'|'HALF_UP'|'HALF_DOWN'|'HALF_EVEN'|'HALF_CEIL'|'HALF_FLOOR'|'EUCLID';
@@ -139,7 +138,8 @@ type FormulaValueOptions = {
   precision?: number,
   rounding?: RoundingType,
   stepRrounding?: boolean|number,
-  eval?: null|((expr: string, dataSource: IFormulaDataSource, options:  FormulaValueOptions) => any),
+  nullAsZero?: boolean,
+  eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions) => any),
 }
 
 type FormulaCustomFunctionItem = {
@@ -171,7 +171,6 @@ interface IFormulaParam extends IFormulaValue {
 
 interface IFormulaBase extends IFormulaValue {
   name: string ;
-
   params: FormulaValues;
 }
 
@@ -179,19 +178,12 @@ interface IFormulaBase extends IFormulaValue {
 interface IFormulaFunction extends IFormulaBase {
   argMin: number;
   argMax: number;
-
   owner: IFormulaValue|null;
 }
 
 interface IFormulaOperator extends IFormulaBase {
   isUnComplete: Boolean;
-  /**
-  * 优先级
-  * */
   priority: number;
-  /**
-  * 运算符类型
-  * */
   operatorType: FormulaOperatorType;
 }
 
