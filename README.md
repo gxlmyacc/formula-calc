@@ -247,7 +247,7 @@ Supports the following values
 
 - `number` - number, like 1, 2, 3, 1e3, 1e+3, 1e-3
 
-- `string` - string, like '1', '2', '3'
+- `string` - string, like "1", "2", "3"
 
 - `boolean` - boolean, like true, false
 
