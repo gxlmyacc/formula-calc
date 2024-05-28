@@ -307,7 +307,13 @@ Supports the following built in functions:
 
 - `ceil(x)` - ceiling
 
+- `eval(expr)` - evaluate expression
+
+- `exist(o, key, type?)` - check if the key exists in the object, if type is not specified, it will be checked for all types, if type is specified, it will be checked for the specified type.
+
 - `floor(x)` - floor
+
+- `if(a, b, c?)` - if `a` is true, then return `b`, otherwise return `c`
 
 - `max(x, y, ...)` - maximum
 
@@ -317,16 +323,13 @@ Supports the following built in functions:
 
 - `sqrt(x)` - square root
 
-- `trunc(x)` - truncate
+- `sum(x, y, ...)` - sum
 
 - `random(n)` - random number
 
-- `if(a, b, c?)` - if `a` is true, then return `b`, otherwise return `c`
+- `trunc(x)` - truncate
 
 - `noref(x)` - directly return x, because `ref` does not count the parentheses of a function, the parentheses wrapped in `noref` will not be included in the `ref`.
-
-- `exist(o, key, type?)` - check if the key exists in the object, if type is not specified, it will be checked for all types, if type is specified, it will be checked for the specified type.
-
 
 
 ## Custom Functions
