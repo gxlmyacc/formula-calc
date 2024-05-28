@@ -329,23 +329,27 @@ Supports the following functions
 
 ## Custom Functions
 
-Custom functions can be used to extend the formula language.
+Custom functions can be used to extend the formula language. due to the formula supporting promise calculation, you can even provide UI related interactions in custom methods
 
 ```js
 import formulaCalc from 'formula-calc';
 
-const result = formulaCalc('add1(2.11)', {
+const result = await formulaCalc('confirm("some prompt", 1, 2) + 1', {
   customFunctions: {
-    add1: {
-      argMin: 1,
-      argMax: 1,
-      execute(params) {
-        return params[0] + 1;
+    confirm: {
+      argMin: 3,
+      argMax: 3,
+      execute([prompt, a, b]) {
+        return new Promise((resolve) => {
+          // some UI interaction
+          setTimeout(() => {
+            resolve(a > b ? a : b);
+          }, 1000);
+        });
       }
     }
   }
 });
-console.log(result); // 3.11
 ```
 
 
