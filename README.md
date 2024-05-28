@@ -254,7 +254,7 @@ Supports the following values
 
 - `Infinity` - Infinity
 
-- `params` - params, like `a`, `a.b`, `a.b.0`, "params" is taken from the "params" parameter in the second parameter of the `formulaCalc` method. If the `param` name contains special characters, it can be enclosed with ', like this: `a()*_(&_&*)b`.
+- `params` - params, like `a`, `a.b`, `a.b.0`, "params" is taken from the "params" parameter in the second parameter of the `formulaCalc` method. If the `param` name contains special characters, it can be enclosed with ', like this: `'a()*_(&_&*)b'`.
 
 - `ref` - `$1`...`$99`, similar to regular expressions, it will match the ordinal of parentheses that do not contain functions.
 
