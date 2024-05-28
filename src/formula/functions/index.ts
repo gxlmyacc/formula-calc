@@ -49,14 +49,14 @@ function isFormulaFunction(func: any): func is FormulaFunctionItem {
  */
 function createFormulaFunction(
   originFuncName: string,
-  valueOptions: FormulaValueOptions = {},
+  valueOptions: FormulaValueOptions,
   options: {
     customFunctions?: Record<string, FormulaCustomFunctionItem>,
   } = {}
 ): IFormulaFunction {
-  const { customFunctions = {} } = options;
+  const { customFunctions } = options;
   const funcName = originFuncName.toUpperCase();
-  const item = customFunctions[funcName]
+  const item = customFunctions?.[funcName]
     || FormulaCustomFunctionMap[funcName]
     || FormulaFunctionMap[funcName];
   if (!item) {

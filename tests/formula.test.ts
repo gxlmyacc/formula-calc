@@ -20,6 +20,16 @@ describe('formula test', () => {
       nullAsZero: true,
     })).toBe(1);
 
+    expect(formulaCalc('a + 1', {
+      nullAsZero: true,
+      params(name, options) {
+        if (name === 'a') {
+          return 1;
+        }
+        return 0;
+      }
+    })).toBe(2);
+
 
     expect(formulaCalc('a + 1', {
       nullAsZero: true,

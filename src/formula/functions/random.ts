@@ -8,9 +8,7 @@ class FormulaFunctionRANDOM extends AbsFormulaFunction {
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
-      [
-        this.params[0]?.execute(dataSource, options)
-      ],
+      this.params.map(v => v.execute(dataSource, options)),
       params => {
         const significantDigits = params.length
           ? params[0]
