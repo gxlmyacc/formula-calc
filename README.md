@@ -251,17 +251,17 @@ Supports the following values
 
 - `boolean` - boolean, like true, false
 
-- `null` - null, like null
+- `null` - null
 
 - `NaN` - NaN
 
 - `Infinity` - Infinity
 
-- `params` - params, like `a`, `a.b`, `a.b.0`, "params" is taken from the "params" parameter in the second parameter of the `formulaCalc` method. If the `param` name contains special characters, it can be enclosed with ', like this: `'a()*_(&_&*)b'`.
+- `params` - params, like `a`, `a.b`, `a.b.0`, "params" is taken from the "params" parameter in the second parameter of the `formulaCalc` method. If the `param` name contains special characters, it can be enclosed with ', like this: `'a()*_(&_&*)b'`
 
-- `ref` - `$1`...`$99`, similar to regular expressions, it will match the ordinal of parentheses that do not contain functions.
+- `ref` - `$1`...`$99`, similar to regular expressions, it will match the ordinal of parentheses that do not contain functions
 
-## Operator
+## Operators
 
 Supports the following operators
 
@@ -299,7 +299,7 @@ Supports the following operators
 
 ## Functions
 
-Supports the following functions
+Supports the following built in functions:
 
 - `abs(x)` - absolute value
 
@@ -313,7 +313,7 @@ Supports the following functions
 
 - `min(x, y, ...)` - minimum
 
-- `round(x, y)` - round
+- `round(x, y?)` - round
 
 - `sqrt(x)` - square root
 
@@ -321,7 +321,7 @@ Supports the following functions
 
 - `random(n)` - random number
 
-- `if(a, b, c)` - if `a` is true, then return `b`, otherwise return `c`
+- `if(a, b, c?)` - if `a` is true, then return `b`, otherwise return `c`
 
 - `noref(x)` - directly return x, because `ref` does not count the parentheses of a function, the parentheses wrapped in `noref` will not be included in the `ref`.
 
