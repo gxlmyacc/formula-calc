@@ -1,5 +1,4 @@
 import { describe, expect, test } from '@jest/globals';
-import Decimal from 'decimal.js';
 import formulaCalc, { registorFormulaFunction } from '../src';
 
 describe('function test', () => {
@@ -273,7 +272,7 @@ describe('function test', () => {
     expect(formulaCalc('round(2.4945, 3)')).toBe(2.495);
 
     expect(formulaCalc('round(2.4945, 3)', {
-      rounding: Decimal.ROUND_FLOOR
+      rounding: 'FLOOR'
     })).toBe(2.494);
   });
 

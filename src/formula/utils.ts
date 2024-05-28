@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-// import { TokenType } from './type';
+import type { RoundingType } from './type';
 
 const _toString = Object.prototype.toString;
 function isPlainObject(obj: any): obj is Record<string, any> {
@@ -24,9 +24,23 @@ function isNumber(value: any): value is number {
   return typeof value === 'number';
 }
 
-function toRound(value: Decimal.Value, decimalPlaces: number = 2, rounding: Decimal.Rounding = Decimal.ROUND_HALF_UP) {
+function toRound(
+  value: Decimal.Value,
+  decimalPlaces: number = 2,
+  rounding: Decimal.Rounding|RoundingType = Decimal.ROUND_HALF_UP
+) {
   const result = new Decimal(value);
-  return Number(result.toFixed(decimalPlaces, rounding));
+  let _rounding = isNumber(rounding)
+    ? rounding
+    : Decimal.ROUND_HALF_UP;
+  if (isString(rounding)) {
+    const r = (Decimal as any)[rounding] || (Decimal as any)[`ROUND_${rounding}`];
+    if (isNumber(r)) _rounding = r as Decimal.Rounding;
+  }
+  return Number(result.toFixed(
+    decimalPlaces,
+    _rounding
+  ));
 }
 
 // function getTokenTypeByValue(value: any) {

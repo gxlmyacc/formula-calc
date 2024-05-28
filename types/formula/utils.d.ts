@@ -1,10 +1,11 @@
 import Decimal from 'decimal.js';
+import type { RoundingType } from './type';
 declare function isPlainObject(obj: any): obj is Record<string, any>;
 declare function hasOwnProp(obj: any, key: PropertyKey): boolean;
 declare function isFunction(value: any): value is Function;
 declare function isString(value: any): value is string;
 declare function isNumber(value: any): value is number;
-declare function toRound(value: Decimal.Value, decimalPlaces?: number, rounding?: Decimal.Rounding): number;
+declare function toRound(value: Decimal.Value, decimalPlaces?: number, rounding?: Decimal.Rounding | RoundingType): number;
 declare function getValueByPath(data: Record<string, any>, path: string, onNotFind?: (path: string, paresedPath: string, pre: any) => void): any;
 declare function isValueType(value: any, type: 'bool' | 'boolean' | 'string' | 'number' | 'null' | 'object'): boolean;
 declare function isPromise(v: any): v is Promise<any>;

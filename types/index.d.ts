@@ -1,5 +1,6 @@
 import Formula, { registorFormulaFunction, TokenType } from './formula';
 import type { FormulaOptions, IFormulaDataSource, FormulaCustomFunctionItem } from './formula';
+export * from './formula/utils';
 interface FormulaCalcOptions extends FormulaOptions {
     params?: Record<string, any> | ((name: string) => any);
     customFunctions?: Record<string, FormulaCustomFunctionItem>;

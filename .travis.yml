@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+- 16
+branches:
+  only:
+  - main
+install:
+- npm install
+script:
+- npm test:coverage
+after_success:
+- npm run coveralls

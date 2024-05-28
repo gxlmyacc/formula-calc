@@ -5,7 +5,7 @@ formula-calc is a library for formula calculation through strings for javascript
 
 [![NPM version](https://img.shields.io/npm/v/formula-calc.svg?style=flat)](https://npmjs.com/package/formula-calc)
 [![NPM downloads](https://img.shields.io/npm/dm/formula-calc.svg?style=flat)](https://npmjs.com/package/formula-calc)
-
+[![Coveralls](https://img.shields.io/coveralls/gxlmyacc/formula-calc.svg)](https://coveralls.io/github/gxlmyacc/formula-calc)
 
 
 ## Install
@@ -41,8 +41,8 @@ const result = formulaCalc('2% + 1')
 console.log(result); // 1.02
 
 // with parenthesis
-const result = formulaCalc('4 * (1 + 1)')
-console.log(result); // 8
+const result = formulaCalc('4 * (1 + 1) + 2')
+console.log(result); // 10
 
 ```
 
@@ -212,10 +212,12 @@ console.log(result); // 6.67
 - formulaCalc
 
 ```ts
+type RoundingType = 'UP'|'DOWN'|'CEIL'|'FLOOR'|'HALF_UP'|'HALF_DOWN'|'HALF_EVEN'|'HALF_CEIL'|'HALF_FLOOR'|'EUCLID';
+
 type FormulaValueOptions = {
   Decimal?: typeof Decimal,
   precision?: number,
-  rounding?: import('decimal.js').Decimal.Rounding,
+  rounding?: RoundingType,
   stepRrounding?: boolean|number,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options:  FormulaValueOptions) => any),
 }
@@ -252,7 +254,7 @@ Supports the following values
 
 - `Infinity` - Infinity
 
-- `params` - params, like `a`, `a.b`, `a.b.0`, "params" is taken from the "params" parameter in the second parameter of the `formulaCalc` method.
+- `params` - params, like `a`, `a.b`, `a.b.0`, "params" is taken from the "params" parameter in the second parameter of the `formulaCalc` method. If the `param` name contains special characters, it can be enclosed with ', like this: `a()*_(&_&*)b`.
 
 - `ref` - `$1`...`$99`, similar to regular expressions, it will match the ordinal of parentheses that do not contain functions.
 

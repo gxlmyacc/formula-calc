@@ -2,7 +2,7 @@
 import Decimal from 'decimal.js';
 import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { isNumber, toRound, nextWithPrimise } from '../utils';
+import { toRound, nextWithPrimise } from '../utils';
 
 
 class FormulaFunctionROUND extends AbsFormulaFunction {
@@ -15,9 +15,7 @@ class FormulaFunctionROUND extends AbsFormulaFunction {
         const decimalPlaces = params.length > 1
           ? params[1]
           : 2;
-        const rounding = isNumber(options.rounding)
-          ? options.rounding
-          : (options.Decimal || Decimal).ROUND_HALF_UP;
+        const rounding = options.rounding || (options.Decimal || Decimal).ROUND_HALF_UP;
         return toRound(value, decimalPlaces, rounding);
       },
       false

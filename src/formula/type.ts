@@ -132,11 +132,12 @@ interface IFormulaDataSource {
   getParam(name: string) : any;
 }
 
+type RoundingType = 'UP'|'DOWN'|'CEIL'|'FLOOR'|'HALF_UP'|'HALF_DOWN'|'HALF_EVEN'|'HALF_CEIL'|'HALF_FLOOR'|'EUCLID';
 
 type FormulaValueOptions = {
   Decimal?: typeof Decimal,
   precision?: number,
-  rounding?: import('decimal.js').Decimal.Rounding,
+  rounding?: RoundingType,
   stepRrounding?: boolean|number,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options:  FormulaValueOptions) => any),
 }
@@ -220,4 +221,5 @@ export type {
   IFormulaDataSource,
   FormulaValueOptions,
   FormulaCustomFunctionItem,
+  RoundingType,
 };
