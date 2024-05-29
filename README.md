@@ -5,7 +5,7 @@ formula-calc is a library for formula calculation through strings for javascript
 
 [![NPM version](https://img.shields.io/npm/v/formula-calc.svg?style=flat)](https://npmjs.com/package/formula-calc)
 [![NPM downloads](https://img.shields.io/npm/dm/formula-calc.svg?style=flat)](https://npmjs.com/package/formula-calc)
-[![Coveralls](https://img.shields.io/coveralls/gxlmyacc/formula-calc.svg)](https://coveralls.io/github/gxlmyacc/formula-calc)
+[![Coverage Status](https://coveralls.io/repos/github/gxlmyacc/formula-calc/badge.svg?branch=main)](https://coveralls.io/github/gxlmyacc/formula-calc?branch=main)
 
 Note: The internal numerical calculation uses the [decimal.js](https://mikemcl.github.io/decimal.js/) library.
 
