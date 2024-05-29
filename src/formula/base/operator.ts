@@ -5,8 +5,6 @@ abstract class AbsFormulaOperator extends AbsFormulaBase implements IFormulaOper
 
   public tokenIndex: number;
 
-  public isUnComplete: boolean;
-
   public priority: number;
 
   public operatorType: FormulaOperatorType;
@@ -17,7 +15,6 @@ abstract class AbsFormulaOperator extends AbsFormulaBase implements IFormulaOper
     this.name = origText;
     this.operatorType = operatorType;
     this.priority = priority;
-    this.isUnComplete = false;
   }
 
 }

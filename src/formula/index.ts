@@ -28,7 +28,7 @@ interface FormulaOptions extends FormulaValueOptions {
 }
 
 function isOperatorUncomplete(operator: IFormulaOperator) {
-  return ([FormulaOperatorType.fotUnaryLeft].includes(operator.operatorType) && (operator.params.length < 1))
+  return ([FormulaOperatorType.fotUnaryLeft, FormulaOperatorType.fotUnaryRight].includes(operator.operatorType) && (operator.params.length < 1))
     || ((operator.operatorType === FormulaOperatorType.fotBinary) && (operator.params.length < 2));
 }
 
@@ -189,19 +189,17 @@ class Formula {
                 operator.params.push(formulas[j]);
                 formulas.splice(j, 1);
               } else {
-                let LOperatorTemp2: IFormulaOperator|null = null;
-                let LOperatorTemp1 = operator;
+                let operatorTemp2: IFormulaOperator|null = null;
+                let operatorTemp1: IFormulaOperator|null = operator;
                 do {
-                  if (LOperatorTemp1.isUnComplete) {
-                    LOperatorTemp2 = LOperatorTemp1;
+                  if (isOperatorUncomplete(operatorTemp1)) {
+                    operatorTemp2 = operatorTemp1;
                   }
-                  LOperatorTemp1 = formulas[LOperatorTemp1.params.length - 1] as IFormulaOperator;
-                } while (isFormulaOperator(formulas[LOperatorTemp1.params.length - 1], v => operator = v));
+                } while (isFormulaOperator(operatorTemp1.params[operatorTemp1.params.length - 1], v => operatorTemp1 = v));
 
-                if (LOperatorTemp2) {
-                  LOperatorTemp2.params.push(formulas[j]);
+                if (operatorTemp2) {
+                  operatorTemp2.params.push(formulas[j]);
                   formulas.splice(j, 1);
-                  LOperatorTemp2.isUnComplete = false;
                 }
               }
             }
@@ -224,10 +222,19 @@ class Formula {
 
           // ff it is a left monocular operator
           if (operator.operatorType === FormulaOperatorType.fotUnaryLeft) {
-            formulas.push(operator);
+            if (operatorLast
+              && ([FormulaOperatorType.fotUnaryLeft, FormulaOperatorType.fotBinary].includes(operatorLast.operatorType))
+              &&  isOperatorUncomplete(operatorLast)) {
+              operatorLast.params.push(operator);
+            } else {
+              formulas.push(operator);
+            }
           } else
           // if it is a right monocular or binocular operator
-          if ([FormulaOperatorType.fotUnaryRight, FormulaOperatorType.fotBinary].includes(operator.operatorType)) {
+          if ([
+            FormulaOperatorType.fotUnaryRight,
+            FormulaOperatorType.fotBinary
+          ].includes(operator.operatorType)) {
             if (!formulas.length) {
               throw new Error(ERROR_FORMULA_STR + '!');
             }
@@ -239,13 +246,15 @@ class Formula {
                 throw new Error(ERROR_FORMULA_STR + '!');
               }
 
-              operator.params.push(operatorPrev.params[operatorPrev.params.length - 1]);
-              operatorPrev.params[operatorPrev.params.length - 1] = operator as IFormulaOperator;
-
-              // mark uncomplete operator
-              if (isOperatorUncomplete(operator)) {
-                operator.isUnComplete = true;
+              let operatorTemp1: IFormulaOperator = operatorPrev;
+              while (isFormulaOperator(operatorTemp1.params[operatorTemp1.params.length - 1], v => {
+                v && (operatorTemp1 = v);
+              })
+              && operatorTemp1.priority < operator.priority) {
+                // empty
               }
+              operator.params.push(operatorTemp1.params[operatorTemp1.params.length - 1]);
+              operatorTemp1.params[operatorTemp1.params.length - 1] = operator as IFormulaOperator;
             } else {
               if (operatorPrev === formulas[formulas.length - 1] && isOperatorUncomplete(operatorPrev)) {
                 throw new Error(ERROR_FORMULA_STR + '!');
@@ -279,23 +288,23 @@ class Formula {
             item = new FormulaRef(tokenItem.token, refs, options);
           }  else if (tokenType === TokenType.ttName) {
             item = new FormulaParam(tokenItem.token, tokenItem.token, tokenItem.tokenType, options);
-          } else {
-            throw new Error(`Unsupported data type [${tokenItem.token}!`);
           }
 
           // If the previous one was an operator
-          if (operatorLast) {
-            if (operatorLast.operatorType === FormulaOperatorType.fotUnaryLeft) {
-              operatorLast.params.push(item);
-            } else
-            if ((operatorLast.operatorType === FormulaOperatorType.fotBinary)
-              && (operatorLast.params.length < 2)) {
-              // if (operatorLast.params.length !== 1) {
-              //   throw new Error(ERROR_FORMULA_STR + '!');
-              // }
-              operatorLast.params.push(item);
+          if (item) {
+            if (operatorLast) {
+              if (operatorLast.operatorType === FormulaOperatorType.fotUnaryLeft) {
+                operatorLast.params.push(item);
+              } else
+              if ((operatorLast.operatorType === FormulaOperatorType.fotBinary)
+                && (operatorLast.params.length < 2)) {
+                // if (operatorLast.params.length !== 1) {
+                //   throw new Error(ERROR_FORMULA_STR + '!');
+                // }
+                operatorLast.params.push(item);
+              } else formulas.push(item);
             } else formulas.push(item);
-          } else formulas.push(item);
+          }
 
           operatorLast = null;
         }

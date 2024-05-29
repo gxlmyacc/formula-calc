@@ -3,7 +3,7 @@ import formulaCalc from '../src';
 
 describe('demo test', () => {
   test('demo', () => {
-    expect(formulaCalc('(1,2,3)')).toStrictEqual([1, 2, 3]);
+    expect(formulaCalc('true & !!1%')).toBe(true);
   });
 });
 

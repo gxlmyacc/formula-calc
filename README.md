@@ -100,6 +100,13 @@ console.log(result); // 1
 const result = formulaCalc('sum(1, 2, 3, 4, 5)');
 console.log(result); // 15
 
+const result = formulaCalc('sum(1, 2, 3, 4, a)', {
+  params: {
+    a: [5, 6, 7, 8]
+  }
+});
+console.log(result); // 36
+
 const result = formulaCalc('round(2.335)');
 console.log(result); // 2.34
 
@@ -247,7 +254,7 @@ Supports the following values
 
 - `number` - number, like 1, 2, 3, 1e3, 1e+3, 1e-3
 
-- `string` - string, like "1", "2", "3"
+- `string` - string, it is quoted with `"`, like "1", "2", "3"
 
 - `boolean` - boolean, like true, false
 
@@ -257,7 +264,7 @@ Supports the following values
 
 - `Infinity` - Infinity
 
-- `params` - params, like `a`, `a.b`, `a.b.0`, "params" is taken from the "params" parameter in the second parameter of the `formulaCalc` method. If the `param` name contains special characters, it can be enclosed with ', like this: `'a()*_(&_&*)b'`
+- `params` - params, like `a`, `a.b`, `a.b.0`, "params" is taken from the "params" parameter in the second parameter of the `formulaCalc` method. If the `param` name contains special characters, it can be quoted with `'`, like this: `'a()*_(&_&*)b'`
 
 - `ref` - `$1`...`$99`, similar to regular expressions, it will match the ordinal of parentheses that do not contain functions
 
@@ -303,7 +310,7 @@ Supports the following built in functions:
 
 - `abs(x)` - absolute value
 
-- `avg(x, y, ...)` - average
+- `avg(n1, n2, ..., n99)` - average, note : `nX` can be number array.
 
 - `ceil(x)` - ceiling
 
@@ -315,21 +322,21 @@ Supports the following built in functions:
 
 - `if(a, b, c?)` - if `a` is true, then return `b`, otherwise return `c`
 
-- `max(x, y, ...)` - maximum
+- `max(n1, n2, ..., n99)` - maximum, note : `nX` can be number array.
 
-- `min(x, y, ...)` - minimum
+- `min(n1, n2, ..., n99)` - minimum, note : `nX` can be number array.
+
+- `noref(x)` - directly return x, because `ref` does not count the parentheses of a function, the parentheses wrapped in `noref` will not be included in the `ref`.
 
 - `round(x, y?)` - round
 
 - `sqrt(x)` - square root
 
-- `sum(x, y, ...)` - sum
+- `sum(n1, n2, ..., n99)` - sum, note : `nX` can be number array.
 
 - `random(n)` - random number
 
 - `trunc(x)` - truncate
-
-- `noref(x)` - directly return x, because `ref` does not count the parentheses of a function, the parentheses wrapped in `noref` will not be included in the `ref`.
 
 
 ## Custom Functions

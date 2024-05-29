@@ -40,12 +40,12 @@ const FormulaOperatorArray : Array<FormulaOperatorItem> = [
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttMul, priority: 5, operatorClass: FormulaOperatorMUL },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttDiv, priority: 5, operatorClass: FormulaOperatorDIV },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttMod, priority: 5, operatorClass: FormulaOperatorMOD },
-  { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttPow, priority: 6, operatorClass: FormulaOperatorPOW },
-  { operatorType: FormulaOperatorType.fotUnaryRight, operatorToken: TokenType.ttPercent, priority: 6, operatorClass: FormulaOperatorPERCENT },
+  { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttPow, priority: 7, operatorClass: FormulaOperatorPOW },
+  { operatorType: FormulaOperatorType.fotUnaryRight, operatorToken: TokenType.ttPercent, priority: 8, operatorClass: FormulaOperatorPERCENT },
 
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttAnd, priority: 3, operatorClass: FormulaOperatorAND },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttOr, priority: 3, operatorClass: FormulaOperatorOR },
-  { operatorType: FormulaOperatorType.fotUnaryLeft, operatorToken: TokenType.ttNot, priority: 3, operatorClass: FormulaOperatorNOT },
+  { operatorType: FormulaOperatorType.fotUnaryLeft, operatorToken: TokenType.ttNot, priority: 6, operatorClass: FormulaOperatorNOT },
 
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttGT, priority: 2, operatorClass: FormulaOperatorGT },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttGE, priority: 2, operatorClass: FormulaOperatorGE },

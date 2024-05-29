@@ -182,7 +182,6 @@ interface IFormulaFunction extends IFormulaBase {
 }
 
 interface IFormulaOperator extends IFormulaBase {
-  isUnComplete: Boolean;
   priority: number;
   operatorType: FormulaOperatorType;
 }

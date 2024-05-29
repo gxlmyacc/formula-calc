@@ -4,6 +4,7 @@ import formulaCalc from '../src';
 describe('operator test', () => {
   test('add', () => {
     expect(formulaCalc('1 + 1')).toBe(2);
+    expect(formulaCalc('0.1 + 0.2')).toBe(0.3);
     expect(formulaCalc(' 1 + 1 + 1.1')).toBe(3.1);
     expect(formulaCalc(' 1 + (1 + 1)')).toBe(3);
     expect(formulaCalc(' -1.1 + 1')).toBe(-0.1);
@@ -155,11 +156,16 @@ describe('operator test', () => {
     expect(formulaCalc('!""')).toBe(true);
     expect(formulaCalc('!(1 + 1)')).toBe(false);
     expect(formulaCalc('!(1 - 1)')).toBe(true);
+    expect(formulaCalc('true & !1')).toBe(false);
+    expect(formulaCalc('true & !(1 - 1)')).toBe(true);
+    expect(formulaCalc('true & !!(1 - 1)')).toBe(false);
+    expect(formulaCalc('true & !(!(1 - 1))')).toBe(false);
 
     expect(formulaCalc('1 <> 2')).toBe(true);
     expect(formulaCalc('1 <> 1')).toBe(false);
     expect(formulaCalc('1 + 3 <> 2 + 2')).toBe(false);
     expect(formulaCalc('1 + 3 <> 2 + 1')).toBe(true);
+    expect(formulaCalc('true & !1%')).toBe(false);
 
     expect(formulaCalc('!noref(false)')).toBe(true);
   });
