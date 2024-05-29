@@ -50,7 +50,7 @@ declare const TokenNegatives: TokenType[];
 declare const TokenPercents: TokenType[];
 declare const TokenValues: TokenType[];
 interface IFormulaDataSource {
-    getParam(name: string): any;
+    getParam(name: string, options: FormulaValueOptions): any;
 }
 type RoundingType = 'UP' | 'DOWN' | 'CEIL' | 'FLOOR' | 'HALF_UP' | 'HALF_DOWN' | 'HALF_EVEN' | 'HALF_CEIL' | 'HALF_FLOOR' | 'EUCLID';
 type FormulaValueOptions = {
@@ -58,6 +58,7 @@ type FormulaValueOptions = {
     precision?: number;
     rounding?: RoundingType;
     stepRrounding?: boolean | number;
+    nullAsZero?: boolean;
     eval?: null | ((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions) => any);
 };
 type FormulaCustomFunctionItem = {
@@ -92,14 +93,7 @@ interface IFormulaFunction extends IFormulaBase {
     owner: IFormulaValue | null;
 }
 interface IFormulaOperator extends IFormulaBase {
-    isUnComplete: Boolean;
-    /**
-    * 优先级
-    * */
     priority: number;
-    /**
-    * 运算符类型
-    * */
     operatorType: FormulaOperatorType;
 }
 export { TokenType, FormulaOperatorType, FormulaExecuteState, TokenValues, TokenUnaryLefts, TokenUnaryRights, TokenBinarys, TokenOperators, TokenNegatives, TokenPercents, FormulaValues, };

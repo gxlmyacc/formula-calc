@@ -2,7 +2,7 @@ import type { FormulaCustomFunctionItem, FormulaValueOptions, IFormulaFunction }
 /**
  * create a formula function
  */
-declare function createFormulaFunction(originFuncName: string, valueOptions?: FormulaValueOptions, options?: {
+declare function createFormulaFunction(originFuncName: string, valueOptions: FormulaValueOptions, options?: {
     customFunctions?: Record<string, FormulaCustomFunctionItem>;
 }): IFormulaFunction;
 /**

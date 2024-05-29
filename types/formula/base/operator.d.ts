@@ -2,7 +2,6 @@ import type { FormulaValueOptions, IFormulaOperator, FormulaOperatorType } from 
 import AbsFormulaBase from './base';
 declare abstract class AbsFormulaOperator extends AbsFormulaBase implements IFormulaOperator {
     tokenIndex: number;
-    isUnComplete: boolean;
     priority: number;
     operatorType: FormulaOperatorType;
     constructor(origText: string, tokenIndex: number, options: FormulaValueOptions, operatorType: FormulaOperatorType, priority: number);
