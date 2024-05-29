@@ -22,8 +22,7 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
-    "coveralls": "coveralls < coverage/lcov.info -r 2bcWhjEpumPMgy4CWyqeW2pbs0lrBIhJG",
-    "test-coveralls": "npm run coverage && npm run coveralls",
+    "test-coveralls": "yarn jest --coverage && coveralls < coverage/lcov.info -r hijUIuPWtZpqtkNtwbRTfnqfYNdaRpORz",
     "build": "npm run build:types && npm run build:js && npm run build:es",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "cross-env BUILD_ENV=js babel src -d esm --extensions \".ts,.tsx\" --source-maps",
@@ -77,7 +76,7 @@
     "babel-loader": "^8.2.2",
     "babel-plugin-define-variables": "^0.0.3",
     "clean-webpack-plugin": "^1.0.1",
-    "coveralls-next": "^4.2.1",
+    "coveralls": "^3.1.1",
     "cross-env": "^5.2.0",
     "eslint": "^6.0.1",
     "eslint-config-airbnb-base": "^13.2.0",
