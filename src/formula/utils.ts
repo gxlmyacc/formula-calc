@@ -84,7 +84,7 @@ function getValueByPath(
   return value;
 }
 
-function isValueType(value: any, type: 'bool'|'boolean'|'string'|'number'|'null'|'object') {
+function isValueType(value: any, type: 'bool'|'boolean'|'string'|'array'|'number'|'NaN'|'Infinity'|'null'|'object') {
   switch (type) {
     case 'bool':
     case 'boolean':
@@ -92,9 +92,15 @@ function isValueType(value: any, type: 'bool'|'boolean'|'string'|'number'|'null'
     case 'string':
       return typeof value === 'string';
     case 'number':
-      return typeof value === 'number';
+      return ['number', 'bigint'].includes(typeof value);
+    case 'NaN':
+      return isNaN(value);
     case 'null':
       return value === null;
+    case 'Infinity':
+      return value === Infinity;
+    case 'array':
+      return Array.isArray(value);
     case 'object':
       return typeof value === 'object';
     default:

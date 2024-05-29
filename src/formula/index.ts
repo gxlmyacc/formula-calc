@@ -81,7 +81,7 @@ class Formula {
     }
   }
 
-  expression(options: FormulaOptions = {}) {
+  expression(options: FormulaOptions) {
     let tokenizer = this.tokenizer;
     const formulas = this.formulas;
     const refs = this.refs;

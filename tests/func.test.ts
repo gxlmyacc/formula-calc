@@ -5,6 +5,7 @@ describe('function test', () => {
   test('abs', () => {
     expect(formulaCalc('abs(1)')).toBe(1);
     expect(formulaCalc('abs(-1)')).toBe(1);
+    expect(formulaCalc('1 + abs(-1)')).toBe(2);
     expect(formulaCalc('abs(-1.2)')).toBe(1.2);
     expect(formulaCalc('abs(10 / -3)')).toBe(3.3333333333333335);
     expect(formulaCalc('abs(10 / -3)', { precision: 2 })).toBe(3.33);
@@ -142,6 +143,27 @@ describe('function test', () => {
         }
       },
     })).toBe(false);
+    expect(formulaCalc('exist(a, "b", "NaN")', {
+      params: {
+        a: {
+          b: NaN
+        }
+      },
+    })).toBe(true);
+    expect(formulaCalc('exist(a, "b", "Infinity")', {
+      params: {
+        a: {
+          b: Infinity
+        }
+      },
+    })).toBe(true);
+    expect(formulaCalc('exist(a, "b", "array")', {
+      params: {
+        a: {
+          b: [1, 2]
+        }
+      },
+    })).toBe(true);
     expect(formulaCalc('exist(a, "b.c", "object")', {
       params: {
         a: {
@@ -160,13 +182,19 @@ describe('function test', () => {
         }
       },
     })).toBe(false);
+    expect(formulaCalc('exist(a, "", "number")', {
+      params: {
+        a: 1
+      },
+    })).toBe(true);
+
     expect(formulaCalc('exist(null, "b.c")')).toBe(false);
     expect(formulaCalc('exist("", "b.c")')).toBe(false);
     expect(formulaCalc('exist(true, "b.c")')).toBe(false);
     expect(formulaCalc('exist(false, "b.c")')).toBe(false);
     expect(formulaCalc('exist(0, "b.c")')).toBe(false);
     expect(formulaCalc('exist(1, "b.c")')).toBe(false);
-    expect(() => formulaCalc('exist(null, "")')).toThrow('Invalid parameter type: "key" is empty!');
+
     expect(() => formulaCalc('exist(null, 1)')).toThrow('Invalid parameter type: "key" is not string!');
     expect(() => formulaCalc('exist(null, true)')).toThrow('Invalid parameter type: "key" is not string!');
     expect(() => formulaCalc('exist(null, null)')).toThrow('Invalid parameter type: "key" is not string!');
@@ -302,6 +330,11 @@ describe('function test', () => {
         a: [2, 3, 4, 5]
       }
     })).toBe(19);
+    expect(formulaCalc('sum(3, 2, 1, 0, -1, a)', {
+      params: {
+        a: [2, 3, 4, [5, 6]]
+      }
+    })).toBe(25);
   });
 
   test('trunc', () => {
@@ -349,6 +382,17 @@ describe('function test', () => {
         }
       }
     })).toThrow('"ADD1" invalid param count, expected: 1, actual: 2');
+    expect(() => formulaCalc('add1()', {
+      customFunctions: {
+        add1: {
+          argMin: 1,
+          argMax: 2,
+          execute(params, dataSource, options) {
+            return params[0] + 1;
+          }
+        }
+      }
+    })).toThrow('"ADD1" invalid param count, expected: 1 to 2, actual: 0');
 
     expect(() => {
       registorFormulaFunction('add1', {

@@ -45,7 +45,7 @@ abstract class FormulaValue implements IFormulaValue {
       };
       if (prom) return value.then(_next).catch((e: any) => {
         this.state = FormulaExecuteState.fesExecuted;
-        throw e;
+        return Promise.reject(e);
       });
       return _next(value);
     } catch (e) {
@@ -58,7 +58,7 @@ abstract class FormulaValue implements IFormulaValue {
 
   constructor(origText: string, options: FormulaValueOptions = {}) {
     this.origText = origText;
-    this.options = options || {};
+    this.options = options;
     this.value = undefined;
     this.state = FormulaExecuteState.fesNone;
     // @ts-ignore

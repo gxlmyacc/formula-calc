@@ -52,7 +52,7 @@ function createFormulaFunction(
   valueOptions: FormulaValueOptions,
   options: {
     customFunctions?: Record<string, FormulaCustomFunctionItem>,
-  } = {}
+  }
 ): IFormulaFunction {
   const { customFunctions } = options;
   const funcName = originFuncName.toUpperCase();

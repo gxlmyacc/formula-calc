@@ -17,13 +17,12 @@ class FormulaFunctionEXIST extends AbsFormulaFunction {
         if (!isString(key)) {
           throw new Error('Invalid parameter type: "key" is not string!');
         }
-        if (!key) {
-          throw new Error('Invalid parameter type: "key" is empty!');
-        }
         let ret = true;
-        const value = getValueByPath(model, key, () => {
-          ret = false;
-        });
+        const value = key
+          ? getValueByPath(model, key, () => {
+            ret = false;
+          })
+          : model;
         if (ret && type && isString(type)) {
           ret = isValueType(value, type as any);
         }

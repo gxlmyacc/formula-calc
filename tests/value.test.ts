@@ -121,6 +121,13 @@ aa"`)).toBe('string\ndd\naa');
     expect(() => formulaCalc('1 + noref(1 + 1) + $1'))
       .toThrow('can not find $1`s ref value!');
     expect(() => formulaCalc('(1 + 1) + $a')).toThrow('Illegal ref char: invalid char "a"');
+
+    expect(() => formulaCalc('1 + true')).toThrow('[DecimalError] Invalid argument: true');
+    expect(() => formulaCalc('1 + a', {
+      params: {
+        a: Promise.resolve(true)
+      }
+    })).rejects.toThrow('[DecimalError] Invalid argument: true');
   });
 });
 

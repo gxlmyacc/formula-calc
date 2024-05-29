@@ -3,8 +3,11 @@ import formulaCalc from '../src';
 
 describe('demo test', () => {
   test('demo', () => {
-    expect(formulaCalc('true & !!1%')).toBe(true);
-    expect(formulaCalc('(0.1 + 0.2)%')).toBe(0.003);
+    expect(() => formulaCalc('1 + a', {
+      params: {
+        a: Promise.resolve(true)
+      }
+    })).rejects.toThrow('[DecimalError] Invalid argument: true');
   });
 });
 
