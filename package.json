@@ -20,8 +20,7 @@
     "string-formula-calc",
     "string-formula-calculator",
     "string-formula-calculation",
-    "string-formula-calculate",
-    "string-formula-calc"
+    "string-formula-calculate"
   ],
   "sideEffects": false,
   "main": "esm/index.js",
