@@ -202,13 +202,13 @@ console.log(result); // 3.33
 import formulaCalc from 'formula-calc';
 
 const result = formulaCalc('3.334 + 3.335', {
-  stepRrounding: true,
+  stepPrecision: true,
 });
 console.log(result); // 6.67
 
 const result = formulaCalc('3.3334 + 3.3315', {
   precision: 2,
-  stepRrounding: 3,
+  stepPrecision: 3,
 };
 console.log(result); // 6.67
 
@@ -227,7 +227,7 @@ type FormulaValueOptions = {
   Decimal?: typeof Decimal,
   precision?: number,
   rounding?: RoundingType,
-  stepRrounding?: boolean|number,
+  stepPrecision?: boolean|number,
   nullAsZero?: boolean,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options:  FormulaValueOptions) => any),
 }

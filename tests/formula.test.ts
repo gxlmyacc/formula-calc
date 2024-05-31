@@ -1,15 +1,28 @@
 import { describe, expect, test } from '@jest/globals';
-import formulaCalc from '../src';
+import formulaCalc, { Formula } from '../src';
 
 describe('formula test', () => {
   test('formula options', () => {
     expect(formulaCalc('3.334 + 3.335', {
       precision: 2,
-      stepRrounding: true,
+      stepPrecision: true,
     })).toBe(6.67);
+    expect(formulaCalc('sum(1.141, 1.141, a)', {
+      precision: 2,
+      params: {
+        a: [1.141, 1.141, 1.141]
+      }
+    })).toBe(5.71);
+    expect(formulaCalc('sum(1.141, 1.141, a)', {
+      precision: 2,
+      stepPrecision: true,
+      params: {
+        a: [1.141, 1.141, 1.141]
+      }
+    })).toBe(5.7);
     expect(formulaCalc('3.3334 + 3.3315', {
       precision: 2,
-      stepRrounding: 3,
+      stepPrecision: 3,
     })).toBe(6.67);
 
     expect(formulaCalc('null + 1', {
@@ -45,6 +58,19 @@ describe('formula test', () => {
         }
       }
     })).toBe(1);
+  });
+
+  test('registorFunction', () => {
+    const formula = new Formula();
+    formula.registorFunction('add1', {
+      argMin: 1,
+      argMax: 1,
+      execute(params, dataSource, options) {
+        return params[0] + 1;
+      }
+    });
+    formula.parse('1 + add1(1)');
+    expect(formula.execute()).toBe(3);
   });
 });
 

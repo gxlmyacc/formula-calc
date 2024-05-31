@@ -34,6 +34,19 @@ const NAME_SEPARATOR = [
   ...SPACE_SEPARATOR
 ];
 
+const LITERAL_MAP: Record<
+  string,
+  Array<{ label: string, tokenType: TokenType }>
+> = {
+  I: [{ label: 'INFINITY', tokenType: TokenType.ttNumber }],
+  N: [
+    { label: 'NULL', tokenType: TokenType.ttNull },
+    { label: 'NAN', tokenType: TokenType.ttNaN },
+  ],
+  T: [{ label: 'TRUE', tokenType: TokenType.ttBool }],
+  F: [{ label: 'FALSE', tokenType: TokenType.ttBool }],
+};
+
 
 type TokenErrorEvent = (errorId: number, errorStr: string) => void;
 
@@ -332,16 +345,7 @@ class Tokenizer {
       } else if (char === '$') {
         i = this.doRef(i);
       } else if (/[_a-zA-z]/.test(char)) {
-        const literalMap: Record<string, { label: string, tokenType: TokenType }[]> = {
-          I: [{ label: 'INFINITY', tokenType: TokenType.ttNumber }],
-          N: [
-            { label: 'NULL', tokenType: TokenType.ttNull },
-            { label: 'NAN', tokenType: TokenType.ttNaN },
-          ],
-          T: [{ label: 'TRUE', tokenType: TokenType.ttBool }],
-          F: [{ label: 'FALSE', tokenType: TokenType.ttBool }],
-        };
-        let itemList = literalMap[char.toUpperCase()];
+        let itemList = LITERAL_MAP[char.toUpperCase()];
         if (itemList?.some(item => {
           if (i + item.label.length - 1 < len) {
             let literalValue = value.substr(i, item.label.length);

@@ -3,6 +3,25 @@ import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions } from '../
 import { FormulaExecuteState, TokenType } from '../type';
 import { isNumber, isPromise, toRound } from '../utils';
 
+function resolveValue(value: any, options: FormulaValueOptions) {
+  let precision = options.precision;
+  let stepPrecision = isNumber(options.stepPrecision) || options.stepPrecision;
+  if (stepPrecision && isNumber(options.stepPrecision)) {
+    precision =  options.stepPrecision;
+  }
+  if ((options.Decimal || Decimal).isDecimal(value)) {
+    value = stepPrecision
+      ? toRound(value, precision, options.rounding)
+      : value.toNumber();
+  } else if (options.stepPrecision && isNumber(value)) {
+    value = toRound(value, precision, options.rounding);
+  }
+  if (options.nullAsZero && (value == null || isNaN(value))) {
+    value = 0;
+  }
+  return value;
+}
+
 abstract class FormulaValue implements IFormulaValue {
 
   public origText: string;
@@ -24,24 +43,9 @@ abstract class FormulaValue implements IFormulaValue {
       let value = this._execute(dataSource, options);
       prom = isPromise(value);
       const _next = (value: any) => {
-        let stepPrecision = options.precision;
-        let stepRrounding = isNumber(options.stepRrounding) || options.stepRrounding;
-        if (stepRrounding && isNumber(options.stepRrounding)) {
-          stepPrecision =  options.stepRrounding;
-        }
-        if ((options.Decimal || Decimal).isDecimal(value)) {
-          value = stepRrounding
-            ? toRound(value, stepPrecision, options.rounding)
-            : value.toNumber();
-        } else if (options.stepRrounding && isNumber(value)) {
-          value = toRound(value, stepPrecision, options.rounding);
-        }
-        if (options.nullAsZero && (value == null || isNaN(value))) {
-          value = 0;
-        }
-        this.value = value;
+        this.value = resolveValue(value, options);
         this.state = FormulaExecuteState.fesExecuted;
-        return value;
+        return this.value;
       };
       if (prom) return value.then(_next).catch((e: any) => {
         this.state = FormulaExecuteState.fesExecuted;
@@ -49,9 +53,7 @@ abstract class FormulaValue implements IFormulaValue {
       });
       return _next(value);
     } catch (e) {
-      if (!prom) {
-        this.state = FormulaExecuteState.fesExecuted;
-      }
+      this.state = FormulaExecuteState.fesExecuted;
       throw e;
     }
   }
@@ -66,5 +68,9 @@ abstract class FormulaValue implements IFormulaValue {
   }
 
 }
+
+export {
+  resolveValue
+};
 
 export default FormulaValue;

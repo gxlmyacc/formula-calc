@@ -137,7 +137,7 @@ type FormulaValueOptions = {
   Decimal?: typeof Decimal,
   precision?: number,
   rounding?: RoundingType,
-  stepRrounding?: boolean|number,
+  stepPrecision?: boolean|number,
   nullAsZero?: boolean,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions) => any),
 }
@@ -185,7 +185,6 @@ interface IFormulaOperator extends IFormulaBase {
   priority: number;
   operatorType: FormulaOperatorType;
 }
-
 
 export {
   TokenType,
