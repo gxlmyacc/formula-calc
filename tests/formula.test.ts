@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import formulaCalc, { Formula } from '../src';
+import formulaCalc, { Formula, createParamsDataSource } from '../src';
 
 describe('formula test', () => {
   test('formula options', () => {
@@ -71,6 +71,16 @@ describe('formula test', () => {
     });
     formula.parse('1 + add1(1)');
     expect(formula.execute()).toBe(3);
+  });
+
+  test('dataSource', () => {
+    expect(formulaCalc('a.b + 1', {
+      dataSource: createParamsDataSource({
+        a: {
+          b: 1
+        }
+      })
+    })).toBe(2);
   });
 });
 

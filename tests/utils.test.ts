@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 import Decimal from 'decimal.js';
-import { toRound, getValueByPath } from '../src';
+import { toRound, getValueByPath, removeFormArray } from '../src';
+
 import FormulaBool from '../src/formula/values/bool';
 
 describe('utils test', () => {
@@ -32,6 +33,14 @@ describe('utils test', () => {
   test('others', () => {
     const value = new FormulaBool('true');
     expect(!!value.options).toBe(true);
+  });
+
+  test('removeFormArray', () => {
+    let array = [1, 2, 3];
+    removeFormArray(array, 1);
+    expect(array).toEqual([2, 3]);
+    removeFormArray(array, 4);
+    expect(array).toEqual([2, 3]);
   });
 });
 

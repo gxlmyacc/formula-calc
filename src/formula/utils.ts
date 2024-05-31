@@ -144,6 +144,15 @@ function flatten(array: any[]) {
   return flattend;
 }
 
+function removeFormArray<T>(array: T[], value: T) {
+  let idx = array.indexOf(value);
+  let find = idx > -1;
+  if (find) {
+    array.splice(idx, 1);
+  }
+  return find;
+}
+
 export {
   isPlainObject,
   isString,
@@ -157,4 +166,5 @@ export {
   getValueByPath,
   nextWithPrimise,
   flatten,
+  removeFormArray,
 };

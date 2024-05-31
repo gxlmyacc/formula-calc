@@ -12,6 +12,31 @@ interface FormulaCalcOptions extends FormulaOptions {
   dataSource?: IFormulaDataSource,
 }
 
+function createParamsDataSource(params: FormulaCalcOptions['params']): IFormulaDataSource {
+  return {
+    getParam(name, options) {
+      if (!params) throw new Error('options require params!');
+      if (isFunction(params)) return params(name, options);
+      return getValueByPath(params, name, (path, paresedPath) => {
+        if (options.nullAsZero) return 0;
+        throw new Error(`param "${paresedPath}${paresedPath ? '.' : ''}${path}" is not exist!`);
+      });
+    },
+  };
+}
+
+function createFormulaEval(_options?: FormulaCalcOptions): FormulaOptions['eval'] {
+  return (expr, dataSource, options) => {
+    if (expr === '') {
+      return null;
+    }
+    if (!isString(expr)) {
+      return expr;
+    }
+    return formulaCalc(expr, { ..._options, ...options });
+  };
+}
+
 function formulaCalc(
   expression: string,
   options: FormulaCalcOptions = {}
@@ -19,30 +44,12 @@ function formulaCalc(
   let { params, customFunctions, dataSource, ...restOptions } = options;
 
   if (!dataSource) {
-    dataSource = {
-      getParam(name, options) {
-        if (!params) throw new Error('options require params!');
-        if (isFunction(params)) return params(name, options);
-        return getValueByPath(params, name, (path, paresedPath) => {
-          if (options.nullAsZero) return 0;
-          throw new Error(`param "${paresedPath}${paresedPath ? '.' : ''}${path}" is not exist!`);
-        });
-      },
-    };
+    dataSource = createParamsDataSource(params);
   }
 
   if (!hasOwnProp(restOptions, 'eval')) {
-    restOptions.eval = (expr, dataSource, options) => {
-      if (expr === '') {
-        return null;
-      }
-      if (!isString(expr)) {
-        return expr;
-      }
-      return formulaCalc(expr, { params, dataSource, customFunctions, ...options });
-    };
+    restOptions.eval = createFormulaEval(options);
   }
-
 
   const formula = new Formula();
 
@@ -72,11 +79,14 @@ function formulaCalc(
 export {
   Formula,
   TokenType,
+  createParamsDataSource,
+  createFormulaEval,
   registorFormulaFunction,
 };
 
 export type {
   FormulaOptions,
+  FormulaCalcOptions,
   IFormulaDataSource
 };
 

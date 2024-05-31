@@ -6,6 +6,7 @@ describe('function test', () => {
     expect(formulaCalc('abs(1)')).toBe(1);
     expect(formulaCalc('abs(-1)')).toBe(1);
     expect(formulaCalc('1 + abs(-1)')).toBe(2);
+    expect(formulaCalc('1 + (abs(-1) + 1)')).toBe(3);
     expect(formulaCalc('abs(-1.2)')).toBe(1.2);
     expect(formulaCalc('abs(10 / -3)')).toBe(3.3333333333333335);
     expect(formulaCalc('abs(10 / -3)', { precision: 2 })).toBe(3.33);

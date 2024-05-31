@@ -22,13 +22,17 @@ import FormulaParam from './values/param';
 import FormulaRef from './values/ref';
 import FormulaNaN from './values/nan';
 import { ERROR_FORMULA_STR } from './constant';
+import { removeFormArray } from './utils';
 
 interface FormulaOptions extends FormulaValueOptions {
 
 }
 
 function isOperatorUncomplete(operator: IFormulaOperator) {
-  return ([FormulaOperatorType.fotUnaryLeft, FormulaOperatorType.fotUnaryRight].includes(operator.operatorType) && (operator.params.length < 1))
+  return ([
+    FormulaOperatorType.fotUnaryLeft,
+    FormulaOperatorType.fotUnaryRight
+  ].includes(operator.operatorType) && (operator.params.length < 1))
     || ((operator.operatorType === FormulaOperatorType.fotBinary) && (operator.params.length < 2));
 }
 
@@ -55,33 +59,8 @@ class Formula {
     customFunctions: this.customFunctions,
   })
 
-  clear() {
-    this.lastError = '';
-    this.origText = '';
-    this.formulas.splice(0, this.formulas.length);
-    const refs = this.refs.splice(0, this.refs.length);
-    refs.forEach(value => value.state = FormulaExecuteState.fesNone);
-  }
 
-  parse(formula: string, options: FormulaOptions = {}) {
-    this.clear();
-    try {
-      this.origText = formula;
-      this.tokenizer.tokenize(formula);
-      if (this.tokenizer.lastError) {
-        throw new Error(this.tokenizer.lastError);
-      }
-
-      this.expression({ ...options });
-
-      return this.verify(options);
-    } catch (error: any) {
-      this.lastError = error.message;
-      throw error;
-    }
-  }
-
-  expression(options: FormulaOptions) {
+  private expression(options: FormulaOptions) {
     let tokenizer = this.tokenizer;
     const formulas = this.formulas;
     const refs = this.refs;
@@ -117,7 +96,7 @@ class Formula {
             if (operatorLast.operatorType === FormulaOperatorType.fotUnaryLeft) {
               operatorLast.params.push(func);
               func.owner = operatorLast;
-            } else if ((operatorLast.operatorType === FormulaOperatorType.fotBinary) && (operatorLast.params.length < 2)) {
+            } else if (operatorLast.operatorType === FormulaOperatorType.fotBinary) {
               // if (operatorLast.params.length !== 1) {
               //   throw new Error(ERROR_FORMULA_STR + '!');
               // }
@@ -150,10 +129,7 @@ class Formula {
             let func = formulas[j - 1] as IFormulaFunction;
 
             // remove func from refs list
-            let idx = refs.indexOf(paren);
-            if (~idx) {
-              refs.splice(idx, 1);
-            }
+            removeFormArray(refs, paren);
 
             let k = formulas.length - 1;
             while (k > j) {
@@ -265,7 +241,7 @@ class Formula {
             }
           } else
           // if it is a left parenthesis, it is directly pushed to the symbol stack;
-          if (operator && [TokenType.ttParenL].includes(tokenType)) {
+          if ([TokenType.ttParenL].includes(tokenType)) {
             formulas.push(operator);
           }
 
@@ -312,7 +288,7 @@ class Formula {
         i++;
       }
     } catch (e: any) {
-      this.lastError = `'[Formula.expression][${this.origText}]${e.message}`;
+      this.lastError = e.message;
       throw e;
     }
   }
@@ -323,7 +299,7 @@ class Formula {
     }
   }
 
-  private verify(options: FormulaOptions = {}) {
+  private verify() {
     this.lastError = '';
     const formulas = this.formulas;
 
@@ -346,6 +322,32 @@ class Formula {
       // }
     }
     this.verifyFormulaCount();
+  }
+
+  clear() {
+    this.lastError = '';
+    this.origText = '';
+    this.formulas.splice(0, this.formulas.length);
+    const refs = this.refs.splice(0, this.refs.length);
+    refs.forEach(value => value.state = FormulaExecuteState.fesNone);
+  }
+
+  parse(formula: string, options: FormulaOptions = {}) {
+    this.clear();
+    try {
+      this.origText = formula;
+      this.tokenizer.tokenize(formula);
+      if (this.tokenizer.lastError) {
+        throw new Error(this.tokenizer.lastError);
+      }
+
+      this.expression({ ...options });
+
+      return this.verify();
+    } catch (error: any) {
+      this.lastError = error.message;
+      throw error;
+    }
   }
 
   execute(dataSource?: IFormulaDataSource, options: FormulaValueOptions = {}) {
