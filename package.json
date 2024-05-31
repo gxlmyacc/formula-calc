@@ -43,7 +43,6 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-coveralls": "yarn jest --coverage && coveralls < coverage/lcov.info -r hijUIuPWtZpqtkNtwbRTfnqfYNdaRpORz",
     "build": "npm run build:types && npm run build:js && npm run build:es",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "cross-env BUILD_ENV=js babel src -d esm --extensions \".ts,.tsx\" --source-maps",
