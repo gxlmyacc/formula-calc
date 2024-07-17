@@ -1,4 +1,4 @@
-// import { resolveValue } from '../base/value';
+import { resolveValue } from '../base/value';
 import { FormulaValues } from '../type';
 import type { IFormulaDataSource, FormulaValueOptions } from '../type';
 import { nextWithPrimise, flatten } from '../utils';
@@ -16,7 +16,7 @@ function walkValues(
       for (let i = 0; i < params.length; i++) {
         const itemValue = params[i];
         if (Array.isArray(itemValue)) {
-          const values = flatten(itemValue); // .map(v => resolveValue(v, options));
+          const values = flatten(itemValue).map(v => resolveValue(v, options));
           result = onWalk(values, i, true);
         } else {
           result = onWalk(itemValue, i, false);

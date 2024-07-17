@@ -144,11 +144,13 @@ type FormulaValueOptions = {
 
 type FormulaCustomFunctionItem = {
   preExecute?: true,
+  arithmetic?: boolean,
   argMin: number
   argMax: number;
   execute: (params: any[], dataSource: IFormulaDataSource, options: FormulaValueOptions) => any
 } | {
   preExecute: false,
+  arithmetic?: boolean,
   argMin: number
   argMax: number;
   execute: (params: FormulaValues, dataSource: IFormulaDataSource, options: FormulaValueOptions) => any
@@ -158,6 +160,8 @@ interface IFormulaValue {
   origText: string;
   value: any,
   state: FormulaExecuteState,
+
+  readonly arithmetic: boolean,
   readonly tokenType: TokenType;
   execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions): any;
 }

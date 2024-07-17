@@ -196,7 +196,7 @@ class Formula {
             refs.push(operator);
           }
 
-          // ff it is a left monocular operator
+          // if it is a left monocular operator
           if (operator.operatorType === FormulaOperatorType.fotUnaryLeft) {
             if (operatorLast
               && ([FormulaOperatorType.fotUnaryLeft, FormulaOperatorType.fotBinary].includes(operatorLast.operatorType))

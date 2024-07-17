@@ -5,6 +5,8 @@ import { walkValues } from './utils';
 
 class FormulaFunctionMIN extends AbsFormulaFunction {
 
+  public arithmetic = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     let result: any;
     return walkValues(

@@ -9,6 +9,8 @@ class FormulaOperatorMINUS extends AbsFormulaOperator {
 
   public tokenType: TokenType = TokenType.ttMinus;
 
+  public arithmetic = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       [

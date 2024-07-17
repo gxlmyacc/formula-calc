@@ -7,6 +7,8 @@ import { toRound, nextWithPrimise } from '../utils';
 
 class FormulaFunctionROUND extends AbsFormulaFunction {
 
+  public arithmetic = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       this.params.map(v => v.execute(dataSource, options)),

@@ -9,6 +9,8 @@ class FormulaOperatorADD extends AbsFormulaOperator {
 
   public tokenType: TokenType = TokenType.ttAdd;
 
+  public arithmetic = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       [

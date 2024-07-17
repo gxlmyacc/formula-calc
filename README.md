@@ -142,7 +142,24 @@ console.log(result); // 1
 
 ```
 
-4. with custom function 
+4. with ref: like regex, $1...$n will match the ordinal of parentheses that do not contain functions
+```js
+
+const result = formulaCalc(
+`if(
+  (a + 2) > 0, 
+  $1, 
+  0 - $1
+)`, {
+  params: {
+    a: -3
+  }
+});
+console.log(result); // 1
+
+```
+
+5. with custom function 
 
 ```js
 import formulaCalc from 'formula-calc';
@@ -162,7 +179,7 @@ console.log(result); // 3.11
 
 ```
 
-5. with eval
+6. with eval
 
 ```js
 import formulaCalc from 'formula-calc';
@@ -183,7 +200,7 @@ console.log(result); // 4
 
 ```
 
-6. handle precision
+7. handle precision
 
 ```js
 import formulaCalc from 'formula-calc';
@@ -196,7 +213,7 @@ console.log(result); // 3.33
 
 ```
 
-7. rounding at each step of the operation
+8. rounding at each step of the operation
 
 ```js
 import formulaCalc from 'formula-calc';

@@ -4,6 +4,8 @@ import FormulaValue from '../base/value';
 
 class FormulaNumber extends FormulaValue implements IFormulaValue {
 
+  public arithmetic = true;
+
   constructor(origText: string, options?: FormulaValueOptions) {
     super(origText, options);
     this.value = Number(origText);

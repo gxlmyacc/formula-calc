@@ -10,6 +10,7 @@ class FormulaFunctionCUSTOM extends AbsFormulaFunction {
   constructor(origText: string, options: FormulaValueOptions, name: string, item: FormulaCustomFunctionItem) {
     super(origText, options, name, item.argMin, item.argMax);
     this.item = item;
+    this.arithmetic = Boolean(item.arithmetic);
   }
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {

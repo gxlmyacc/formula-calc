@@ -34,6 +34,8 @@ function sumExecute(
 
 class FormulaFunctionSUM extends AbsFormulaFunction {
 
+  public arithmetic = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     return sumExecute(this.params, dataSource, options);
   }

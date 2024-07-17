@@ -5,6 +5,8 @@ import { sumExecute } from './sum';
 
 class FormulaFunctionAVG extends AbsFormulaFunction {
 
+  public arithmetic = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     let paramCount = this.params.length;
     let value = sumExecute(

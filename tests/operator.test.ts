@@ -111,6 +111,7 @@ describe('operator test', () => {
   test('percent', () => {
     expect(formulaCalc('100%')).toBe(1);
     expect(formulaCalc('100% + 100%')).toBe(2);
+    expect(formulaCalc('1% + 2% + 30% + 0.1%')).toBe(0.331);
     expect(formulaCalc('200% + 350%')).toBe(5.5);
     expect(formulaCalc('200% * 4 + 100%')).toBe(9);
     expect(formulaCalc('200% * (4 + 100%)')).toBe(10);

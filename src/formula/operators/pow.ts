@@ -8,6 +8,8 @@ class FormulaOperatorPOW extends AbsFormulaOperator {
 
   public tokenType: TokenType = TokenType.ttMul;
 
+  public arithmetic = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       [

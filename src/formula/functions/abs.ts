@@ -5,6 +5,8 @@ import { nextWithPrimise } from '../utils';
 
 class FormulaFunctionABS extends AbsFormulaFunction {
 
+  public arithmetic = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       [

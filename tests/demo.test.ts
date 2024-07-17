@@ -3,7 +3,7 @@ import formulaCalc from '../src';
 
 describe('demo test', () => {
   test('demo', () => {
-    expect(formulaCalc('abs(1)')).toBe(1);
+    expect(formulaCalc('random()')).toBeLessThan(1);
   });
 });
 
