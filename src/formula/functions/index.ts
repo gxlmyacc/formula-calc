@@ -19,21 +19,21 @@ import FormulaFunctionEXIST from './exist';
 import FormulaFunctionCUSTOM from './custom';
 
 const FormulaFunctionMap: Record<string, FormulaFunctionItem> = {
-  ABS: { min: 1, max: 1, functionClass: FormulaFunctionABS },
-  AVG: { min: 1, max: 99, functionClass: FormulaFunctionAVG },
-  CEIL: { min: 1, max: 1, functionClass: FormulaFunctionCEIL },
-  EVAL: { min: 1, max: 1, functionClass: FormulaFunctionEVAL },
-  EXIST: { min: 2, max: 3, functionClass: FormulaFunctionEXIST },
-  FLOOR: { min: 1, max: 1, functionClass: FormulaFunctionFLOOR },
-  IF: { min: 2, max: 3, functionClass: FormulaFunctionIF },
-  MAX: { min: 1, max: 99, functionClass: FormulaFunctionMAX },
-  MIN: { min: 1, max: 99,  functionClass: FormulaFunctionMIN },
-  NOREF: { min: 1, max: 1,  functionClass: FormulaFunctionNOREF },
-  RANDOM: { min: 0, max: 1, functionClass: FormulaFunctionRANDOM },
-  ROUND: { min: 1, max: 2, functionClass: FormulaFunctionROUND },
-  SQRT: { min: 1, max: 1, functionClass: FormulaFunctionSQRT },
-  TRUNC: { min: 1, max: 1, functionClass: FormulaFunctionTRUNC },
-  SUM: { min: 1, max: 99,  functionClass: FormulaFunctionSUM },
+  abs: { min: 1, max: 1, functionClass: FormulaFunctionABS },
+  avg: { min: 1, max: 99, functionClass: FormulaFunctionAVG },
+  ceil: { min: 1, max: 1, functionClass: FormulaFunctionCEIL },
+  eval: { min: 1, max: 1, functionClass: FormulaFunctionEVAL },
+  exist: { min: 2, max: 3, functionClass: FormulaFunctionEXIST },
+  floor: { min: 1, max: 1, functionClass: FormulaFunctionFLOOR },
+  if: { min: 2, max: 3, functionClass: FormulaFunctionIF },
+  max: { min: 1, max: 99, functionClass: FormulaFunctionMAX },
+  min: { min: 1, max: 99,  functionClass: FormulaFunctionMIN },
+  noref: { min: 1, max: 1,  functionClass: FormulaFunctionNOREF },
+  random: { min: 0, max: 1, functionClass: FormulaFunctionRANDOM },
+  round: { min: 1, max: 2, functionClass: FormulaFunctionROUND },
+  sqrt: { min: 1, max: 1, functionClass: FormulaFunctionSQRT },
+  trunc: { min: 1, max: 1, functionClass: FormulaFunctionTRUNC },
+  sum: { min: 1, max: 99,  functionClass: FormulaFunctionSUM },
 };
 
 const FormulaCustomFunctionMap: Record<string, FormulaCustomFunctionItem> = {
@@ -55,7 +55,7 @@ function createFormulaFunction(
   }
 ): IFormulaFunction {
   const { customFunctions } = options;
-  const funcName = originFuncName.toUpperCase();
+  const funcName = originFuncName;
   const item = customFunctions?.[funcName]
     || FormulaCustomFunctionMap[funcName]
     || FormulaFunctionMap[funcName];
@@ -80,7 +80,7 @@ function registorFormulaFunction(originFuncName: string, item: FormulaCustomFunc
   customFunctions?: Record<string, FormulaCustomFunctionItem>,
 } = {}) {
   const { force, customFunctions } = options;
-  const funcName = originFuncName.toUpperCase();
+  const funcName = originFuncName;
   if (FormulaCustomFunctionMap[funcName] && !force) {
     throw new Error(`registor custom function fail: "${originFuncName}" already exist!`);
   }

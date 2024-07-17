@@ -262,25 +262,23 @@ class Formula {
             item = new FormulaString(`"${tokenItem.token}"`, tokenItem.token, options);
           } else if (tokenType === TokenType.ttRef) {
             item = new FormulaRef(tokenItem.token, refs, options);
-          }  else if (tokenType === TokenType.ttName) {
+          } else /* if (tokenType === TokenType.ttName) */{
             item = new FormulaParam(tokenItem.token, tokenItem.token, tokenItem.tokenType, options);
           }
 
           // If the previous one was an operator
-          if (item) {
-            if (operatorLast) {
-              if (operatorLast.operatorType === FormulaOperatorType.fotUnaryLeft) {
-                operatorLast.params.push(item);
-              } else
-              if ((operatorLast.operatorType === FormulaOperatorType.fotBinary)
-                && (operatorLast.params.length < 2)) {
-                // if (operatorLast.params.length !== 1) {
-                //   throw new Error(ERROR_FORMULA_STR + '!');
-                // }
-                operatorLast.params.push(item);
-              } else formulas.push(item);
+          if (operatorLast) {
+            if (operatorLast.operatorType === FormulaOperatorType.fotUnaryLeft) {
+              operatorLast.params.push(item);
+            } else
+            if ((operatorLast.operatorType === FormulaOperatorType.fotBinary)
+              && (operatorLast.params.length < 2)) {
+              // if (operatorLast.params.length !== 1) {
+              //   throw new Error(ERROR_FORMULA_STR + '!');
+              // }
+              operatorLast.params.push(item);
             } else formulas.push(item);
-          }
+          } else formulas.push(item);
 
           operatorLast = null;
         }

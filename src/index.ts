@@ -15,11 +15,18 @@ interface FormulaCalcOptions extends FormulaOptions {
 function createParamsDataSource(params: FormulaCalcOptions['params']): IFormulaDataSource {
   return {
     getParam(name, options) {
-      if (!params) throw new Error('options require params!');
+      if (!params) {
+        if (options.nullAsZero) return 0;
+        throw new Error(`require param: "${name}" !`);
+      }
       if (isFunction(params)) return params(name, options);
       return getValueByPath(params, name, (path, paresedPath) => {
         if (options.nullAsZero) return 0;
-        throw new Error(`param "${paresedPath}${paresedPath ? '.' : ''}${path}" is not exist!`);
+        throw new Error(
+          paresedPath
+            ? `param "${paresedPath}.${path}" is not exist!`
+            : `require param: "${path}" !`
+        );
       });
     },
   };

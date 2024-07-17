@@ -38,13 +38,15 @@ const LITERAL_MAP: Record<
   string,
   Array<{ label: string, tokenType: TokenType }>
 > = {
-  I: [{ label: 'INFINITY', tokenType: TokenType.ttNumber }],
-  N: [
-    { label: 'NULL', tokenType: TokenType.ttNull },
-    { label: 'NAN', tokenType: TokenType.ttNaN },
+  I: [{ label: 'Infinity', tokenType: TokenType.ttNumber }],
+  n: [
+    { label: 'null', tokenType: TokenType.ttNull },
   ],
-  T: [{ label: 'TRUE', tokenType: TokenType.ttBool }],
-  F: [{ label: 'FALSE', tokenType: TokenType.ttBool }],
+  N: [
+    { label: 'NaN', tokenType: TokenType.ttNaN },
+  ],
+  t: [{ label: 'true', tokenType: TokenType.ttBool }],
+  f: [{ label: 'false', tokenType: TokenType.ttBool }],
 };
 
 
@@ -345,12 +347,12 @@ class Tokenizer {
       } else if (char === '$') {
         i = this.doRef(i);
       } else if (/[_a-zA-z]/.test(char)) {
-        let itemList = LITERAL_MAP[char.toUpperCase()];
+        let itemList = LITERAL_MAP[char];
         if (itemList?.some(item => {
           if (i + item.label.length - 1 < len) {
             let literalValue = value.substr(i, item.label.length);
             let literalValueNextChar = value[i + item.label.length];
-            if (literalValue.toUpperCase() === item.label && (!literalValueNextChar || !REGX_NAME_CHAR.test(literalValueNextChar))) {
+            if (literalValue === item.label && (!literalValueNextChar || !REGX_NAME_CHAR.test(literalValueNextChar))) {
               i += this.addOperator(literalValue, item.tokenType, i, literalValue.length);
               return true;
             }

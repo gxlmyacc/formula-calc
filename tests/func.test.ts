@@ -382,7 +382,7 @@ describe('function test', () => {
           }
         }
       }
-    })).toThrow('"ADD1" invalid param count, expected: 1, actual: 2');
+    })).toThrow('"add1" invalid param count, expected: 1, actual: 2');
     expect(() => formulaCalc('add1()', {
       customFunctions: {
         add1: {
@@ -393,7 +393,7 @@ describe('function test', () => {
           }
         }
       }
-    })).toThrow('"ADD1" invalid param count, expected: 1 to 2, actual: 0');
+    })).toThrow('"add1" invalid param count, expected: 1 to 2, actual: 0');
 
     expect(() => {
       registorFormulaFunction('add1', {
