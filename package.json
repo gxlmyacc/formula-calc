@@ -1,6 +1,6 @@
 {
   "name": "formula-calc",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "formula-calc is a library for formula calculation through strings for javascript.",
   "keywords": [
     "formula",
@@ -42,6 +42,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "test:demo": "jest -- tests/demo.test.ts",
     "coverage": "jest --coverage",
     "build": "npm run build:types && npm run build:js && npm run build:es",
     "build:types": "tsc --emitDeclarationOnly",

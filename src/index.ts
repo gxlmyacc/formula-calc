@@ -6,22 +6,33 @@ import { FormulaValueOptions } from './formula/type';
 export * from './formula/utils';
 
 
-interface FormulaCalcOptions extends FormulaOptions {
-  params?: Record<string, any>|((name: string, options: FormulaValueOptions) => any),
+type FormulaCalcParams = Record<string, any>|((name: string, options: FormulaValueOptions) => any);
+
+interface FormulaCreateOptions extends FormulaOptions {
   customFunctions?: Record<string, FormulaCustomFunctionItem>,
-  dataSource?: IFormulaDataSource,
+}
+
+interface FormulaCalcCommonOptions extends FormulaCreateOptions {
+  dataSource?: IFormulaDataSource
+}
+
+interface FormulaCalcOptions extends FormulaCalcCommonOptions {
+  params?: FormulaCalcParams|Array<FormulaCalcParams>,
+  onFormulaCreated?: (formula: Formula) => void,
 }
 
 function createParamsDataSource(params: FormulaCalcOptions['params']): IFormulaDataSource {
   return {
+
     getParam(name, options) {
+      const { nullAsZero } = options;
       if (!params) {
-        if (options.nullAsZero) return 0;
+        if (nullAsZero) return 0;
         throw new Error(`require param: "${name}" !`);
       }
       if (isFunction(params)) return params(name, options);
       return getValueByPath(params, name, (path, paresedPath) => {
-        if (options.nullAsZero) return 0;
+        if (nullAsZero) return 0;
         throw new Error(
           paresedPath
             ? `param "${paresedPath}.${path}" is not exist!`
@@ -32,7 +43,7 @@ function createParamsDataSource(params: FormulaCalcOptions['params']): IFormulaD
   };
 }
 
-function createFormulaEval(_options?: FormulaCalcOptions): FormulaOptions['eval'] {
+function createFormulaEval(params: FormulaCalcParams|undefined, _options?: FormulaCalcOptions): FormulaOptions['eval'] {
   return (expr, dataSource, options) => {
     if (expr === '') {
       return null;
@@ -40,24 +51,12 @@ function createFormulaEval(_options?: FormulaCalcOptions): FormulaOptions['eval'
     if (!isString(expr)) {
       return expr;
     }
-    return formulaCalc(expr, { ..._options, ...options });
+    return formulaCalc(expr, { params, ..._options, ...options });
   };
 }
 
-function formulaCalc(
-  expression: string,
-  options: FormulaCalcOptions = {}
-) {
-  let { params, customFunctions, dataSource, ...restOptions } = options;
-
-  if (!dataSource) {
-    dataSource = createParamsDataSource(params);
-  }
-
-  if (!hasOwnProp(restOptions, 'eval')) {
-    restOptions.eval = createFormulaEval(options);
-  }
-
+function createFormula(expression: string,  options: FormulaCreateOptions = {}) {
+  let { customFunctions, ...restOptions } = options;
   const formula = new Formula();
 
   if (isPlainObject(customFunctions)) {
@@ -67,6 +66,25 @@ function formulaCalc(
   }
 
   formula.parse(expression, restOptions);
+
+  return formula;
+}
+
+function formulaCalcWithParams<T = any>(
+  formula: Formula,
+  params: FormulaCalcParams|undefined,
+  options: FormulaCalcCommonOptions
+): T {
+  let { customFunctions, dataSource, ...restOptions } = options;
+
+  if (!dataSource) {
+    dataSource = createParamsDataSource(params);
+  }
+
+  if (!hasOwnProp(restOptions, 'eval')) {
+    restOptions.eval = createFormulaEval(params, options);
+  }
+
   const result = formula.execute(dataSource, restOptions);
 
   return nextWithPrimise(
@@ -83,9 +101,31 @@ function formulaCalc(
   );
 }
 
+
+function formulaCalc<T extends any = any>(
+  expressionOrFormula: string|Formula,
+  options: FormulaCalcOptions = {}
+): T {
+  const { onFormulaCreated, params, ...restOptions } = options;
+
+  let formula: Formula;
+  if (isString(expressionOrFormula)) {
+    formula = createFormula(expressionOrFormula, restOptions);
+    if (onFormulaCreated) onFormulaCreated(formula);
+  } else {
+    formula = expressionOrFormula;
+  }
+
+  return Array.isArray(params)
+    ? params.map(item => formulaCalcWithParams(formula, item, restOptions)) as T
+    : formulaCalcWithParams<T>(formula, params, restOptions);
+}
+
+
 export {
   Formula,
   TokenType,
+  createFormula,
   createParamsDataSource,
   createFormulaEval,
   registorFormulaFunction,
@@ -94,7 +134,9 @@ export {
 export type {
   FormulaOptions,
   FormulaCalcOptions,
-  IFormulaDataSource
+  IFormulaDataSource,
+  FormulaCalcParams,
+  FormulaCreateOptions,
 };
 
 export default formulaCalc;

@@ -51,7 +51,7 @@ console.log(result); // 10
 2. with variable
 
 ```js
-import formulaCalc from 'formula-calc';
+import formulaCalc, { createFormula } from 'formula-calc';
 
 const result = formulaCalc('a + b.c', { 
   params: { 
@@ -72,6 +72,26 @@ const result = formulaCalc('a + b.c.1', {
   }
  });
 console.log(result); // 3
+
+
+// calc with params list
+const result = formulaCalc('a + 1', { 
+  params: [
+    { a: 1 },
+    { a: 2 },
+    { a: 3 },
+  ]
+ });
+console.log(result); // [2, 3, 4]
+
+// calc with formula instance
+const formula = createFormula('a + 1');
+const result = formulaCalc(formula, {
+  params: {
+    a: 1
+  }
+});
+console.log(result); // 2
 
 // with promise
 const result = await formulaCalc('a + 1', { 
@@ -228,6 +248,20 @@ const result = formulaCalc('3.3334 + 3.3315', {
   stepPrecision: 3,
 };
 console.log(result); // 6.67
+
+```
+
+9. null as zero
+
+```js
+import formulaCalc from 'formula-calc';
+
+const result = formulaCalc('a.b.c', {
+  params: {
+    a: {}
+  }
+});
+console.log(result); // 0
 
 ```
 

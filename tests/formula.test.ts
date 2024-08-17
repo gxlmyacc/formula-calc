@@ -1,5 +1,8 @@
 import { describe, expect, test } from '@jest/globals';
-import formulaCalc, { Formula, createParamsDataSource } from '../src';
+import formulaCalc, {
+  Formula, createParamsDataSource,
+  createFormula
+} from '../src';
 
 describe('formula test', () => {
   test('formula options', () => {
@@ -58,6 +61,28 @@ describe('formula test', () => {
         }
       }
     })).toBe(1);
+
+    let formula: Formula|null = null;
+    const result1 = formulaCalc('1 + a', {
+      params: {
+        a: 1
+      },
+      onFormulaCreated: f => formula = f
+    });
+    const result2 = formula && formulaCalc(formula, {
+      params: {
+        a: 2
+      },
+    });
+    expect([result1, result2]).toEqual([2, 3]);
+
+    expect(formulaCalc(createFormula('a + 1'), {
+      params: {
+        a: 3
+      },
+    })).toBe(4);
+
+    expect(formulaCalc(createFormula('1 + 1'))).toBe(2);
   });
 
   test('registorFunction', () => {

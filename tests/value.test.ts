@@ -63,11 +63,36 @@ aa"`)).toBe('string\ndd\naa');
         }
       }
     })).toBe(2);
+    expect(formulaCalc('a.b', {
+      nullAsZero: true,
+      params: {
+        a: {}
+      }
+    })).toBe(0);
+    expect(formulaCalc('a.b', {
+      nullAsZero: true,
+      params: {
+        a: { b: null }
+      }
+    })).toBe(0);
+    expect(formulaCalc('a.b', {
+      params: {
+        a: { b: null }
+      }
+    })).toBe(null);
     expect(formulaCalc('a.1', {
       params: {
         a: [1, 2, 3]
       }
     })).toBe(2);
+
+    expect(formulaCalc<number[]>('a.b', {
+      params: [
+        { a: { b: 1 } },
+        { a: { b: 2 } },
+        { a: { b: 3 } }
+      ]
+    })).toEqual([1, 2, 3]);
 
     expect(() => formulaCalc('t')).toThrow('require param: "t" !');
     expect(() => formulaCalc('a')).toThrow('require param: "a" !');
@@ -88,6 +113,7 @@ aa"`)).toBe('string\ndd\naa');
         a: [1, 2, 3]
       }
     })).toThrow('param "a.3" is not exist!');
+
 
     expect(formulaCalc('a.b', {
       params: {
@@ -110,6 +136,13 @@ aa"`)).toBe('string\ndd\naa');
 
   test('ref', () => {
     expect(formulaCalc('(1)+$1')).toBe(2);
+    expect(formulaCalc('(a + 1)+$1', {
+      params: [
+        { a: 1 },
+        { a: 2 },
+        { a: 3 },
+      ]
+    })).toEqual([4, 6, 8]);
     expect(formulaCalc('1 + (3 - (1 + 1)) + $1')).toBe(3);
     expect(formulaCalc('1 + noref(3 - (1 + 1)) + $1')).toBe(4);
     expect(formulaCalc('1 + (3 - (1 + 1)) + $1 + $2')).toBe(5);
