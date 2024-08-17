@@ -5,6 +5,7 @@ import { FormulaValueOptions } from './formula/type';
 
 export * from './formula/utils';
 
+const formulaCache: Record<string, Formula> = {};
 
 type FormulaCalcParams = Record<string, any>|((name: string, options: FormulaValueOptions) => any);
 
@@ -19,6 +20,7 @@ interface FormulaCalcCommonOptions extends FormulaCreateOptions {
 interface FormulaCalcOptions extends FormulaCalcCommonOptions {
   params?: FormulaCalcParams|Array<FormulaCalcParams>,
   onFormulaCreated?: (formula: Formula) => void,
+  cache?: boolean,
 }
 
 function createParamsDataSource(params: FormulaCalcOptions['params']): IFormulaDataSource {
@@ -108,9 +110,13 @@ function formulaCalc<T extends any = any>(
 ): T {
   const { onFormulaCreated, params, ...restOptions } = options;
 
-  let formula: Formula;
+  let formula: Formula|null = null;
   if (isString(expressionOrFormula)) {
-    formula = createFormula(expressionOrFormula, restOptions);
+    if (restOptions.cache) formula = formulaCache[expressionOrFormula];
+    if (!formula) {
+      formula = createFormula(expressionOrFormula, restOptions);
+      if (restOptions.cache) formulaCache[expressionOrFormula] = formula;
+    }
     if (onFormulaCreated) onFormulaCreated(formula);
   } else {
     formula = expressionOrFormula;

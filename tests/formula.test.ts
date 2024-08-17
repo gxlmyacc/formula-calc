@@ -107,5 +107,20 @@ describe('formula test', () => {
       })
     })).toBe(2);
   });
+
+  test('cache', () => {
+    expect(formulaCalc('1 + a', {
+      params: {
+        a: 1
+      },
+      cache: true,
+    })).toBe(2);
+    expect(formulaCalc('1 + a', {
+      params: {
+        a: 2
+      },
+      cache: true,
+    })).toBe(3);
+  });
 });
 
