@@ -110,7 +110,7 @@ function formulaCalc<T extends any = any>(
 ): T {
   const { onFormulaCreated, params, ...restOptions } = options;
 
-  let formula: Formula|null = null;
+  let formula: Formula = null as any;
   if (isString(expressionOrFormula)) {
     if (restOptions.cache) formula = formulaCache[expressionOrFormula];
     if (!formula) {
