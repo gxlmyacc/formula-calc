@@ -11,14 +11,11 @@ function eqExecute(params: FormulaValues, dataSource: IFormulaDataSource, option
       params[0].execute(dataSource, options, forArithmetic),
       params[1].execute(dataSource, options, forArithmetic),
     ],
-    args => {
-      (args as any[]).forEach((arg, index) => {
-        if (arg === undefined) args[index] = null;
-        else if (Object.is(arg, -0)) args[index] = 0;
-      });
-      return String(args[0]) === String(args[1]);
-    },
-    false,
+    (a, b) => {
+      if (a === undefined) a = null;
+      if (b === undefined) b = null;
+      return String(a) === String(b);
+    }
   );
   return result;
 }
