@@ -5,7 +5,7 @@ import { nextWithPrimise } from '../utils';
 
 class FormulaFunctionEVAL extends AbsFormulaFunction {
 
-  public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
+  public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) {
     const result = nextWithPrimise(
       [
         this.params[0].execute(dataSource, options),
@@ -15,7 +15,7 @@ class FormulaFunctionEVAL extends AbsFormulaFunction {
         if (!_eval) {
           throw new Error('eval function is not supported!');
         }
-        return _eval?.(expr, dataSource, options);
+        return _eval?.(expr, dataSource, options, forArithmetic);
       }
     );
     return result;

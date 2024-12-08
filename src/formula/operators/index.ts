@@ -13,9 +13,11 @@ import FormulaOperatorADD from './add';
 import FormulaOperatorMINUS from './minus';
 import FormulaOperatorMUL from './mul';
 import FormulaOperatorDIV from './div';
+import FormulaOperatorDIVINT from './divInt';
 import FormulaOperatorAND from './and';
 import FormulaOperatorOR from './or';
 import FormulaOperatorNOT from './not';
+import FormulaOperatorIF from './if';
 import FormulaOperatorGT from './gt';
 import FormulaOperatorGE from './ge';
 import FormulaOperatorLT from './lt';
@@ -39,6 +41,7 @@ const FormulaOperatorArray : Array<FormulaOperatorItem> = [
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttMinus, priority: 4, operatorClass: FormulaOperatorMINUS },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttMul, priority: 5, operatorClass: FormulaOperatorMUL },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttDiv, priority: 5, operatorClass: FormulaOperatorDIV },
+  { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttDivInt, priority: 5, operatorClass: FormulaOperatorDIVINT },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttMod, priority: 5, operatorClass: FormulaOperatorMOD },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttPow, priority: 7, operatorClass: FormulaOperatorPOW },
   { operatorType: FormulaOperatorType.fotUnaryRight, operatorToken: TokenType.ttPercent, priority: 8, operatorClass: FormulaOperatorPERCENT },
@@ -53,6 +56,7 @@ const FormulaOperatorArray : Array<FormulaOperatorItem> = [
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttLE, priority: 2, operatorClass: FormulaOperatorLE },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttEQ, priority: 2, operatorClass: FormulaOperatorEQ },
   { operatorType: FormulaOperatorType.fotBinary, operatorToken: TokenType.ttNE, priority: 2, operatorClass: FormulaOperatorNE },
+  { operatorType: FormulaOperatorType.fotTernary, operatorToken: TokenType.ttIf, priority: 2, operatorClass: FormulaOperatorIF },
 
   { operatorType: FormulaOperatorType.fotQuote, operatorToken: TokenType.ttParenL, priority: 1, operatorClass: FormulaOperatorPAREN },
 ];

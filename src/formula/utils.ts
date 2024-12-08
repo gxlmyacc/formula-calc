@@ -64,20 +64,38 @@ function toRound(
 function getValueByPath(
   data: Record<string, any>,
   path: string,
-  onNotFind?: (path: string, paresedPath: string, pre: any) => void,
+  onNotFind?: (
+    path: string,
+    options: {
+      paresedPath: string,
+      pre: any,
+      isLeaf: boolean,
+      paths: string[],
+  }) => void,
+  defaultValue?: any,
 ) {
   let paresedPath = '';
   let value: any;
   let pre = data;
-  path.split('.').some(path => {
-    if (pre && typeof pre === 'object' && hasOwnProp(pre, path)) {
+  let paths = path.split('.');
+  let isLeaf = false;
+  paths.some((path, index) => {
+    isLeaf = index === paths.length - 1;
+    let optional = false;
+    if (path.endsWith('?')) {
+      optional = true;
+      path = path.slice(0, -1);
+    }
+    if (pre && (optional || hasOwnProp(pre, path))) {
       paresedPath += `${paresedPath ? '.' : ''}${path}`;
       pre = value = pre[path];
-      return;
+      return pre && (typeof pre === 'object' || Array.isArray(pre))
+        ? false
+        : optional;
     }
-    value = undefined;
+    value = defaultValue;
     if (onNotFind) {
-      value = onNotFind(path, paresedPath, pre);
+      value = onNotFind(path, { paresedPath, pre, isLeaf, paths });
     }
     return true;
   });

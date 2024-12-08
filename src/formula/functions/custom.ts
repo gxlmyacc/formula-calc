@@ -13,13 +13,13 @@ class FormulaFunctionCUSTOM extends AbsFormulaFunction {
     this.arithmetic = Boolean(item.arithmetic);
   }
 
-  public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
+  public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic: boolean) {
     if (this.item.preExecute === false) {
       return this.item.execute(this.params, dataSource, options);
     }
     return nextWithPrimise(
       this.params.map(v => v.execute(dataSource, options)),
-      params => this.item.execute(params, dataSource, options),
+      params => this.item.execute(params, dataSource, options, forArithmetic),
       false,
     );
   }

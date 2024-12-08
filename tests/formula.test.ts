@@ -62,6 +62,15 @@ describe('formula test', () => {
       }
     })).toBe(1);
 
+    expect(formulaCalc('a.b + 1', {
+      nullAsZero: true,
+      params: {
+        a: {
+          b: ''
+        }
+      }
+    })).toBe(1);
+
     let formula: Formula|null = null;
     const result1 = formulaCalc('1 + a', {
       params: {

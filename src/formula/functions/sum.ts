@@ -12,6 +12,7 @@ function sumExecute(
   dataSource: IFormulaDataSource,
   options: FormulaValueOptions,
   onWalk?: (itemValue: any, index: number, isArray: boolean) => void,
+  forArithmetic?: boolean
 ) {
   let value = new (options.Decimal || Decimal)(0);
   return walkValues(
@@ -28,7 +29,8 @@ function sumExecute(
         value = value.add(itemValue);
       }
       return value;
-    }
+    },
+    forArithmetic
   );
 }
 
@@ -37,7 +39,7 @@ class FormulaFunctionSUM extends AbsFormulaFunction {
   public arithmetic = true;
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
-    return sumExecute(this.params, dataSource, options);
+    return sumExecute(this.params, dataSource, options, undefined, true);
   }
 
 }

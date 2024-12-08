@@ -3,20 +3,21 @@ import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
 import { nextWithPrimise } from '../utils';
 
-class FormulaFunctionABS extends AbsFormulaFunction {
+class FormulaFunctionDecimal extends AbsFormulaFunction {
 
   public arithmetic = true;
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
+    const decimal = (options.Decimal || Decimal) as any;
     const result = nextWithPrimise(
-      [
-        this.params[0].execute(dataSource, options),
-      ],
-      a => (options.Decimal || Decimal).abs(a)
+      this.params.map(param => param.execute(dataSource, options, true)),
+      // eslint-disable-next-line prefer-spread
+      args => decimal[this.name].apply(decimal, args),
+      false
     );
     return result;
   }
 
 }
 
-export default FormulaFunctionABS;
+export default FormulaFunctionDecimal;

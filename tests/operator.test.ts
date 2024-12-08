@@ -77,11 +77,17 @@ describe('operator test', () => {
         a: 2
       }
     })).toBe(1.725);
-    // expect(formulaCalc(' -1.1 / 4 + %a%', {
-    //   params: {
-    //     a: 2
-    //   }
-    // })).toBe(1.725);
+  });
+
+  test('divInt', () => {
+    expect(formulaCalc('6 // 3')).toBe(2);
+    expect(formulaCalc(' 5 // 4 // 2')).toBe(0);
+    expect(formulaCalc(' 5 + 4 // 2')).toBe(7);
+    expect(formulaCalc(' 1 + (5 // 2)')).toBe(3);
+    expect(formulaCalc(' 1 + 5 // 2')).toBe(3);
+    expect(formulaCalc(' (1 + 5) // 3')).toBe(2);
+    expect(formulaCalc(' -1.1 // 6')).toBe(0);
+    expect(formulaCalc(' 1.1 // 6')).toBe(0);
   });
 
   test('mod', () => {
@@ -140,6 +146,13 @@ describe('operator test', () => {
     expect(formulaCalc('true & 1 + 3')).toBe(4);
     expect(formulaCalc('false & 1 + 3')).toBe(false);
     expect(formulaCalc('null & 1 + 3')).toBe(null);
+
+    expect(formulaCalc('1 && 2')).toBe(2);
+    expect(formulaCalc('1 + 2 && 1 + 3')).toBe(4);
+    expect(formulaCalc('1 - 1 && 1 + 3')).toBe(0);
+    expect(formulaCalc('true && 1 + 3')).toBe(4);
+    expect(formulaCalc('false && 1 + 3')).toBe(false);
+    expect(formulaCalc('null && 1 + 3')).toBe(null);
   });
 
   test('or', () => {
@@ -149,6 +162,13 @@ describe('operator test', () => {
     expect(formulaCalc('true | 1 + 3')).toBe(true);
     expect(formulaCalc('false | 1 + 3')).toBe(4);
     expect(formulaCalc('null | 1 + 3')).toBe(4);
+
+    expect(formulaCalc('1 || 2')).toBe(1);
+    expect(formulaCalc('1 + 2 || 1 + 3')).toBe(3);
+    expect(formulaCalc('1 - 1 || 1 + 3')).toBe(4);
+    expect(formulaCalc('true || 1 + 3')).toBe(true);
+    expect(formulaCalc('false || 1 + 3')).toBe(4);
+    expect(formulaCalc('null || 1 + 3')).toBe(4);
   });
 
   test('not', () => {
@@ -181,6 +201,16 @@ describe('operator test', () => {
     expect(formulaCalc('2 + 5 >= 6 + 1')).toBe(true);
     expect(formulaCalc('3 + 4 >= 5 + 1')).toBe(true);
     expect(formulaCalc('2 + 5 >= 6 + 2')).toBe(false);
+
+    expect(formulaCalc('a >= b', { params: { a: 10,  b: 2 } })).toBe(true);
+    expect(formulaCalc('a >= b', { params: { a: '10',  b: '2' } })).toBe(false);
+    expect(formulaCalc('a >= b', { params: { a: '10',  b: 2 } })).toBe(true);
+    expect(formulaCalc('a >= b', { params: { a: 10,  b: '2' } })).toBe(true);
+
+    expect(formulaCalc('a > b', { params: { a: 10,  b: 2 } })).toBe(true);
+    expect(formulaCalc('a > b', { params: { a: '10',  b: '2' } })).toBe(false);
+    expect(formulaCalc('a > b', { params: { a: '10',  b: 2 } })).toBe(true);
+    expect(formulaCalc('a > b', { params: { a: 10,  b: '2' } })).toBe(true);
   });
 
   test('lt', () => {
@@ -193,6 +223,16 @@ describe('operator test', () => {
     expect(formulaCalc('2 + 5 <= 6 + 1')).toBe(true);
     expect(formulaCalc('3 + 4 <= 5 + 1')).toBe(false);
     expect(formulaCalc('2 + 5 <= 6 + 2')).toBe(true);
+
+    expect(formulaCalc('a <= b', { params: { a: 10,  b: 2 } })).toBe(false);
+    expect(formulaCalc('a <= b', { params: { a: '10',  b: '2' } })).toBe(true);
+    expect(formulaCalc('a <= b', { params: { a: '10',  b: 2 } })).toBe(false);
+    expect(formulaCalc('a <= b', { params: { a: 10,  b: '2' } })).toBe(false);
+
+    expect(formulaCalc('a < b', { params: { a: 10,  b: 2 } })).toBe(false);
+    expect(formulaCalc('a < b', { params: { a: '10',  b: '2' } })).toBe(true);
+    expect(formulaCalc('a < b', { params: { a: '10',  b: 2 } })).toBe(false);
+    expect(formulaCalc('a < b', { params: { a: 10,  b: '2' } })).toBe(false);
   });
 
   test('eq', () => {
@@ -200,17 +240,137 @@ describe('operator test', () => {
     expect(formulaCalc('2 = 2')).toBe(true);
     expect(formulaCalc('true = 0')).toBe(false);
     expect(formulaCalc('false = 0')).toBe(false);
+    expect(formulaCalc('0 = -0')).toBe(true);
     expect(formulaCalc('2 + 5 = 6 + 1')).toBe(true);
     expect(formulaCalc('3 + 4 = 5 + 1')).toBe(false);
     expect(formulaCalc('2 + 5 = 6 + 2')).toBe(false);
     expect(formulaCalc('1 + 1 = abs(-2)')).toBe(true);
     expect(formulaCalc('NaN = NaN')).toBe(true);
     expect(formulaCalc('1 / 0 = Infinity')).toBe(true);
+    expect(formulaCalc('null = a', { params: { a: undefined } })).toBe(true);
+
+    expect(formulaCalc('1 = a', { params: { a: 1 } })).toBe(true);
+    expect(formulaCalc('1 = a', { params: { a: '1' } })).toBe(true);
+    expect(formulaCalc('0 = a', { params: { a: '' }, nullAsZero: true })).toBe(true);
+    expect(formulaCalc('0 = a', { params: { a: null }, nullAsZero: true })).toBe(true);
+    expect(formulaCalc('0 = a', { params: { }, nullAsZero: true })).toBe(true);
+    expect(formulaCalc('a = 0', { params: { }, nullAsZero: true })).toBe(true);
+    expect(formulaCalc('0 = a.b', { params: { a: { } } })).toBe(false);
+    expect(formulaCalc('a.b = 0', { params: { a: { } } })).toBe(false);
   });
 
   test('ne', () => {
     expect(formulaCalc('2 != 2')).toBe(false);
     expect(formulaCalc('1 != 2')).toBe(true);
+  });
+
+  test('if', () => {
+    expect(formulaCalc('true ? 1 : 2')).toBe(1);
+    expect(formulaCalc('false ? 1 : 2')).toBe(2);
+    expect(formulaCalc('true ? 1 : false ? 2 : 3')).toBe(2);
+    expect(formulaCalc('false ? 1 : false ? 2 : 3')).toBe(3);
+    expect(formulaCalc('true ? 1 : (false ? 2 : 3)')).toBe(1);
+    expect(formulaCalc('true ? 1 : (false ? 2 : 3)')).toBe(1);
+    expect(formulaCalc('false ? 1 : (false ? 2 : 3)')).toBe(3);
+    expect(formulaCalc('false ? 1 : (true ? 2 : 3)')).toBe(2);
+    expect(formulaCalc(
+      `a
+        ? 2
+        : 3
+      `,
+      { params: { a: true } }
+    )).toBe(2);
+    expect(formulaCalc(
+      `a
+        ? 2
+        : 3
+      `,
+      { params: { a: false } }
+    )).toBe(3);
+    expect(formulaCalc(
+      `a
+        ? 2
+        : 3
+      `,
+      { params: { a: true } }
+    )).toBe(2);
+    expect(formulaCalc(
+      `a
+        ? 1 + 1
+        : 2 + 2
+      `,
+      { params: { a: true } }
+    )).toBe(2);
+    expect(formulaCalc(
+      `a
+        ? 1 + 1
+        : 2 + 2
+      `,
+      { params: { a: false } }
+    )).toBe(4);
+    expect(formulaCalc(
+      `a
+       ? abs(-1)
+      : abs(-3)
+      `,
+      { params: { a: true } }
+    )).toBe(1);
+    expect(formulaCalc(
+      `a
+        ? abs(-1)
+        : abs(-3)
+      `,
+      { params: { a: false } }
+    )).toBe(3);
+
+
+    expect(formulaCalc(`
+      (a + 2) > 0
+      ? $1,
+      : 0 - $1
+      `, {
+      params: {
+        a: -3
+      }
+    })).toBe(1);
+    expect(formulaCalc(
+      `
+        a > 0
+        ? eval(planA)
+        : eval(planB)
+      `, {
+        params: {
+          a: -3,
+          planA: 'a + 1',
+          planB: '0 - a + 1',
+        }
+      }
+    )).toBe(4);
+
+    expect(formulaCalc('"a" ? 1 : 2')).toBe(1);
+    expect(formulaCalc('false ? 1 : 2')).toBe(2);
+    expect(formulaCalc('0 ? 1 : 2')).toBe(2);
+    expect(formulaCalc('"" ? 1 : 2')).toBe(2);
+
+    expect(formulaCalc('(a + b) ? 1 : 2', {
+      params: {
+        a: '-1',
+        b: '1'
+      }
+    })).toBe(2);
+
+    expect(formulaCalc('a.b?.c ? 1 : 2', {
+      params: {
+        a: {
+        }
+      }
+    })).toBe(2);
+
+    expect(() => formulaCalc('?')).toThrow('The formula is incorrect!');
+    expect(() => formulaCalc('1 ?')).toThrow('The formula is incorrect: uncomplete operator "?": expected 3 parameters, but got 1!');
+    expect(() => formulaCalc('1 ? 2 :')).toThrow('The formula is incorrect: uncomplete operator "?": expected 3 parameters, but got 2!');
+    expect(() => formulaCalc('1 ? :')).toThrow('The formula is incorrect!');
+    expect(() => formulaCalc('1 :')).toThrow('The formula is incorrect!');
   });
 
   test('parenthesis', () => {
@@ -219,6 +379,36 @@ describe('operator test', () => {
     expect(() => formulaCalc('1 + 2) + 1')).toThrow('The formula is incorrect: No matching "(" was found for ")"');
     expect(formulaCalc('(1)')).toBe(1);
     expect(formulaCalc('(1,2,3)')).toStrictEqual([1, 2, 3]);
+  });
+
+  test('precision', () => {
+    // Floating point addition and subtraction precision issues
+    expect(formulaCalc('0.1 + 0.2')).toBe(0.3);
+    expect(formulaCalc('0.3 - 0.2')).toBe(0.1);
+    expect(formulaCalc('0.7 - 0.1')).toBe(0.6);
+    expect(formulaCalc('0.18 - 1')).toBe(-0.82);
+
+    // Floating point multiplication precision issues
+    expect(formulaCalc('19.9 * 100')).toBe(1990);
+    expect(formulaCalc('0.7 * 180')).toBe(126);
+    expect(formulaCalc('35.41 * 100')).toBe(3541);
+    expect(formulaCalc('0.68 * 10')).toBe(6.8);
+
+    // Floating point division precision issues
+    expect(formulaCalc('10 / 3')).toBe(3.3333333333333335);
+    expect(formulaCalc('2.2 / 100')).toBe(0.022);
+
+    // Large number precision issues
+    expect(formulaCalc('9007199254740992 + 1')).toBe(9007199254740992);
+    // expect(formulaCalc('9007199254740992 + 1.23')).toBe(9007199254740992);
+
+    // Scientific notation precision issues
+    expect(formulaCalc('1e-4 + 1e-5')).toBe(0.00011);
+    expect(formulaCalc('0.0001 + 0.00001')).toBe(0.00011);
+
+    // Calculations with precision parameter
+    expect(formulaCalc('10 / 3', { precision: 2 })).toBe(3.33);
+    expect(formulaCalc('1e-4 + 1e-5', { precision: 6 })).toBe(0.00011);
   });
 
   test('other', () => {

@@ -2,7 +2,7 @@
 
 import Tokenizer from './tokenizer';
 import {
-  TokenType, FormulaOperatorType,
+  TokenType, FormulaOperatorType, OperatorWithRightParams, OperatorWithLeftParams,
   FormulaValues, TokenOperators, TokenValues, FormulaValueOptions,
   FormulaExecuteState
 } from './type';
@@ -14,6 +14,7 @@ import AbsFormulaFunction from './base/function';
 import { createFormulaFunction, registorFormulaFunction } from './functions';
 import { createFormulaOperator, isFormulaOperator } from './operators';
 import FormulaOperatorPAREN from './operators/paren';
+import FormulaOperatorIF from './operators/if';
 import FormulaNull from './values/null';
 import FormulaBool from './values/bool';
 import FormulaNumber from './values/number';
@@ -29,11 +30,23 @@ interface FormulaOptions extends FormulaValueOptions {
 }
 
 function isOperatorUncomplete(operator: IFormulaOperator) {
-  return ([
-    FormulaOperatorType.fotUnaryLeft,
-    FormulaOperatorType.fotUnaryRight
-  ].includes(operator.operatorType) && (operator.params.length < 1))
-    || ((operator.operatorType === FormulaOperatorType.fotBinary) && (operator.params.length < 2));
+  return operator.paramsCount !== null && operator.params.length < operator.paramsCount;
+}
+
+function resolveNearOperator(operatorNear: IFormulaOperator|null, item: IFormulaValue)  {
+  let result = false;
+  // If the previous one was an operator
+  if (operatorNear && OperatorWithRightParams.includes(operatorNear.operatorType)) {
+    operatorNear.params.push(item);
+    result = true;
+  }
+  return result;
+}
+
+function getPrevOperator(formulas: FormulaValues) {
+  return formulas.length && isFormulaOperator(formulas[formulas.length - 1])
+    ? formulas[formulas.length - 1] as IFormulaOperator
+    : null;
 }
 
 class Formula {
@@ -45,6 +58,8 @@ class Formula {
   public tokenizer: Tokenizer;
 
   public formulas: FormulaValues = [];
+
+  public operators: IFormulaOperator[] = [];
 
   public refs: FormulaValues = [];
 
@@ -67,8 +82,7 @@ class Formula {
     const customFunctions = this.customFunctions;
     try {
       this.lastError = '';
-      let operatorLast: IFormulaOperator|null = null;
-      let operatorPrev: IFormulaOperator|null = null;
+      let operatorNear: IFormulaOperator|null = null;
       let operator: IFormulaOperator|null = null;
       let i = 0;
       while (i < tokenizer.items.length) {
@@ -92,22 +106,12 @@ class Formula {
           formulas.push(func);
 
           // check the nearest operator;
-          if (operatorLast) {
-            if (operatorLast.operatorType === FormulaOperatorType.fotUnaryLeft) {
-              operatorLast.params.push(func);
-              func.owner = operatorLast;
-            } else if (operatorLast.operatorType === FormulaOperatorType.fotBinary) {
-              // if (operatorLast.params.length !== 1) {
-              //   throw new Error(ERROR_FORMULA_STR + '!');
-              // }
-              operatorLast.params.push(func);
-              func.owner = operatorLast;
-            }
+          if (resolveNearOperator(operatorNear, func)) {
+            func.owner = operatorNear;
           }
-
-          operatorLast = null;
+          operatorNear = null;
         } else  if (tokenType === TokenType.ttParenR) { // if it is a right parenthesis
-          if (operatorLast && ([FormulaOperatorType.fotBinary, FormulaOperatorType.fotUnaryLeft].includes(operatorLast.operatorType))) {
+          if (operatorNear && (OperatorWithRightParams.includes(operatorNear.operatorType))) {
             throw new Error(ERROR_FORMULA_STR + '!');
           }
 
@@ -126,7 +130,7 @@ class Formula {
           const paren = formulas[j] as FormulaOperatorPAREN;
           // if there is a function before the left parenthesis, it indicates that it is a function
           if ((j - 1 >= 0) && (formulas[j - 1].tokenType === TokenType.ttFunc)) {
-            let func = formulas[j - 1] as IFormulaFunction;
+            const func = formulas[j - 1] as IFormulaFunction;
 
             // remove func from refs list
             removeFormArray(refs, paren);
@@ -160,7 +164,7 @@ class Formula {
           }
 
           if ((j - 1 >= 0) && isFormulaOperator(formulas[j - 1], v => operator = v)) {
-            if (operator && [FormulaOperatorType.fotUnaryLeft, FormulaOperatorType.fotBinary].includes(operator.operatorType)) {
+            if (operator && OperatorWithRightParams.includes(operator.operatorType)) {
               if (isOperatorUncomplete(operator)) {
                 operator.params.push(formulas[j]);
                 formulas.splice(j, 1);
@@ -181,44 +185,56 @@ class Formula {
             }
           }
 
-          operatorLast = null;
+          operatorNear = null;
+        } else if (tokenType === TokenType.ttIfElse) {
+          if (operatorNear && (OperatorWithRightParams.includes(operatorNear.operatorType))) {
+            throw new Error(ERROR_FORMULA_STR + '!');
+          }
+          const operatorPrev = getPrevOperator(formulas);
+          if (!operatorPrev
+            || operatorPrev.tokenType !== TokenType.ttIf
+            || operatorPrev.params.length !== 2) {
+            throw new Error(ERROR_FORMULA_STR + '!');
+          }
+          (operatorPrev as FormulaOperatorIF).withElse = true;
+          operatorNear = operatorPrev;
         } else
         // if it is an operator
         if (TokenOperators.includes(tokenType)) {
           operator = createFormulaOperator(tokenType, tokenItem.token, tokenItem.index, options);
+          this.operators.push(operator);
+
           // check if the previous one is an operator
-          if (formulas.length) {
-            operatorPrev = isFormulaOperator(formulas[formulas.length - 1])
-              ? formulas[formulas.length - 1] as IFormulaOperator
-              : null;
-          }
+          const operatorPrev = getPrevOperator(formulas);
+
           if (operator.tokenType === TokenType.ttParenL) {
             refs.push(operator);
           }
 
           // if it is a left monocular operator
           if (operator.operatorType === FormulaOperatorType.fotUnaryLeft) {
-            if (operatorLast
-              && ([FormulaOperatorType.fotUnaryLeft, FormulaOperatorType.fotBinary].includes(operatorLast.operatorType))
-              &&  isOperatorUncomplete(operatorLast)) {
-              operatorLast.params.push(operator);
+            if (operatorNear
+              && (OperatorWithRightParams.includes(operatorNear.operatorType))
+              &&  isOperatorUncomplete(operatorNear)) {
+              operatorNear.params.push(operator);
             } else {
               formulas.push(operator);
             }
           } else
           // if it is a right monocular or binocular operator
-          if ([
-            FormulaOperatorType.fotUnaryRight,
-            FormulaOperatorType.fotBinary
-          ].includes(operator.operatorType)) {
+          if (OperatorWithLeftParams.includes(operator.operatorType)) {
             if (!formulas.length) {
               throw new Error(ERROR_FORMULA_STR + '!');
             }
             // compare priority with the previous operator
             if (operatorPrev
-              && ([FormulaOperatorType.fotUnaryLeft, FormulaOperatorType.fotBinary].includes(operatorPrev.operatorType))
+              && (OperatorWithRightParams.includes(operatorPrev.operatorType))
               && (operator.priority > operatorPrev.priority)) {
-              if (isOperatorUncomplete(operatorPrev)) {
+              if (isOperatorUncomplete(operatorPrev) && (
+                operatorPrev.tokenType !== TokenType.ttIf
+                || (operatorPrev as FormulaOperatorIF).withElse
+                || operatorPrev.params.length < 1
+              )) {
                 throw new Error(ERROR_FORMULA_STR + '!');
               }
 
@@ -239,16 +255,12 @@ class Formula {
               formulas.pop();
               formulas.push(operator);
             }
-          } else
-          // if it is a left parenthesis, it is directly pushed to the symbol stack;
-          if ([TokenType.ttParenL].includes(tokenType)) {
+          } else /** if ([TokenType.ttParenL].includes(tokenType)) */ { // if it is a left parenthesis, it is directly pushed to the symbol stack;
             formulas.push(operator);
           }
 
-          operatorLast = operator;
-        } else
-        // If it is a literal value
-        if (TokenValues.includes(tokenType)) {
+          operatorNear = operator;
+        } else if (TokenValues.includes(tokenType)) { // If it is a literal value
           item = null;
           if (tokenType === TokenType.ttNull) {
             item = new FormulaNull(tokenItem.token, options);
@@ -267,20 +279,10 @@ class Formula {
           }
 
           // If the previous one was an operator
-          if (operatorLast) {
-            if (operatorLast.operatorType === FormulaOperatorType.fotUnaryLeft) {
-              operatorLast.params.push(item);
-            } else
-            if ((operatorLast.operatorType === FormulaOperatorType.fotBinary)
-              && (operatorLast.params.length < 2)) {
-              // if (operatorLast.params.length !== 1) {
-              //   throw new Error(ERROR_FORMULA_STR + '!');
-              // }
-              operatorLast.params.push(item);
-            } else formulas.push(item);
-          } else formulas.push(item);
-
-          operatorLast = null;
+          if (!resolveNearOperator(operatorNear, item)) {
+            formulas.push(item);
+          }
+          operatorNear = null;
         }
 
         i++;
@@ -309,7 +311,7 @@ class Formula {
       let item = formulas[i];
       if (item.tokenType === TokenType.ttParenL) {
         if (!(item as FormulaOperatorPAREN).closed) {
-          throw new Error(ERROR_FORMULA_STR + ': there are unclosed parentheses!');
+          throw new Error(ERROR_FORMULA_STR + ': unclosed parentheses!');
         }
       }
 
@@ -319,6 +321,12 @@ class Formula {
       //   }
       // }
     }
+    this.operators.forEach(operator => {
+      if (isOperatorUncomplete(operator)) {
+        // eslint-disable-next-line max-len
+        throw new Error(ERROR_FORMULA_STR + `: uncomplete operator "${operator.name}": expected ${operator.paramsCount} parameters, but got ${operator.params.length}!`);
+      }
+    });
     this.verifyFormulaCount();
   }
 
@@ -326,6 +334,7 @@ class Formula {
     this.lastError = '';
     this.origText = '';
     this.formulas.splice(0, this.formulas.length);
+    this.operators.splice(0, this.operators.length);
     const refs = this.refs.splice(0, this.refs.length);
     refs.forEach(value => value.state = FormulaExecuteState.fesNone);
   }

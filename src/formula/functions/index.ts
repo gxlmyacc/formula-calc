@@ -6,34 +6,70 @@ import FormulaFunctionSUM from './sum';
 import FormulaFunctionAVG from './avg';
 import FormulaFunctionMIN from './min';
 import FormulaFunctionMAX from './max';
-import FormulaFunctionABS from './abs';
 import FormulaFunctionROUND from './round';
-import FormulaFunctionSQRT from './sqrt';
-import FormulaFunctionTRUNC from './trunc';
-import FormulaFunctionFLOOR from './floor';
-import FormulaFunctionCEIL from './ceil';
 import FormulaFunctionRANDOM from './random';
 import FormulaFunctionNOREF from './noref';
 import FormulaFunctionEVAL from './eval';
 import FormulaFunctionEXIST from './exist';
 import FormulaFunctionCUSTOM from './custom';
+import FormulaFunctionDecimal from './decimal';
+import FormulaFunctionCAST, { CAST_MAP } from './cast';
+
+const OneArgDecimalMethods = [
+  'abs',
+  'acos',
+  'acosh',
+  'asin',
+  'asinh',
+  'atan',
+  'atanh',
+  { name: 'atan2', min: 2, max: 2 },
+  'cbrt',
+  'ceil',
+  { name: 'clamp', min: 3, max: 3 },
+  'cos',
+  'cosh',
+  'floor',
+  { name: 'hypot', min: 1, max: 99 },
+  'ln',
+  'log',
+  'log10',
+  'log2',
+  'sign',
+  'sin',
+  'sinh',
+  'sqrt',
+  'tan',
+  'tanh',
+  'trunc'
+] as const;
+
+const FormulaFunctionDecimalMap = OneArgDecimalMethods.reduce((p, v) => {
+  const item = typeof v === 'string'
+    ? { min: 1, max: 1, name: v }
+    : v;
+  p[item.name] = { min: item.min, max: item.max, functionClass: FormulaFunctionDecimal };
+  return p;
+}, {} as Record<string, FormulaFunctionItem>);
+
+const FormulaFunctionCastMap = Object.keys(CAST_MAP).reduce((p, v) => {
+  p[v] = { min: 1, max: 1, functionClass: FormulaFunctionCAST };
+  return p;
+}, {} as Record<string, FormulaFunctionItem>);
 
 const FormulaFunctionMap: Record<string, FormulaFunctionItem> = {
-  abs: { min: 1, max: 1, functionClass: FormulaFunctionABS },
   avg: { min: 1, max: 99, functionClass: FormulaFunctionAVG },
-  ceil: { min: 1, max: 1, functionClass: FormulaFunctionCEIL },
   eval: { min: 1, max: 1, functionClass: FormulaFunctionEVAL },
   exist: { min: 2, max: 3, functionClass: FormulaFunctionEXIST },
-  floor: { min: 1, max: 1, functionClass: FormulaFunctionFLOOR },
   if: { min: 2, max: 3, functionClass: FormulaFunctionIF },
   max: { min: 1, max: 99, functionClass: FormulaFunctionMAX },
   min: { min: 1, max: 99,  functionClass: FormulaFunctionMIN },
   noref: { min: 1, max: 1,  functionClass: FormulaFunctionNOREF },
   random: { min: 0, max: 1, functionClass: FormulaFunctionRANDOM },
   round: { min: 1, max: 2, functionClass: FormulaFunctionROUND },
-  sqrt: { min: 1, max: 1, functionClass: FormulaFunctionSQRT },
-  trunc: { min: 1, max: 1, functionClass: FormulaFunctionTRUNC },
   sum: { min: 1, max: 99,  functionClass: FormulaFunctionSUM },
+  ...FormulaFunctionDecimalMap,
+  ...FormulaFunctionCastMap,
 };
 
 const FormulaCustomFunctionMap: Record<string, FormulaCustomFunctionItem> = {

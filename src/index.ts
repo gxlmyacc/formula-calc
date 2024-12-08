@@ -27,20 +27,21 @@ function createParamsDataSource(params: FormulaCalcOptions['params']): IFormulaD
   return {
 
     getParam(name, options) {
-      const { nullAsZero } = options;
-      if (!params) {
-        if (nullAsZero) return 0;
-        throw new Error(`require param: "${name}" !`);
-      }
+      const { nullAsZero, nullIfParamNotFound } = options;
       if (isFunction(params)) return params(name, options);
-      return getValueByPath(params, name, (path, paresedPath) => {
-        if (nullAsZero) return 0;
-        throw new Error(
-          paresedPath
-            ? `param "${paresedPath}.${path}" is not exist!`
-            : `require param: "${path}" !`
-        );
-      });
+      return getValueByPath(
+        params || {},
+        name,
+        (path, { paresedPath, isLeaf }) => {
+          if (nullAsZero
+          || ((nullIfParamNotFound || paresedPath) && isLeaf)
+          ) {
+            return (nullIfParamNotFound || nullAsZero) ? null : undefined;
+          }
+          throw new Error(`require param: "${path}" !`);
+        },
+        nullIfParamNotFound ? null : undefined
+      );
     },
   };
 }

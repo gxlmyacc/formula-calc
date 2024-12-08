@@ -2,6 +2,142 @@ import { describe, expect, test } from '@jest/globals';
 import formulaCalc, { registorFormulaFunction } from '../src';
 
 describe('function test', () => {
+  test('max', () => {
+    expect(formulaCalc('max(1)')).toBe(1);
+    expect(formulaCalc('max(-1, 0, 1, 2, 3)')).toBe(3);
+    expect(formulaCalc('max(-1.2, -1, 0, 1.3, 1)')).toBe(1.3);
+    expect(formulaCalc('max(a, b, c)', {
+      params: {
+        a: 1,
+        b: 2,
+        c: 3
+      }
+    })).toBe(3);
+    expect(formulaCalc('max(a)', {
+      params: {
+        a: [1, 2, 5, 4, 3]
+      }
+    })).toBe(5);
+
+    expect(formulaCalc('max(1)')).toBe(1);
+    expect(formulaCalc('max(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(6);
+    expect(formulaCalc('max(-1, -1.2, 0, 1, 1.3)')).toBe(1.3);
+
+    expect(formulaCalc('max(3, 2, 1, 0, -1, a)', {
+      params: {
+        a: 5
+      }
+    })).toBe(5);
+    expect(formulaCalc('max(3, 2, 1, 0, -1, a)', {
+      params: {
+        a: [2, 3, 4, 5]
+      }
+    })).toBe(5);
+  });
+
+  test('min', () => {
+    expect(formulaCalc('min(1)')).toBe(1);
+    expect(formulaCalc('min(-1, 0, 1, 2, 3)')).toBe(-1);
+    expect(formulaCalc('min(-1.2, -1, 0, 1.3, 1)')).toBe(-1.2);
+    expect(formulaCalc('min(a, b, c)', {
+      params: {
+        a: 1,
+        b: 2,
+        c: 3
+      }
+    })).toBe(1);
+    expect(formulaCalc('min(a)', {
+      params: {
+        a: [1, 2, 3, 4, 5]
+      }
+    })).toBe(1);
+
+    expect(formulaCalc('min(1)')).toBe(1);
+    expect(formulaCalc('min(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(-1);
+    expect(formulaCalc('min(-1, -1.2, 0, 1, 1.3)')).toBe(-1.2);
+
+    expect(formulaCalc('min(3, 2, 1, 0, -1, a)', {
+      params: {
+        a: -4
+      }
+    })).toBe(-4);
+    expect(formulaCalc('min(3, 2, 1, 0, -1, a)', {
+      params: {
+        a: [2, 3, 4, 5, -100]
+      }
+    })).toBe(-100);
+  });
+
+  test('sum', () => {
+    expect(formulaCalc('sum(1)')).toBe(1);
+    expect(formulaCalc('sum(-1, 0, 1, 2, 3)')).toBe(5);
+    expect(formulaCalc('sum(-1.2, -1, 0, 1.3, 1)')).toBe(0.1);
+    expect(formulaCalc('sum(a, b, c)', {
+      params: {
+        a: 1,
+        b: 2,
+        c: 3
+      }
+    })).toBe(6);
+    expect(formulaCalc('sum(a)', {
+      params: {
+        a: [1, 2, 3, 4, 5]
+      }
+    })).toBe(15);
+    expect(formulaCalc('sum(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(20);
+    expect(formulaCalc('sum(-1, -1.2, 0, 1, 1.3)')).toBe(0.1);
+
+    expect(formulaCalc('sum(3, 2, 1, 0, -1, a)', {
+      params: {
+        a: 5
+      }
+    })).toBe(10);
+    expect(formulaCalc('sum(3, 2, 1, 0, -1, a)', {
+      params: {
+        a: [2, 3, 4, 5]
+      }
+    })).toBe(19);
+    expect(formulaCalc('sum(3, 2, 1, 0, -1, a)', {
+      params: {
+        a: [2, 3, 4, [5, 6]]
+      }
+    })).toBe(25);
+  });
+
+  test('ceil', () => {
+    expect(formulaCalc('ceil(1.2)')).toBe(2);
+    expect(formulaCalc('ceil(-1.2)')).toBe(-1);
+    expect(formulaCalc('ceil(a)', {
+      params: {
+        a: 1.2
+      }
+    })).toBe(2);
+    expect(formulaCalc('ceil(2.11)')).toBe(3);
+    expect(formulaCalc('ceil(2.49)')).toBe(3);
+    expect(formulaCalc('ceil(2.51)')).toBe(3);
+    expect(formulaCalc('ceil(2.00000000001)')).toBe(3);
+    expect(formulaCalc('ceil(-2.000001)')).toBe(-2);
+    expect(formulaCalc('ceil(-1.97)')).toBe(-1);
+    expect(formulaCalc('ceil(9e-7)')).toBe(1);
+  });
+
+  test('floor', () => {
+    expect(formulaCalc('floor(1.2)')).toBe(1);
+    expect(formulaCalc('floor(-1.2)')).toBe(-2);
+    expect(formulaCalc('floor(a)', {
+      params: {
+        a: 1.2
+      }
+    })).toBe(1);
+    expect(formulaCalc('floor(2.11)')).toBe(2);
+    expect(formulaCalc('floor(2.49)')).toBe(2);
+    expect(formulaCalc('floor(2.51)')).toBe(2);
+    expect(formulaCalc('floor(2.00000000001)')).toBe(2);
+    expect(formulaCalc('floor(-2.000001)')).toBe(-3);
+    expect(formulaCalc('floor(-1.97)')).toBe(-2);
+    expect(formulaCalc('floor(9e-7)')).toBe(0);
+  });
+
   test('abs', () => {
     expect(formulaCalc('abs(1)')).toBe(1);
     expect(formulaCalc('abs(-1)')).toBe(1);
@@ -79,16 +215,6 @@ describe('function test', () => {
       }
     })).toBe(11);
     expect(() => formulaCalc('eval("1")', { eval: null })).toThrow('eval function is not supported!');
-  });
-
-  test('ceil', () => {
-    expect(formulaCalc('ceil(2.11)')).toBe(3);
-    expect(formulaCalc('ceil(2.49)')).toBe(3);
-    expect(formulaCalc('ceil(2.51)')).toBe(3);
-    expect(formulaCalc('ceil(2.00000000001)')).toBe(3);
-    expect(formulaCalc('ceil(-2.000001)')).toBe(-2);
-    expect(formulaCalc('ceil(-1.97)')).toBe(-1);
-    expect(formulaCalc('ceil(9e-7)')).toBe(1);
   });
 
   test('exist', () => {
@@ -201,16 +327,6 @@ describe('function test', () => {
     expect(() => formulaCalc('exist(null, null)')).toThrow('Invalid parameter type: "key" is not string!');
   });
 
-  test('floor', () => {
-    expect(formulaCalc('floor(2.11)')).toBe(2);
-    expect(formulaCalc('floor(2.49)')).toBe(2);
-    expect(formulaCalc('floor(2.51)')).toBe(2);
-    expect(formulaCalc('floor(2.00000000001)')).toBe(2);
-    expect(formulaCalc('floor(-2.000001)')).toBe(-3);
-    expect(formulaCalc('floor(-1.97)')).toBe(-2);
-    expect(formulaCalc('floor(9e-7)')).toBe(0);
-  });
-
   test('if', () => {
     expect(formulaCalc('if(true, 1, 2)')).toBe(1);
     expect(
@@ -248,40 +364,13 @@ describe('function test', () => {
     expect(formulaCalc('if(false, 1, 2)')).toBe(2);
     expect(formulaCalc('if(0, 1, 2)')).toBe(2);
     expect(formulaCalc('if("", 1, 2)')).toBe(2);
-  });
 
-  test('max', () => {
-    expect(formulaCalc('max(1)')).toBe(1);
-    expect(formulaCalc('max(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(6);
-    expect(formulaCalc('max(-1, -1.2, 0, 1, 1.3)')).toBe(1.3);
-
-    expect(formulaCalc('max(3, 2, 1, 0, -1, a)', {
+    expect(formulaCalc('if(a + b, 1, 2)', {
       params: {
-        a: 5
+        a: '-1',
+        b: '1'
       }
-    })).toBe(5);
-    expect(formulaCalc('max(3, 2, 1, 0, -1, a)', {
-      params: {
-        a: [2, 3, 4, 5]
-      }
-    })).toBe(5);
-  });
-
-  test('min', () => {
-    expect(formulaCalc('min(1)')).toBe(1);
-    expect(formulaCalc('min(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(-1);
-    expect(formulaCalc('min(-1, -1.2, 0, 1, 1.3)')).toBe(-1.2);
-
-    expect(formulaCalc('min(3, 2, 1, 0, -1, a)', {
-      params: {
-        a: -4
-      }
-    })).toBe(-4);
-    expect(formulaCalc('min(3, 2, 1, 0, -1, a)', {
-      params: {
-        a: [2, 3, 4, 5, -100]
-      }
-    })).toBe(-100);
+    })).toBe(2);
   });
 
   test('random', () => {
@@ -314,28 +403,6 @@ describe('function test', () => {
       }
     })).toBe(7);
     expect(formulaCalc('sqrt(-1)')).toBe(NaN);
-  });
-
-  test('sum', () => {
-    expect(formulaCalc('sum(1)')).toBe(1);
-    expect(formulaCalc('sum(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(20);
-    expect(formulaCalc('sum(-1, -1.2, 0, 1, 1.3)')).toBe(0.1);
-
-    expect(formulaCalc('sum(3, 2, 1, 0, -1, a)', {
-      params: {
-        a: 5
-      }
-    })).toBe(10);
-    expect(formulaCalc('sum(3, 2, 1, 0, -1, a)', {
-      params: {
-        a: [2, 3, 4, 5]
-      }
-    })).toBe(19);
-    expect(formulaCalc('sum(3, 2, 1, 0, -1, a)', {
-      params: {
-        a: [2, 3, 4, [5, 6]]
-      }
-    })).toBe(25);
   });
 
   test('trunc', () => {
@@ -413,9 +480,70 @@ describe('function test', () => {
     }).toThrow('registor custom function fail: "add1" already exist!');
   });
 
+  test('cast', () => {
+    expect(formulaCalc('string(1)')).toBe('1');
+    expect(formulaCalc('string(a)', { params: { a: undefined } })).toBe('null');
+    expect(formulaCalc('string(a)', { params: { a: null } })).toBe('null');
+    expect(formulaCalc('number(1)')).toBe(1);
+    expect(formulaCalc('number(a)', { params: { a: '' }, nullAsZero: true })).toBe(0);
+    expect(formulaCalc('number("1")')).toBe(1);
+    expect(formulaCalc('number("1.23")')).toBe(1.23);
+    expect(formulaCalc('number("1.23") + 1')).toBe(2.23);
+    expect(formulaCalc('boolean("true")')).toBe(true);
+    expect(formulaCalc('boolean("false")')).toBe(true);
+    expect(formulaCalc('boolean(true)')).toBe(true);
+    expect(formulaCalc('boolean(false)')).toBe(false);
+    expect(formulaCalc('boolean("1")')).toBe(true);
+    expect(formulaCalc('boolean("0")')).toBe(true);
+    expect(formulaCalc('boolean(1)')).toBe(true);
+    expect(formulaCalc('boolean(0)')).toBe(false);
+  });
+
+  test('decimal', () => {
+    expect(formulaCalc('abs(-1)')).toBe(1);
+    expect(formulaCalc('abs(-1.23)')).toBe(1.23);
+    expect(formulaCalc('ceil(1.23)')).toBe(2);
+    expect(formulaCalc('floor(1.23)')).toBe(1);
+    expect(formulaCalc('trunc(1.23)')).toBe(1);
+    expect(formulaCalc('sign(-1.23)')).toBe(-1);
+    expect(formulaCalc('sign(1.23)')).toBe(1);
+
+    expect(formulaCalc('sin(0)')).toBe(0);
+    expect(formulaCalc('cos(0)')).toBe(1);
+    expect(formulaCalc('tan(0)')).toBe(0);
+    expect(formulaCalc('asin(0)')).toBe(0);
+    expect(formulaCalc('acos(1)')).toBe(0);
+    expect(formulaCalc('atan(0)')).toBe(0);
+
+    expect(formulaCalc('sinh(0)')).toBe(0);
+    expect(formulaCalc('cosh(0)')).toBe(1);
+    expect(formulaCalc('tanh(0)')).toBe(0);
+    expect(formulaCalc('asinh(0)')).toBe(0);
+    expect(formulaCalc('acosh(1)')).toBe(0);
+    expect(formulaCalc('atanh(0)')).toBe(0);
+
+    expect(formulaCalc('ln(1)')).toBe(0);
+    expect(formulaCalc('log(1)')).toBe(0);
+    expect(formulaCalc('log10(1)')).toBe(0);
+    expect(formulaCalc('log2(1)')).toBe(0);
+
+    expect(formulaCalc('sqrt(4)')).toBe(2);
+    expect(formulaCalc('cbrt(8)')).toBe(2);
+    expect(formulaCalc('hypot(3,4)')).toBe(5);
+    expect(formulaCalc('hypot(3,4,5)')).toBe(7.0710678118654755);
+    expect(formulaCalc('clamp(1,0,2)')).toBe(1);
+    expect(formulaCalc('clamp(-1,0,2)')).toBe(0);
+    expect(formulaCalc('clamp(3,0,2)')).toBe(2);
+    expect(formulaCalc('atan2(1,1)')).toBe(0.7853981633974483);
+
+    expect(() => formulaCalc('clamp(1,0)')).toThrow('"clamp" invalid param count, expected: 3, actual: 2');
+    expect(() => formulaCalc('clamp(1,0,2,3)')).toThrow('"clamp" invalid param count, expected: 3, actual: 4');
+    expect(() => formulaCalc('abs()')).toThrow('"abs" invalid param count, expected: 1, actual: 0');
+    expect(() => formulaCalc('abs(1,2)')).toThrow('"abs" invalid param count, expected: 1, actual: 2');
+    expect(() => formulaCalc('hypot()')).toThrow('"hypot" invalid param count, expected: 1 to 99, actual: 0');
+  });
 
   test('other', () => {
     expect(() => formulaCalc('some_method(111)')).toThrow('unsupported function: "some_method"');
   });
 });
-

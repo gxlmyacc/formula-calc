@@ -13,8 +13,8 @@ class FormulaOperatorPOW extends AbsFormulaOperator {
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       [
-        this.params[0].execute(dataSource, options),
-        this.params[1].execute(dataSource, options),
+        this.params[0].execute(dataSource, options, true),
+        this.params[1].execute(dataSource, options, true),
       ],
       (a, b) => (options.Decimal || Decimal).pow(a, b)
     );

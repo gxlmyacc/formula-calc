@@ -18,12 +18,12 @@ abstract class AbsFormulaBase extends FormulaValue implements IFormulaValue, IFo
     return '';
   }
 
-  public execute(dataSource: IFormulaDataSource, options: FormulaValueOptions): any {
+  public execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean): any {
     const error = this.checkArgVaild();
     if (error) {
       throw new Error(`[${this.name}]${error}`);
     }
-    return super.execute(dataSource, options);
+    return super.execute(dataSource, options, forArithmetic);
   }
 
 }

@@ -25,7 +25,7 @@ const SPACE_SEPARATOR = [
 
 const NAME_SEPARATOR = [
   ListSeparator, '\\',
-  '/', '?', '*', '[',
+  '/', '?', ':', '*', '[',
   ']', '+', '&',
   '-', '*', '/', '%',
   '^', '<', '>', '=',
@@ -33,6 +33,7 @@ const NAME_SEPARATOR = [
   "'", '"', '!',
   ...SPACE_SEPARATOR
 ];
+
 
 const LITERAL_MAP: Record<
   string,
@@ -254,7 +255,13 @@ class Tokenizer {
     let len = this.len;
     let value = this.value;
 
-    while ((result < len) && !NAME_SEPARATOR.includes(value[result])) {
+    while ((result < len)) {
+      let char = value[result];
+      if (NAME_SEPARATOR.includes(char)) {
+        if (char !== '?' || value[result + 1] !== '.') {
+          break;
+        }
+      }
       result++;
     }
 
@@ -298,15 +305,21 @@ class Tokenizer {
       } else if (char === '+') {
         i += this.addOperator(char, TokenType.ttAdd, i, char.length);
       } else if (char === '&') {
-        i += this.addOperator(char, TokenType.ttAnd, i, char.length);
+        let doubleOperator = value[i + 1] === char;
+        i += this.addOperator(doubleOperator ? '&&' : char, TokenType.ttAnd, i, doubleOperator ? 2 : char.length);
       } else if (char === '|') {
-        i += this.addOperator(char, TokenType.ttOr, i, char.length);
+        let doubleOperator = value[i + 1] === char;
+        i += this.addOperator(doubleOperator ? '||' : char, TokenType.ttOr, i, doubleOperator ? 2 : char.length);
       } else if (char === '-') {
         i += this.addOperator(char, TokenType.ttMinus, i, char.length);
       } else if (char === '*') {
         i += this.addOperator(char, TokenType.ttMul, i, char.length);
       } else if (char === '/') {
-        i += this.addOperator(char, TokenType.ttDiv, i, char.length);
+        if (value[i + 1] === '/') {
+          i += this.addOperator('//', TokenType.ttDivInt, i, 2);
+        } else {
+          i += this.addOperator(char, TokenType.ttDiv, i, char.length);
+        }
       } else if (char === '%') {
         i += this.addOperator(char, TokenType.ttPercent, i, char.length);
       } else if (char === '^') {
@@ -333,6 +346,10 @@ class Tokenizer {
         }
       } else if (char === '=') {
         i += this.addOperator('=', TokenType.ttEQ, i, 1);
+      } else if (char === '?') {
+        i += this.addOperator('?', TokenType.ttIf, i, 1);
+      } else if (char === ':') {
+        i += this.addOperator(':', TokenType.ttIfElse, i, 1);
       } else if (char === '(') {
         if (this.getLast() === TokenType.ttName) {
           this.changeLast(TokenType.ttFunc);

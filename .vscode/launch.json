@@ -5,6 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "test",
+      "request": "launch",
+      "runtimeArgs": [
+        "run-script",
+        "test",
+      ],
+      "runtimeExecutable": "npm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
+    {
       "name": "test value",
       "request": "launch",
       "runtimeArgs": [
@@ -42,6 +55,21 @@
         "test",
         "--",
         "tests/func.test.ts"
+      ],
+      "runtimeExecutable": "npm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
+    {
+      "name": "test formula",
+      "request": "launch",
+      "runtimeArgs": [
+        "run-script",
+        "test",
+        "--",
+        "tests/formula.test.ts"
       ],
       "runtimeExecutable": "npm",
       "skipFiles": [

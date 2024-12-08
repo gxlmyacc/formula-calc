@@ -10,9 +10,9 @@ class FormulaOperatorPAREN extends AbsFormulaOperator {
 
   public closed: boolean = false;
 
-  public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
+  public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) {
     const result = nextWithPrimise(
-      this.params.map(v => v.execute(dataSource, options)),
+      this.params.map(v => v.execute(dataSource, options, forArithmetic)),
       params => params,
       false
     );

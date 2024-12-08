@@ -63,6 +63,28 @@ aa"`)).toBe('string\ndd\naa');
         }
       }
     })).toBe(2);
+    expect(formulaCalc('a?.b', {
+      params: {
+        a: {
+          b: 2
+        }
+      }
+    })).toBe(2);
+    expect(formulaCalc('a?.b', {
+      params: {
+        a: null
+      }
+    })).toBe(null);
+    expect(formulaCalc('a?.b', {
+      params: {
+        a: 3
+      }
+    })).toBe(3);
+    expect(formulaCalc('a?.b', {
+      params: {
+        a: null
+      }
+    })).toBe(null);
     expect(formulaCalc('a.b', {
       nullAsZero: true,
       params: {
@@ -94,25 +116,38 @@ aa"`)).toBe('string\ndd\naa');
       ]
     })).toEqual([1, 2, 3]);
 
+    expect(formulaCalc('a', { nullIfParamNotFound: true })).toBe(null);
+
+    expect(formulaCalc('a.b', {
+      params: { a: {} },
+      nullIfParamNotFound: true
+    })).toBe(null);
+    expect(formulaCalc('a.b', {
+      params: { a: {} },
+    })).toBe(undefined);
+    expect(formulaCalc('a?.b')).toBe(undefined);
+
     expect(() => formulaCalc('t')).toThrow('require param: "t" !');
     expect(() => formulaCalc('a')).toThrow('require param: "a" !');
-    expect(() => formulaCalc('a.b')).toThrow('require param: "a.b" !');
+    expect(() => formulaCalc('a.b')).toThrow('require param: "a" !');
 
     expect(() => formulaCalc('a', { params: {} })).toThrow('require param: "a" !');
     expect(() => formulaCalc('a.b', { params: {} })).toThrow('require param: "a" !');
-    expect(() => formulaCalc('a.b', {
+    expect(formulaCalc('a.b.d', {
       params: {
         a: {
-          c: 2
+          b: {
+            c: 2
+          }
         }
       }
-    })).toThrow('param "a.b" is not exist!');
+    })).toBe(undefined);
 
-    expect(() => formulaCalc('a.3', {
+    expect(formulaCalc('a.3', {
       params: {
         a: [1, 2, 3]
       }
-    })).toThrow('param "a.3" is not exist!');
+    })).toBe(undefined);
 
 
     expect(formulaCalc('a.b', {

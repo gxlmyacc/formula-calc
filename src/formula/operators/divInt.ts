@@ -5,9 +5,9 @@ import type { IFormulaDataSource, FormulaValueOptions  } from '../type';
 import AbsFormulaOperator from '../base/operator';
 import { nextWithPrimise } from '../utils';
 
-class FormulaOperatorDIV extends AbsFormulaOperator {
+class FormulaOperatorDIVINT extends AbsFormulaOperator {
 
-  public tokenType: TokenType = TokenType.ttDiv;
+  public tokenType: TokenType = TokenType.ttDivInt;
 
   public arithmetic = true;
 
@@ -17,11 +17,11 @@ class FormulaOperatorDIV extends AbsFormulaOperator {
         this.params[0].execute(dataSource, options, true),
         this.params[1].execute(dataSource, options, true),
       ],
-      (a, b) => (options.Decimal || Decimal).div(a, b)
+      (a, b) => new (options.Decimal || Decimal)(a).dividedToIntegerBy(b)
     );
     return result;
   }
 
 }
 
-export default FormulaOperatorDIV;
+export default FormulaOperatorDIVINT;

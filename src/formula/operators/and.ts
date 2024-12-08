@@ -8,10 +8,10 @@ class FormulaOperatorAND extends AbsFormulaOperator {
 
   public tokenType: TokenType = TokenType.ttAnd;
 
-  public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
+  public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) {
     return nextWithPrimise(
-      this.params[0].execute(dataSource, options),
-      a => a && nextWithPrimise(this.params[1].execute(dataSource, options))
+      this.params[0].execute(dataSource, options, forArithmetic),
+      a => a && nextWithPrimise(this.params[1].execute(dataSource, options, forArithmetic))
     );
   }
 

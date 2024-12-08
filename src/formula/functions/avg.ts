@@ -15,7 +15,8 @@ class FormulaFunctionAVG extends AbsFormulaFunction {
       options,
       (itemValue, i, isArray) => {
         if (isArray) paramCount += (itemValue.length - 1);
-      }
+      },
+      true
     );
     return nextWithPrimise(value, a => a.div(paramCount));
   }

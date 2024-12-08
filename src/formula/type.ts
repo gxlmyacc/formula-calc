@@ -6,6 +6,7 @@ enum TokenType {
   ttMinus,
   ttMul,
   ttDiv,
+  ttDivInt,
   ttMod,
   ttPow,
   ttPercent,
@@ -31,6 +32,8 @@ enum TokenType {
   ttNumber,
   ttString,
   ttSpace,
+  ttIf,
+  ttIfElse
 }
 
 
@@ -38,7 +41,8 @@ enum FormulaOperatorType {
   fotBinary,
   fotUnaryLeft,
   fotUnaryRight,
-  fotQuote
+  fotQuote,
+  fotTernary
 }
 
 enum FormulaExecuteState {
@@ -55,6 +59,7 @@ const TokenBinarys = [
   TokenType.ttMinus,
   TokenType.ttMul,
   TokenType.ttDiv,
+  TokenType.ttDivInt,
   TokenType.ttMod,
   TokenType.ttPow,
   TokenType.ttAnd,
@@ -73,6 +78,7 @@ const TokenOperators = [
   TokenType.ttMinus,
   TokenType.ttMul,
   TokenType.ttDiv,
+  TokenType.ttDivInt,
   TokenType.ttMod,
   TokenType.ttPercent,
   TokenType.ttPow,
@@ -86,6 +92,7 @@ const TokenOperators = [
   TokenType.ttEQ,
   TokenType.ttNE,
   TokenType.ttParenL,
+  TokenType.ttIf,
 ];
 
 const TokenNegatives = [
@@ -102,6 +109,7 @@ const TokenPercents = [
   TokenType.ttMinus,
   TokenType.ttMul,
   TokenType.ttDiv,
+  TokenType.ttDivInt,
   TokenType.ttMod,
   TokenType.ttPercent,
   TokenType.ttPow,
@@ -127,6 +135,17 @@ const TokenValues = [
   TokenType.ttString,
 ];
 
+const OperatorWithRightParams = [
+  FormulaOperatorType.fotUnaryLeft,
+  FormulaOperatorType.fotBinary,
+  FormulaOperatorType.fotTernary
+];
+const OperatorWithLeftParams = [
+  FormulaOperatorType.fotUnaryRight,
+  FormulaOperatorType.fotBinary,
+  FormulaOperatorType.fotTernary
+];
+
 interface IFormulaDataSource {
   getParam(name: string, options: FormulaValueOptions) : any;
 }
@@ -139,7 +158,8 @@ type FormulaValueOptions = {
   rounding?: RoundingType,
   stepPrecision?: boolean|number,
   nullAsZero?: boolean,
-  eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions) => any),
+  nullIfParamNotFound?: boolean,
+  eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any),
 }
 
 type FormulaCustomFunctionItem = {
@@ -147,13 +167,13 @@ type FormulaCustomFunctionItem = {
   arithmetic?: boolean,
   argMin: number
   argMax: number;
-  execute: (params: any[], dataSource: IFormulaDataSource, options: FormulaValueOptions) => any
+  execute: (params: any[], dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any
 } | {
   preExecute: false,
   arithmetic?: boolean,
   argMin: number
   argMax: number;
-  execute: (params: FormulaValues, dataSource: IFormulaDataSource, options: FormulaValueOptions) => any
+  execute: (params: FormulaValues, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any
 }
 
 interface IFormulaValue {
@@ -163,7 +183,7 @@ interface IFormulaValue {
 
   readonly arithmetic: boolean,
   readonly tokenType: TokenType;
-  execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions): any;
+  execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions, forArithmetic?: boolean): any;
 }
 
 type FormulaValues = Array<IFormulaValue>;
@@ -188,6 +208,8 @@ interface IFormulaFunction extends IFormulaBase {
 interface IFormulaOperator extends IFormulaBase {
   priority: number;
   operatorType: FormulaOperatorType;
+
+  readonly paramsCount: number|null;
 }
 
 export {
@@ -202,6 +224,8 @@ export {
   TokenOperators,
   TokenNegatives,
   TokenPercents,
+  OperatorWithRightParams,
+  OperatorWithLeftParams,
 
   FormulaValues,
 };

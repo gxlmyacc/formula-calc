@@ -3,8 +3,8 @@ import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions } from '../
 import { FormulaExecuteState, TokenType } from '../type';
 import { isNumber, isPromise, toRound } from '../utils';
 
-function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaValue) {
-  if (!item || item.arithmetic) {
+function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaValue, forArithmetic?: boolean) {
+  if (!item || item.arithmetic || forArithmetic) {
     let precision = options.precision;
     let stepPrecision = isNumber(options.stepPrecision) || options.stepPrecision;
     if (stepPrecision && isNumber(options.stepPrecision)) {
@@ -20,9 +20,9 @@ function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaV
   } else if ((options.Decimal || Decimal).isDecimal(value)) {
     value = value.toNumber();
   }
-  if (options.nullAsZero && (value == null || isNaN(value))) {
+  if (options.nullAsZero && (value == null || value === '' || isNaN(value))) {
     value = 0;
-  }
+  } else if (Object.is(value, -0)) value = 0;
   return value;
 }
 
@@ -40,16 +40,16 @@ abstract class FormulaValue implements IFormulaValue {
 
   public arithmetic: boolean = false;
 
-  protected abstract _execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions): any;
+  protected abstract _execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions, forArithmetic?: boolean): any;
 
-  public execute(dataSource: IFormulaDataSource, options: FormulaValueOptions): any {
+  public execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean): any {
     this.state = FormulaExecuteState.fesExecuting;
     let prom = false;
     try {
       let value = this._execute(dataSource, options);
       prom = isPromise(value);
       const _next = (value: any) => {
-        this.value = resolveValue(value, options, this);
+        this.value = resolveValue(value, options, this, forArithmetic);
         this.state = FormulaExecuteState.fesExecuted;
         return this.value;
       };

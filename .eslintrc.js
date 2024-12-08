@@ -21,10 +21,6 @@ module.exports = {
   plugins: [],
   settings: {
 
-
-
-
-
   },
   globals: {
     'define': true,

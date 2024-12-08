@@ -12,10 +12,10 @@ class FormulaFunctionMAX extends AbsFormulaFunction {
       this.params,
       dataSource,
       options,
-      (itemValue, index, isArray) => {
-        if (!isArray) itemValue = [itemValue];
-        itemValue.forEach((value: any) => {
-          if (!index) {
+      (itemValue, index, isArray, isFirst) => {
+        const values = isArray ? itemValue as any[] : [itemValue];
+        values.forEach((value, index) => {
+          if (isFirst && !index) {
             result = value;
             return;
           }
@@ -24,7 +24,8 @@ class FormulaFunctionMAX extends AbsFormulaFunction {
           }
         });
         return result;
-      }
+      },
+      true,
     );
   }
 

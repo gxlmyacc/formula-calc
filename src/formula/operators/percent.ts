@@ -14,7 +14,7 @@ class FormulaOperatorPERCENT extends AbsFormulaOperator {
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       [
-        this.params[0].execute(dataSource, options),
+        this.params[0].execute(dataSource, options, true),
       ],
       a => (options.Decimal || Decimal).div(a, 100)
     );
