@@ -310,7 +310,7 @@ const result = formulaCalc('string(1)');
 console.log(result); // '1'
 
 const result = formulaCalc('string(a)', { params: { a: undefined } });
-console.log(result); // ''
+console.log(result); // 'null'
 
 const result = formulaCalc('number("1")');
 console.log(result); // 1
