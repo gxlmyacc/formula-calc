@@ -364,6 +364,7 @@ type FormulaValueOptions = {
   rounding?: RoundingType,
   stepPrecision?: boolean|number,
   nullAsZero?: boolean,
+  nullIfParamNotFound?: boolean,
   cache?: boolean,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options:  FormulaValueOptions) => any),
 }
