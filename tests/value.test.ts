@@ -11,6 +11,7 @@ describe('value test', () => {
     expect(formulaCalc(' 9e-7')).toBe(0.0000009);
     expect(formulaCalc(' NaN')).toBe(NaN);
     expect(formulaCalc(' Infinity')).toBe(Infinity);
+    expect(formulaCalc('NaN', { nullAsZero: true })).toBe(0);
 
     expect(() => formulaCalc('1.111.11')).toThrow('Illegal number: already exist decimal separator "."');
     expect(() => formulaCalc('1.1e2')).toThrow('Illegal number: invalid char "e"');
@@ -19,6 +20,9 @@ describe('value test', () => {
   });
   test('string', () => {
     expect(formulaCalc('"string"')).toBe('string');
+    expect(formulaCalc('"1"')).toBe('1');
+    expect(formulaCalc('"1"', { tryStringToNumber: true })).toBe(1);
+    expect(formulaCalc('""', { nullAsZero: true })).toBe(0);
     expect(formulaCalc(`"string
 dd
 aa"`)).toBe('string\ndd\naa');
@@ -27,6 +31,7 @@ aa"`)).toBe('string\ndd\naa');
   });
   test('null', () => {
     expect(formulaCalc('null')).toBe(null);
+    expect(formulaCalc('null', { nullAsZero: true })).toBe(0);
     expect(formulaCalc('NULL', { nullAsZero: true })).toBe(0);
     // expect(formulaCalc('NULL')).toBe(null);
     expect(() => formulaCalc('NULL')).toThrow('require param: "NULL" !');
@@ -95,6 +100,18 @@ aa"`)).toBe('string\ndd\naa');
       nullAsZero: true,
       params: {
         a: { b: null }
+      }
+    })).toBe(0);
+    expect(formulaCalc('a.b', {
+      nullAsZero: true,
+      params: {
+        a: { b: '' }
+      }
+    })).toBe(0);
+    expect(formulaCalc('a.b', {
+      nullAsZero: true,
+      params: {
+        a: { b: NaN }
       }
     })).toBe(0);
     expect(formulaCalc('a.b', {

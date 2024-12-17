@@ -1,9 +1,10 @@
 
 
+import Decimal from 'decimal.js';
 import Tokenizer from './tokenizer';
 import {
   TokenType, FormulaOperatorType, OperatorWithRightParams, OperatorWithLeftParams,
-  FormulaValues, TokenOperators, TokenValues, FormulaValueOptions,
+  FormulaValues, TokenOperators, FormulaValueOptions,
   FormulaExecuteState
 } from './type';
 import type {
@@ -23,7 +24,7 @@ import FormulaParam from './values/param';
 import FormulaRef from './values/ref';
 import FormulaNaN from './values/nan';
 import { ERROR_FORMULA_STR } from './constant';
-import { removeFormArray } from './utils';
+import { isDecimal, isDecimalValue, isNumber, isString, nextWithPrimise, removeFormArray, toRound } from './utils';
 
 interface FormulaOptions extends FormulaValueOptions {
 
@@ -260,7 +261,7 @@ class Formula {
           }
 
           operatorNear = operator;
-        } else if (TokenValues.includes(tokenType)) { // If it is a literal value
+        } else /* if (TokenValues.includes(tokenType)) */ { // If it is a literal value
           item = null;
           if (tokenType === TokenType.ttNull) {
             item = new FormulaNull(tokenItem.token, options);
@@ -357,7 +358,7 @@ class Formula {
     }
   }
 
-  execute(dataSource?: IFormulaDataSource, options: FormulaValueOptions = {}) {
+  private _execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions) {
     try {
       this.lastError = '';
       this.verifyFormulaCount();
@@ -366,6 +367,43 @@ class Formula {
       this.lastError = error.message;
       throw error;
     }
+  }
+
+  execute(dataSource?: IFormulaDataSource, options: FormulaValueOptions = {}) {
+    return nextWithPrimise(
+      this._execute(dataSource, options),
+      result => {
+        const _resolveResult = (result: any): any => {
+          if (Array.isArray(result)) {
+            return result.map(_resolveResult);
+          }
+          if (isNumber(options.precision)
+            && (
+              (isNumber(result) && !isNaN(result))
+              || (isDecimal(result, options) && !result.isNaN())
+            )
+          ) {
+            result = toRound(result, options.precision, options.rounding);
+          }
+          if (isDecimal(result, options)) {
+            if (!options.returnDecimal) {
+              result = result.toNumber();
+              if (Object.is(result, -0)) result = 0;
+            }
+          } else if (isDecimalValue(result, options)) {
+            if (options.returnDecimal) {
+              result =  new (options.Decimal || Decimal)(result);
+            } else if (isString(result) && options.tryStringToNumber) {
+              result = Number(result);
+            }
+          }
+          return result;
+        };
+        result = _resolveResult(result);
+        return result;
+      },
+      false
+    );
   }
 
 }

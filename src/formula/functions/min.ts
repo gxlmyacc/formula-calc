@@ -1,4 +1,5 @@
 
+import Decimal from 'decimal.js';
 import type { IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
 import { walkValues } from './utils';
@@ -9,18 +10,18 @@ class FormulaFunctionMIN extends AbsFormulaFunction {
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     let result: any;
-    return walkValues(
+    return walkValues<Decimal>(
       this.params,
       dataSource,
       options,
       (itemValue, index, isArray, isFirst) => {
-        const values = isArray ? itemValue as any[] : [itemValue];
+        const values = isArray ? itemValue as Decimal[] : [itemValue as Decimal];
         values.forEach((value, index) => {
           if (isFirst && !index) {
             result = value;
             return;
           }
-          if (value < result) {
+          if (value.lessThan(result)) {
             result = value;
           }
         });

@@ -1,7 +1,7 @@
 import { TokenType,  } from '../type';
 import type { IFormulaParam, IFormulaDataSource,  FormulaValueOptions } from '../type';
 import FormulaValue from '../base/value';
-import { isNumber } from '../utils';
+import { isDecimalValue } from '../utils';
 
 class FormulaParam extends FormulaValue implements IFormulaParam {
 
@@ -21,7 +21,7 @@ class FormulaParam extends FormulaValue implements IFormulaParam {
     //   throw new Error('param must have a dataSource!');
     // }
     const value = dataSource.getParam(this.name, options);
-    this.arithmetic = isNumber(value);
+    this.arithmetic = isDecimalValue(value, options);
     return value;
   }
 

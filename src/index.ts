@@ -1,5 +1,5 @@
 import Formula, { registorFormulaFunction, TokenType } from './formula';
-import { getValueByPath, hasOwnProp, isFunction, isNumber, isPlainObject, isString, nextWithPrimise, toRound } from './formula/utils';
+import { getValueByPath, hasOwnProp, isFunction, isPlainObject, isString } from './formula/utils';
 import type { FormulaOptions, IFormulaDataSource, FormulaCustomFunctionItem } from './formula';
 import { FormulaValueOptions } from './formula/type';
 
@@ -88,26 +88,14 @@ function formulaCalcWithParams<T = any>(
     restOptions.eval = createFormulaEval(params, options);
   }
 
-  const result = formula.execute(dataSource, restOptions);
-
-  return nextWithPrimise(
-    result,
-    result => {
-      if (isNumber(restOptions.precision)
-      && isNumber(result)
-      && !isNaN(result)) {
-        result = toRound(result, restOptions.precision, restOptions.rounding);
-      }
-      return result;
-    },
-    false
-  );
+  return formula.execute(dataSource, restOptions);
 }
 
 
 function formulaCalc<T extends any = any>(
   expressionOrFormula: string|Formula,
-  options: FormulaCalcOptions = {}
+  options: FormulaCalcOptions = {},
+  returnReferenceType?: T|((result: any) => T)
 ): T {
   const { onFormulaCreated, params, ...restOptions } = options;
 
@@ -123,9 +111,15 @@ function formulaCalc<T extends any = any>(
     formula = expressionOrFormula;
   }
 
-  return Array.isArray(params)
-    ? params.map(item => formulaCalcWithParams(formula, item, restOptions)) as T
-    : formulaCalcWithParams<T>(formula, params, restOptions);
+  let result = (
+    Array.isArray(params)
+      ? params.map(item => formulaCalcWithParams(formula, item, restOptions)) as T
+      : formulaCalcWithParams<T>(formula, params, restOptions)
+  );
+  if (isFunction(returnReferenceType)) {
+    result = returnReferenceType(result);
+  }
+  return result;
 }
 
 

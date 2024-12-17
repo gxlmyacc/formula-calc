@@ -2,7 +2,7 @@
 import { TokenType, } from '../type';
 import type { IFormulaDataSource, FormulaValueOptions  } from '../type';
 import AbsFormulaOperator from '../base/operator';
-import { nextWithPrimise } from '../utils';
+import { isDecimal, nextWithPrimise, toDecimal } from '../utils';
 
 class FormulaOperatorGT extends AbsFormulaOperator {
 
@@ -15,7 +15,15 @@ class FormulaOperatorGT extends AbsFormulaOperator {
         this.params[0].execute(dataSource, options, forArithmetic),
         this.params[1].execute(dataSource, options, forArithmetic),
       ],
-      (a, b) => (forArithmetic ? Number(a) < Number(b) : a < b)
+      (a, b) => {
+        if (isDecimal(a, options)) {
+          return a.lessThan(toDecimal(b, options));
+        }
+        if (isDecimal(b, options)) {
+          return b.greaterThanOrEqualTo(toDecimal(a, options));
+        }
+        return a < b;
+      }
     );
     return result;
   }

@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import type { RoundingType } from './type';
+import type { FormulaValueOptions, RoundingType } from './type';
 
 const _toString = Object.prototype.toString;
 function isPlainObject(obj: any): obj is Record<string, any> {
@@ -24,12 +24,39 @@ function isNumber(value: any): value is number {
   return typeof value === 'number';
 }
 
+// function isBoolean(value: any): value is boolean {
+//   return typeof value === 'boolean';
+// }
+
+function isDecimal(value: any, options: FormulaValueOptions) {
+  return (options.Decimal || Decimal).isDecimal(value);
+}
+
+function isDecimalValue(value: any, options: FormulaValueOptions) {
+  return isDecimal(value, options) || isNumber(value) || (!!options.tryStringToNumber && isStringNumber(value));
+}
+
+function isDecimalTrue(value: any, options: FormulaValueOptions) {
+  if (isDecimal(value, options)) {
+    return !value.isNaN() && !value.isZero();
+  }
+  return value;
+}
+
+function toDecimal(value: any, options: FormulaValueOptions) {
+  return isDecimal(value, options)
+    ? value
+    : isNumber(value) || isStringNumber(value)
+      ? new (options.Decimal || Decimal)(value)
+      : new (options.Decimal || Decimal)(NaN);
+}
+
 function toRound(
   value: Decimal.Value,
   decimalPlaces: number = 2,
-  rounding: Decimal.Rounding|RoundingType = Decimal.ROUND_HALF_UP
+  rounding: Decimal.Rounding|RoundingType = Decimal.ROUND_HALF_UP,
 ) {
-  const result = new Decimal(value);
+  let result: Decimal = new Decimal(value);
   let _rounding = isNumber(rounding)
     ? rounding
     : Decimal.ROUND_HALF_UP;
@@ -37,10 +64,11 @@ function toRound(
     const r = (Decimal as any)[rounding] || (Decimal as any)[`ROUND_${rounding}`];
     if (isNumber(r)) _rounding = r as Decimal.Rounding;
   }
-  return Number(result.toFixed(
+  result = result.toDecimalPlaces(
     decimalPlaces,
     _rounding
-  ));
+  );
+  return result;
 }
 
 // function getTokenTypeByValue(value: any) {
@@ -171,15 +199,27 @@ function removeFormArray<T>(array: T[], value: T) {
   return find;
 }
 
+const numberRegex = /^-?(?:(?:\d+(\.\d*)?)|(?:\.\d+))(e[-+]?\d+)?$/i;
+function isStringNumber(str: string) {
+  return !!str && isString(str) && numberRegex.test(str);
+}
+
+
 export {
   isPlainObject,
   isString,
   isFunction,
   isNumber,
   isPromise,
+  // isBoolean,
   isValueType,
+  isDecimal,
+  isDecimalTrue,
+  isDecimalValue,
+  toDecimal,
   toRound,
   hasOwnProp,
+  isStringNumber,
   // getTokenTypeByValue,
   getValueByPath,
   nextWithPrimise,

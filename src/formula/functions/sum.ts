@@ -15,18 +15,18 @@ function sumExecute(
   forArithmetic?: boolean
 ) {
   let value = new (options.Decimal || Decimal)(0);
-  return walkValues(
+  return walkValues<Decimal>(
     params,
     dataSource,
     options,
     (itemValue, index, isArray) => {
       onWalk && onWalk(itemValue, index, isArray);
       if (isArray) {
-        (itemValue as any[]).forEach(v => {
+        (itemValue as Decimal[]).forEach(v => {
           value = value.add(v);
         });
       } else {
-        value = value.add(itemValue);
+        value = value.add(itemValue as Decimal);
       }
       return value;
     },

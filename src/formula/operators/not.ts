@@ -2,7 +2,7 @@
 import { TokenType, } from '../type';
 import type { IFormulaDataSource, FormulaValueOptions  } from '../type';
 import AbsFormulaOperator from '../base/operator';
-import { nextWithPrimise } from '../utils';
+import { isDecimalTrue, nextWithPrimise } from '../utils';
 
 class FormulaOperatorNOT extends AbsFormulaOperator {
 
@@ -13,7 +13,7 @@ class FormulaOperatorNOT extends AbsFormulaOperator {
       [
         this.params[0].execute(dataSource, options),
       ],
-      a => !a
+      a => !isDecimalTrue(a, options)
     );
     return result;
   }

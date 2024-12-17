@@ -14,6 +14,7 @@ import FormulaFunctionEXIST from './exist';
 import FormulaFunctionCUSTOM from './custom';
 import FormulaFunctionDecimal from './decimal';
 import FormulaFunctionCAST, { CAST_MAP } from './cast';
+import FormulaFunctionCONCAT from './concat';
 
 const OneArgDecimalMethods = [
   'abs',
@@ -68,6 +69,7 @@ const FormulaFunctionMap: Record<string, FormulaFunctionItem> = {
   random: { min: 0, max: 1, functionClass: FormulaFunctionRANDOM },
   round: { min: 1, max: 2, functionClass: FormulaFunctionROUND },
   sum: { min: 1, max: 99,  functionClass: FormulaFunctionSUM },
+  concat: { min: 1, max: 99,  functionClass: FormulaFunctionCONCAT },
   ...FormulaFunctionDecimalMap,
   ...FormulaFunctionCastMap,
 };

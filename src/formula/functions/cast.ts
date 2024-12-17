@@ -1,11 +1,16 @@
 import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { nextWithPrimise } from '../utils';
+import { isDecimal, nextWithPrimise, toDecimal } from '../utils';
 
 const CAST_MAP = {
-  string: String,
-  number: Number,
-  boolean: Boolean,
+  string: (value: any) => {
+    if (value == null) {
+      return '';
+    }
+    return String(value);
+  },
+  number: (value: any, options: FormulaValueOptions) => toDecimal(value, options),
+  boolean: (value: any) => Boolean(value),
 };
 
 class FormulaFunctionCAST extends AbsFormulaFunction {
@@ -19,11 +24,10 @@ class FormulaFunctionCAST extends AbsFormulaFunction {
     const result = nextWithPrimise(
       this.params.map(param => param.execute(dataSource, options, this.arithmetic)),
       value => {
-        const cast = (CAST_MAP as any)[this.name];
-        if (value === undefined && cast === String) {
-          return 'null';
+        if (isDecimal(value, options)) {
+          value = value.toNumber();
         }
-        return cast(value);
+        return (CAST_MAP as any)[this.name](value, options);
       },
     );
     return result;

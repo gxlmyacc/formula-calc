@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js';
 import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions } from '../type';
 import { FormulaExecuteState, TokenType } from '../type';
-import { isNumber, isPromise, toRound } from '../utils';
+import { isDecimal, isNumber, isPromise, isStringNumber, toDecimal, toRound } from '../utils';
 
 function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaValue, forArithmetic?: boolean) {
   if (!item || item.arithmetic || forArithmetic) {
@@ -10,19 +10,22 @@ function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaV
     if (stepPrecision && isNumber(options.stepPrecision)) {
       precision =  options.stepPrecision;
     }
-    if ((options.Decimal || Decimal).isDecimal(value)) {
-      value = stepPrecision
-        ? toRound(value, precision, options.rounding)
-        : value.toNumber();
-    } else if (options.stepPrecision && isNumber(value)) {
-      value = toRound(value, precision, options.rounding);
+    if (isNumber(value) || (options.tryStringToNumber && isStringNumber(value))) {
+      value = toDecimal(value, options);
     }
-  } else if ((options.Decimal || Decimal).isDecimal(value)) {
-    value = value.toNumber();
+    if (isDecimal(value, options)) {
+      if (stepPrecision) {
+        value = toRound(value, precision, options.rounding);
+      } else if (options.nullAsZero && value.isNaN()) {
+        value = new Decimal(0);
+      }
+    }
   }
-  if (options.nullAsZero && (value == null || value === '' || isNaN(value))) {
-    value = 0;
-  } else if (Object.is(value, -0)) value = 0;
+  if (options.nullAsZero && (value == null || value === '' || (
+    isNumber(value) && isNaN(value)
+  ))) {
+    value = new Decimal(0);
+  }
   return value;
 }
 

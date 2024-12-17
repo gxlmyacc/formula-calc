@@ -1,4 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
+import Decimal from 'decimal.js';
 import formulaCalc, {
   Formula, createParamsDataSource,
   createFormula
@@ -27,6 +28,12 @@ describe('formula test', () => {
       precision: 2,
       stepPrecision: 3,
     })).toBe(6.67);
+    expect(formulaCalc('3.334', {
+      precision: 2,
+    })).toBe(3.33);
+    expect(formulaCalc('NaN', {
+      precision: 2,
+    })).toBe(NaN);
 
     expect(formulaCalc('null + 1', {
       nullAsZero: true,
@@ -130,6 +137,52 @@ describe('formula test', () => {
       },
       cache: true,
     })).toBe(3);
+  });
+
+  test('returnDecimal', () => {
+    let result = formulaCalc('1', {
+
+      returnDecimal: true
+    });
+    expect(Decimal.isDecimal(result)).toBe(true);
+
+    expect(formulaCalc('"1"', {
+      returnDecimal: true,
+    })).toBe('1');
+
+    result = formulaCalc('"1"', {
+      returnDecimal: true,
+      tryStringToNumber: true
+    });
+    expect(Decimal.isDecimal(result)).toBe(true);
+
+
+    result = formulaCalc('a', {
+      params: {
+        a: [1, 2, 3]
+      },
+      returnDecimal: true
+    });
+    expect(Array.isArray(result) && result.every(v => Decimal.isDecimal(v))).toBe(true);
+
+    result = formulaCalc('a', {
+      params: {
+        a: [1, '2', 3]
+      },
+      returnDecimal: true
+    });
+    expect(Array.isArray(result) && result.every((v, i) => {
+      if (i === 1) return v === '2';
+      return Decimal.isDecimal(v);
+    })).toBe(true);
+  });
+
+  test('returnReferenceType', () => {
+    let result = formulaCalc('1 + 1', {}, 0);
+    expect(result).toBe(2);
+
+    result = formulaCalc('1 + 1', {}, (result: number) => result + 1);
+    expect(result).toBe(3);
   });
 });
 

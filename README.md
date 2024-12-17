@@ -9,6 +9,26 @@ formula-calc is a library for formula calculation through strings for javascript
 
 Note: The internal numerical calculation uses the [decimal.js](https://mikemcl.github.io/decimal.js/) library.
 
+## [中文说明](https://github.com/gxlmyacc/formula-calc/blob/main/README_CN.md)
+
+## Main Features
+
+1. Basic Calculations: Supports basic mathematical operations such as addition, subtraction, multiplication, division, exponentiation, and modulus.
+
+2. Variable Support: Allows parameters to be passed through objects or arrays, supporting optional parameters and ternary operations.
+
+3. Built-in Functions: Provides various built-in functions like max, min, sum, avg, round, etc.
+
+4. Custom Functions: Users can define their own functions to extend the library's functionality.
+
+5. Asynchronous Support: Supports Promise calculations, allowing for the handling of asynchronous parameters.
+
+6. Precision Control: Users can set the precision of calculations and the precision for each step.
+
+7. Type Conversion: Supports converting values to strings, numbers, and booleans.
+
+8. Null Value Handling: Can treat `null`, `undefined`, `NaN`, `empty string` as zero.
+
 
 ## Install
 
@@ -310,7 +330,7 @@ const result = formulaCalc('string(1)');
 console.log(result); // '1'
 
 const result = formulaCalc('string(a)', { params: { a: undefined } });
-console.log(result); // 'null'
+console.log(result); // ''
 
 const result = formulaCalc('number("1")');
 console.log(result); // 1
@@ -363,27 +383,80 @@ type FormulaValueOptions = {
   precision?: number,
   rounding?: RoundingType,
   stepPrecision?: boolean|number,
+  tryStringToNumber?: boolean,
+  returnDecimal?: boolean,
   nullAsZero?: boolean,
   nullIfParamNotFound?: boolean,
-  cache?: boolean,
-  eval?: null|((expr: string, dataSource: IFormulaDataSource, options:  FormulaValueOptions) => any),
+  eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any),
 }
 
 interface FormulaOptions extends FormulaValueOptions {
 
 }
 
-interface FormulaCalcOptions extends FormulaOptions {
-  params?: Record<string, any>|((name: string) => any),
+interface FormulaCreateOptions extends FormulaOptions {
   customFunctions?: Record<string, FormulaCustomFunctionItem>,
-  dataSource?: IFormulaDataSource,
 }
 
-declare function formulaCalc(
-  expression: string,
-  options: FormulaCalcOptions = {}
-): any;
+interface FormulaCalcCommonOptions extends FormulaCreateOptions {
+  dataSource?: IFormulaDataSource
+}
+
+interface FormulaCalcOptions extends FormulaOptions {
+  params?: FormulaCalcParams|Array<FormulaCalcParams>,
+  onFormulaCreated?: (formula: Formula) => void,
+  cache?: boolean,
+}
+
+function formulaCalc<T extends any = any>(
+  expressionOrFormula: string|Formula,
+  options: FormulaCalcOptions = {},
+  returnReferenceType?: T|((result: any) => T)
+): T;
 ```
+
+#### expressionOrFormula
+
+Supports the following types:
+
+- Expression strings, such as: `a + b`.
+
+- Formula instances. You can create them using `new Formula()`. If you need to perform a large number of repeated calculations on the same expression, it is recommended to use formula instances, as they cache the calculation results, improving performance.
+
+#### options
+
+The following is a tabular description of the parameters supported by options in formulaCalc:
+
+| Parameter Name | Type | Default Value | Description |
+|------------------------------|----------------------------------------|--------------|--------------------------------------------------------------|
+| params | FormulaCalcParams\| Array\<FormulaCalcParams\> | - | Parameters passed to the expression, which can be an object or an array. If it is an array, each object in the array will be traversed to execute the expression, returning an array of results. |
+| dataSource | IFormulaDataSource | - | Custom data source passed to the expression. If not provided, the default data source (which handles the retrieval of params) will be used. If provided, the retrieval of params will be handled by the user. |
+| customFunctions | Record\<string, FormulaCustomFunctionItem\> | - | Custom function mapping table for registering custom functions. |
+| onFormulaCreated | (formula: Formula) => void | - | Callback function executed after creating the formula instance. |
+| cache | boolean | false | Whether to cache the formula instance, default is false. If true, instances of the same expression will be cached, and the next call to the same expression will return the cached instance without recreating it. |
+| Decimal | typeof Decimal | - | Custom instance of Decimal.js used for numerical calculations. |
+| precision | number | 2 | Sets the precision of the calculation results. |
+| rounding | RoundingType | 'HALF_UP' | Sets the rounding type. Optional values include: UP, DOWN, CEIL, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, HALF_CEIL, HALF_FLOOR, EUCLID. |
+| stepPrecision | boolean \| number | - | Whether to round at each step of the operation, or set the precision for each step. |
+| tryStringToNumber | boolean | false | Whether to attempt to convert strings to numbers. |
+| returnDecimal | boolean | false | Whether to return the number type as Decimal type. |
+| nullAsZero | boolean | false | Whether to treat null, undefined, NaN, and empty strings as zero in calculations. |
+| nullIfParamNotFound | boolean | false | Whether to return null if a parameter is not found. If false, an exception will be thrown when a parameter is not found. |
+| eval | null | ((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any) | - | Custom expression eval function. |
+
+##### returnReferenceType
+
+The return value type of `formulaCalc` can be referenced in the parameters. In js code, users can set `returnReferenceType` to the corresponding type to facilitate IDE type hints.
+
+like this:
+
+```js
+/** IDE should be able to automatically recognize that the result is of type number  */
+const result = formulaCalc('1 + 1', {}, 0);
+```
+
+If `returnReferenceType` is a function, it can process the result value before formulaCalc returns, and the return value of that function will be the final return value.
+
 
 ## Values
 
@@ -425,7 +498,7 @@ Supports the following operators
 
 - `=`  -  equal, like `a = b`, if `a` or `b` is `undefined`, it will be as `null`
 
-- `!=`  -  not equal
+- `!=` or `<>`  -  not equal
 
 - `>`  -  greater than
 
@@ -487,8 +560,11 @@ Supports the following built in functions:
 - `tan(x)` - Returns the tangent of x (x in radians)
 
 - `asin(x)` - Returns the arcsine of x in radians
+
 - `acos(x)` - Returns the arccosine of x in radians
+
 - `atan(x)` - Returns the arctangent of x in radians
+
 - `atan2(y, x)` - Returns the arctangent of the quotient of y and x in radians
 
 ### Hyperbolic Functions
@@ -504,6 +580,10 @@ Supports the following built in functions:
 - `acosh(x)` - Returns the inverse hyperbolic cosine of x
 
 - `atanh(x)` - Returns the inverse hyperbolic tangent of x
+
+### String Funcionts
+
+- `concat(n1, n2, ..., n99)` - return all parameters into a string
 
 ### Special Functions
 
@@ -529,7 +609,7 @@ Supports the following built in functions:
 
 ### Cast Functions
 
-- `string(expr)` - cast expr to string, note: if `expr` is `undefined`, it will be as `null`
+- `string(expr)` - cast expr to string, note: `null` will be cast to an empty string, if `expr` is `undefined`, it will be as `null`
 
 - `number(expr)` - cast expr to number
 

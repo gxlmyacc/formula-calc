@@ -1,7 +1,7 @@
 
 import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { getValueByPath, isString, isValueType, nextWithPrimise } from '../utils';
+import { getValueByPath, isDecimal, isString, isValueType, nextWithPrimise } from '../utils';
 
 
 class FormulaFunctionEXIST extends AbsFormulaFunction {
@@ -18,12 +18,15 @@ class FormulaFunctionEXIST extends AbsFormulaFunction {
           throw new Error('Invalid parameter type: "key" is not string!');
         }
         let ret = true;
-        const value = key
+        let value = key
           ? getValueByPath(model, key, () => {
             ret = false;
           })
           : model;
         if (ret && type && isString(type)) {
+          if (isDecimal(value, options)) {
+            value = value.toNumber();
+          }
           ret = isValueType(value, type as any);
         }
         return ret;

@@ -29,6 +29,13 @@ describe('operator test', () => {
         }
       }
     })).resolves.toBe(1.9);
+
+    expect(formulaCalc('1 + "1"')).toBe(2);
+    expect(formulaCalc('"1" + 1')).toBe(2);
+    expect(formulaCalc('1 + "1"', { tryStringToNumber: true })).toBe(2);
+    expect(formulaCalc('1 + null', { nullAsZero: true })).toBe(1);
+    expect(formulaCalc('1 + ""', { nullAsZero: true })).toBe(1);
+    expect(formulaCalc('1 + NaN', { nullAsZero: true })).toBe(1);
   });
 
   test('sub', () => {
@@ -182,10 +189,7 @@ describe('operator test', () => {
     expect(formulaCalc('true & !!(1 - 1)')).toBe(false);
     expect(formulaCalc('true & !(!(1 - 1))')).toBe(false);
 
-    expect(formulaCalc('1 <> 2')).toBe(true);
-    expect(formulaCalc('1 <> 1')).toBe(false);
-    expect(formulaCalc('1 + 3 <> 2 + 2')).toBe(false);
-    expect(formulaCalc('1 + 3 <> 2 + 1')).toBe(true);
+
     expect(formulaCalc('true & !1%')).toBe(false);
 
     expect(formulaCalc('!noref(false)')).toBe(true);
@@ -206,6 +210,7 @@ describe('operator test', () => {
     expect(formulaCalc('a >= b', { params: { a: '10',  b: '2' } })).toBe(false);
     expect(formulaCalc('a >= b', { params: { a: '10',  b: 2 } })).toBe(true);
     expect(formulaCalc('a >= b', { params: { a: 10,  b: '2' } })).toBe(true);
+    expect(formulaCalc('a >= b', { params: { a: '10',  b: 2 } })).toBe(true);
 
     expect(formulaCalc('a > b', { params: { a: 10,  b: 2 } })).toBe(true);
     expect(formulaCalc('a > b', { params: { a: '10',  b: '2' } })).toBe(false);
@@ -216,8 +221,8 @@ describe('operator test', () => {
   test('lt', () => {
     expect(formulaCalc('1 < 2')).toBe(true);
     expect(formulaCalc('2 < 1')).toBe(false);
-    expect(formulaCalc('true < 2')).toBe(true);
-    expect(formulaCalc('false < 2')).toBe(true);
+    expect(formulaCalc('true < 2')).toBe(false);
+    expect(formulaCalc('false < 2')).toBe(false);
     expect(formulaCalc('2 <= 1')).toBe(false);
     expect(formulaCalc('1 <= 2')).toBe(true);
     expect(formulaCalc('2 + 5 <= 6 + 1')).toBe(true);
@@ -226,6 +231,7 @@ describe('operator test', () => {
 
     expect(formulaCalc('a <= b', { params: { a: 10,  b: 2 } })).toBe(false);
     expect(formulaCalc('a <= b', { params: { a: '10',  b: '2' } })).toBe(true);
+    expect(formulaCalc('number(a) <= number(b)', { params: { a: '10',  b: '2' } })).toBe(false);
     expect(formulaCalc('a <= b', { params: { a: '10',  b: 2 } })).toBe(false);
     expect(formulaCalc('a <= b', { params: { a: 10,  b: '2' } })).toBe(false);
 
@@ -262,6 +268,11 @@ describe('operator test', () => {
   test('ne', () => {
     expect(formulaCalc('2 != 2')).toBe(false);
     expect(formulaCalc('1 != 2')).toBe(true);
+
+    expect(formulaCalc('1 <> 2')).toBe(true);
+    expect(formulaCalc('1 <> 1')).toBe(false);
+    expect(formulaCalc('1 + 3 <> 2 + 2')).toBe(false);
+    expect(formulaCalc('1 + 3 <> 2 + 1')).toBe(true);
   });
 
   test('if', () => {
@@ -311,7 +322,7 @@ describe('operator test', () => {
     expect(formulaCalc(
       `a
        ? abs(-1)
-      : abs(-3)
+       : abs(-3)
       `,
       { params: { a: true } }
     )).toBe(1);
@@ -400,7 +411,20 @@ describe('operator test', () => {
 
     // Large number precision issues
     expect(formulaCalc('9007199254740992 + 1')).toBe(9007199254740992);
+    expect(formulaCalc('9007199254740992 + 1.23 - 2.23')).toBe(9007199254740991);
+    expect(formulaCalc('9007199254740992 + 1 - 1')).toBe(9007199254740992);
+    expect(formulaCalc('9007199254740992 + 2')).toBe(9007199254740994);
     // expect(formulaCalc('9007199254740992 + 1.23')).toBe(9007199254740992);
+
+    expect(formulaCalc('9007199254740992 * 2')).toBe(18014398509481984);
+    expect(formulaCalc('9007199254740992 * 0.5')).toBe(4503599627370496);
+    expect(formulaCalc('9007199254740992 * 3')).toBe(27021597764222976);
+    expect(formulaCalc('9007199254740992 * 0.333333')).toBe(3002396749180579);
+
+    expect(formulaCalc('9007199254740992 / 0.5')).toBe(18014398509481984);
+    expect(formulaCalc('9007199254740992 / 2')).toBe(4503599627370496);
+    expect(formulaCalc('9007199254740992 / 3')).toBe(3002399751580330.5);
+    expect(formulaCalc('9007199254740992 / 9007199254740992')).toBe(1);
 
     // Scientific notation precision issues
     expect(formulaCalc('1e-4 + 1e-5')).toBe(0.00011);

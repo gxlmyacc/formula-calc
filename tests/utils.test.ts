@@ -6,12 +6,12 @@ import FormulaBool from '../src/formula/values/bool';
 
 describe('utils test', () => {
   test('utils', () => {
-    expect(toRound(3.335)).toBe(3.34);
-    expect(toRound(3.331, 2, 'CEIL')).toBe(3.34);
+    expect(Number(toRound(3.335))).toBe(3.34);
+    expect(Number(toRound(3.331, 2, 'CEIL'))).toBe(3.34);
     // @ts-ignore
-    expect(toRound(3.331, 2, 'CEIL1')).toBe(3.33);
+    expect(Number(toRound(3.331, 2, 'CEIL1'))).toBe(3.33);
 
-    expect(toRound(3.331, 2, Decimal.ROUND_CEIL)).toBe(3.34);
+    expect(Number(toRound(3.331, 2, Decimal.ROUND_CEIL))).toBe(3.34);
 
     expect(getValueByPath({
       a: {

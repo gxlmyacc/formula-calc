@@ -3,11 +3,13 @@ import { FormulaValues } from '../type';
 import type { IFormulaDataSource, FormulaValueOptions } from '../type';
 import { nextWithPrimise, flatten } from '../utils';
 
-function walkValues(
+type WalkEvent<T> = ((itemValue: T|T[], index: number, isArray: boolean, isFirst: boolean) => void)
+
+function walkValues<T = any>(
   params: FormulaValues,
   dataSource: IFormulaDataSource,
   options: FormulaValueOptions,
-  onWalk: (itemValue: any, index: number, isArray: boolean, isFirst: boolean) => void,
+  onWalk: WalkEvent<T>,
   forArithmetic?: boolean
 ) {
   return nextWithPrimise(
@@ -19,7 +21,7 @@ function walkValues(
         const itemValue = params[i];
         if (Array.isArray(itemValue)) {
           const values = flatten(itemValue).map(v => resolveValue(v, options));
-          result = onWalk(values, i, true, isFirst);
+          result = onWalk(values as any, i, true, isFirst);
         } else {
           result = onWalk(itemValue, i, false, isFirst);
         }
