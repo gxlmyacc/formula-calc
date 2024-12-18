@@ -431,7 +431,7 @@ console.log(result); // [2, 3, 4]
 以下是 `formulaCalc` 中 `options` 支持的参数的表格式说明文档：
 
 | 参数名称 | 类型 | 默认值 | 描述 |
-|------------------------------|----------------------------------------|--------------|--------------------------------------------------------------|
+|---------------------------|----------------------------------------|-----------|--------------------------------------------------------------|
 | params  | FormulaCalcParams\| Array\<FormulaCalcParams\> | - | 传递给表达式的参数，可以是对象或数组。若为数组，则会将数组中每个对象作为参数遍历执行表达式，并返回一个结果数组。 |
 | dataSource | IFormulaDataSource | - | 传递给表达式的自定义数据源，如果不传递，则使用默认的数据源（处理params参数的获取）。若传递，则params参数的获取将由使用者自己处理。 |
 | customFunctions | Record\<string, FormulaCustomFunctionItem\> | - | 自定义函数映射表，用于注册自定义函数。 |
@@ -445,7 +445,7 @@ console.log(result); // [2, 3, 4]
 | returnDecimal | boolean | false | 是否将返回的数字类型作为 Decimal 类型进行返回。 |
 | nullAsZero | boolean | false | 是否将 `null`、`undefined`、`NaN` 、`空字符串` 视为零参与计算。 |
 | nullIfParamNotFound | boolean | false | 如果参数未找到，是否返回 `null`。若为false时，未找到参数将抛出异常。 |
-| eval | null | ((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any) | - | 自定义的表达式eval函数。 |
+| eval | null\|Function | - | 自定义的表达式eval函数。 |
 
 #### returnReferenceType
 

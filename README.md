@@ -447,7 +447,7 @@ console.log(result); // [2, 3, 4]
 The following is a tabular description of the parameters supported by options in formulaCalc:
 
 | Parameter Name | Type | Default Value | Description |
-|------------------------------|----------------------------------------|--------------|--------------------------------------------------------------|
+|---------------------------|----------------------------------------|-----------|--------------------------------------------------------------|
 | params | FormulaCalcParams\| Array\<FormulaCalcParams\> | - | Parameters passed to the expression, which can be an object or an array. If it is an array, each object in the array will be traversed to execute the expression, returning an array of results. |
 | dataSource | IFormulaDataSource | - | Custom data source passed to the expression. If not provided, the default data source (which handles the retrieval of params) will be used. If provided, the retrieval of params will be handled by the user. |
 | customFunctions | Record\<string, FormulaCustomFunctionItem\> | - | Custom function mapping table for registering custom functions. |
@@ -461,7 +461,7 @@ The following is a tabular description of the parameters supported by options in
 | returnDecimal | boolean | false | Whether to return the number type as Decimal type. |
 | nullAsZero | boolean | false | Whether to treat null, undefined, NaN, and empty strings as zero in calculations. |
 | nullIfParamNotFound | boolean | false | Whether to return null if a parameter is not found. If false, an exception will be thrown when a parameter is not found. |
-| eval | null | ((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any) | - | Custom expression eval function. |
+| eval | null\|Function | - | Custom expression eval function. |
 
 ##### returnReferenceType
 
