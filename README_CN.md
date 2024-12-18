@@ -406,6 +406,26 @@ function formulaCalc<T extends any = any>(
 
 - 公式实例。可以通过`new Formula()`来创建，若需要对相同表达式进行大量重复计算，建议使用公式实例，因为公式实例会缓存计算结果，从而提高性能。
 
+使用formula实例:
+```ts
+import formulaCalc from 'formula-calc';
+
+const formula = new Formula();
+formula.parse('1 + a');
+
+const result = [1, 2, 3].map(a => formulaCalc(formula, { params: { a } }));
+console.log(result); // [2, 3, 4]
+
+```
+
+你也可以使用参数列表实现相同相同的功能:
+```ts
+import formulaCalc from 'formula-calc';
+
+const result = formulaCalc('1 + a', { params: [1, 2, 3].map(a => ({ a }))  });
+console.log(result); // [2, 3, 4]
+```
+
 #### options
 
 以下是 `formulaCalc` 中 `options` 支持的参数的表格式说明文档：
@@ -499,6 +519,8 @@ const result = formulaCalc('1 + 1', {}, 0);
 - `? :`  -  三元运算符，如 `a ? b : c`
 
 - `()` -  括号
+
+注意：上述操作符中的比较操作符（`=`, `!=`, `<>`, `>`, `<`, `>=`, `<=`）在进行比较之前，如果比较的两边中有一边是数字，则将会尝试将两边都转换为数字进行比较，否则进行字符串比较，比如`10 > "2"`为true，而`"10" > "2"`为false。如果配置了`tryStringToNumber`为`true`，则将会尝试将两边的字符串转换为数字进行比较。
 
 ## 函数
 

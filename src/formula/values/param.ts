@@ -16,11 +16,11 @@ class FormulaParam extends FormulaValue implements IFormulaParam {
     this.tokenType = tokenType;
   }
 
-  _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
+  _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic: boolean) {
     // if (!dataSource) {
     //   throw new Error('param must have a dataSource!');
     // }
-    const value = dataSource.getParam(this.name, options);
+    const value = dataSource.getParam(this.name, options, forArithmetic);
     this.arithmetic = isDecimalValue(value, options);
     return value;
   }

@@ -147,7 +147,7 @@ const OperatorWithLeftParams = [
 ];
 
 interface IFormulaDataSource {
-  getParam(name: string, options: FormulaValueOptions) : any;
+  getParam(name: string, options: FormulaValueOptions, forArithmetic?: boolean) : any;
 }
 
 type RoundingType = 'UP'|'DOWN'|'CEIL'|'FLOOR'|'HALF_UP'|'HALF_DOWN'|'HALF_EVEN'|'HALF_CEIL'|'HALF_FLOOR'|'EUCLID';

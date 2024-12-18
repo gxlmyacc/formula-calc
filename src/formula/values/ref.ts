@@ -16,7 +16,7 @@ class FormulaRef extends FormulaValue {
     this.order = Number(origText.substr(1, origText.length));
   }
 
-  _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
+  _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic: boolean) {
     const value = this.refs[this.order - 1];
     if (!value) {
       throw new Error(`can not find ${this.origText}\`s ref value!`);
@@ -24,9 +24,10 @@ class FormulaRef extends FormulaValue {
     if (value.state === FormulaExecuteState.fesExecuting) {
       throw new Error(`${this.origText} execute failed: exist circular reference!`);
     }
-    return value.state === FormulaExecuteState.fesExecuted
+    const result = value.state === FormulaExecuteState.fesExecuted
       ? value.value
-      : value.execute(dataSource, options);
+      : value.execute(dataSource, options, forArithmetic);
+    return result;
   }
 
 }

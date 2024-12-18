@@ -4,7 +4,7 @@ import { FormulaExecuteState, TokenType } from '../type';
 import { isDecimal, isNumber, isPromise, isStringNumber, toDecimal, toRound } from '../utils';
 
 function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaValue, forArithmetic?: boolean) {
-  if (!item || item.arithmetic || forArithmetic) {
+  if (!item || item.arithmetic || forArithmetic || options.tryStringToNumber) {
     let precision = options.precision;
     let stepPrecision = isNumber(options.stepPrecision) || options.stepPrecision;
     if (stepPrecision && isNumber(options.stepPrecision)) {

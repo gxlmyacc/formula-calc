@@ -423,6 +423,25 @@ Supports the following types:
 
 - Formula instances. You can create them using `new Formula()`. If you need to perform a large number of repeated calculations on the same expression, it is recommended to use formula instances, as they cache the calculation results, improving performance.
 
+use formula instance:
+```ts
+import formulaCalc from 'formula-calc';
+
+const formula = new Formula();
+formula.parse('1 + a');
+
+const result = [1, 2, 3].map(a => formulaCalc(formula, { params: { a } }));
+console.log(result); // [2, 3, 4]
+
+```
+you can also use params list to execute multiple times:
+
+```ts
+import formulaCalc from 'formula-calc';
+const result = formulaCalc('1 + a', { params: [1, 2, 3].map(a => ({ a }))  });
+console.log(result); // [2, 3, 4]
+```
+
 #### options
 
 The following is a tabular description of the parameters supported by options in formulaCalc:
@@ -517,6 +536,11 @@ Supports the following operators
 - `? :`  -  ternary operator, like `a ? b : c`
 
 - `()` -  parenthesis
+
+
+Note: 
+
+- The comparison operators (`=`, `!=`, `<>`, `>`, `<`, `>=`, `<=`) mentioned above will attempt to convert both sides of the comparison to numbers before comparing. Otherwise, string comparison will be performed, for example, ` 10 > "2" ` is `true`, and `"10" > "2"` is `false`. If `tryStringToNumber` is configured as `true`, an attempt will be made to convert both strings into numbers for comparison.
 
 ## Functions
 

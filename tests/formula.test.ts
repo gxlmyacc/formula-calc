@@ -156,6 +156,10 @@ describe('formula test', () => {
     });
     expect(Decimal.isDecimal(result)).toBe(true);
 
+    expect(formulaCalc('"1"', {
+      tryStringToNumber: true
+    })).toBe(1);
+
 
     result = formulaCalc('a', {
       params: {

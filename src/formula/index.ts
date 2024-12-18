@@ -24,7 +24,7 @@ import FormulaParam from './values/param';
 import FormulaRef from './values/ref';
 import FormulaNaN from './values/nan';
 import { ERROR_FORMULA_STR } from './constant';
-import { isDecimal, isDecimalValue, isNumber, isString, nextWithPrimise, removeFormArray, toRound } from './utils';
+import { isDecimal, isDecimalValue, isNumber, nextWithPrimise, removeFormArray, toRound } from './utils';
 
 interface FormulaOptions extends FormulaValueOptions {
 
@@ -393,8 +393,6 @@ class Formula {
           } else if (isDecimalValue(result, options)) {
             if (options.returnDecimal) {
               result =  new (options.Decimal || Decimal)(result);
-            } else if (isString(result) && options.tryStringToNumber) {
-              result = Number(result);
             }
           }
           return result;

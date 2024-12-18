@@ -204,6 +204,13 @@ aa"`)).toBe('string\ndd\naa');
         a: -1
       }
     })).toBe(7);
+    expect(formulaCalc('$1 ? (1 + 1) : (1 + 2)')).toBe(2);
+    expect(formulaCalc('((1 + 1) + a) > $2 ? $1 : $2', { params: { a: 1  } })).toBe(3);
+    expect(formulaCalc('((1 + 1) + a) > $2 ? $1 : $2', { params: { a: -1  } })).toBe(2);
+    expect(formulaCalc('("10") ? ($1 > 2) : 1')).toBe(true);
+    expect(formulaCalc('("10") ? ($1 > "2") : 1')).toBe(false);
+    expect(formulaCalc('("10") ? ($1 > "2") : 1', { tryStringToNumber: true })).toBe(true);
+    expect(formulaCalc('(10) ? ($1 > "2") : 1')).toBe(true);
 
     expect(() => formulaCalc('1 + (1 + 1 + $1)'))
       .toThrow('$1 execute failed: exist circular reference!');
