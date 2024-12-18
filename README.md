@@ -539,8 +539,7 @@ Supports the following operators
 
 
 Note: 
-
-- The comparison operators (`=`, `!=`, `<>`, `>`, `<`, `>=`, `<=`) mentioned above will attempt to convert both sides of the comparison to numbers before comparing. Otherwise, string comparison will be performed, for example, ` 10 > "2" ` is `true`, and `"10" > "2"` is `false`. If `tryStringToNumber` is configured as `true`, an attempt will be made to convert both strings into numbers for comparison.
+- For the comparison operators (`=`, `!=`, `<>`, `>`, `<`, `>=`, `<=`), before performing the comparison, if one side is a number, both sides will be attempted to be converted to numbers for comparison; otherwise, string comparison will be performed. For example, `10 > "2"` is true, while `"10" > "2"` is false. If the `tryStringToNumber` option is set to `true`, then will attempt to convert both sides of the comparison to numbers.
 
 ## Functions
 
