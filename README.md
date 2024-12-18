@@ -421,7 +421,7 @@ Supports the following types:
 
 - Expression strings, such as: `a + b`.
 
-- Formula instances. You can create them using `new Formula()`. If you need to perform a large number of repeated calculations on the same expression, it is recommended to use formula instances, as they cache the calculation results, improving performance.
+- Formula instances. You can create them using `new Formula()`. If you need to perform a large number of repeated calculations on the same expression, it is recommended to use formula instances, as they cache the parsing result of the expression to improve execution performance.
 
 use formula instance:
 ```ts
