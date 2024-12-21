@@ -377,7 +377,7 @@ console.log(result); // 1
 
 #### formulaCalc
 
-`formulaCalc` is default export.
+`formulaCalc` is the default export method. It is the core function for performing formula calculations.
 
 ```tsx
 type RoundingType = 'UP'|'DOWN'|'CEIL'|'FLOOR'|'HALF_UP'|'HALF_DOWN'|'HALF_EVEN'|'HALF_CEIL'|'HALF_FLOOR'|'EUCLID';
