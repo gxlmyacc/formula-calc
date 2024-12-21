@@ -29,6 +29,8 @@ Note: The internal numerical calculation uses the [decimal.js](https://mikemcl.g
 
 8. Null Value Handling: Can treat `null`, `undefined`, `NaN`, `empty string` as zero.
 
+9. Result referencing: Supports referencing the results of calculations in order using `$1...$n`, similar to regular expressions.
+
 
 ## Install
 
