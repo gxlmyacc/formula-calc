@@ -18,6 +18,17 @@ describe('function test', () => {
         a: [1, 2, 5, 4, 3]
       }
     })).toBe(5);
+    expect(formulaCalc('max(a)', {
+      params: {
+        a: []
+      }
+    })).toBe(undefined);
+    expect(formulaCalc('max(a)', {
+      params: {
+        a: []
+      },
+      nullAsZero: true,
+    })).toBe(0);
 
     expect(formulaCalc('max(1)')).toBe(1);
     expect(formulaCalc('max(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(6);
@@ -51,6 +62,17 @@ describe('function test', () => {
         a: [1, 2, 3, 4, 5]
       }
     })).toBe(1);
+    expect(formulaCalc('min(a)', {
+      params: {
+        a: []
+      }
+    })).toBe(undefined);
+    expect(formulaCalc('min(a)', {
+      params: {
+        a: []
+      },
+      nullAsZero: true,
+    })).toBe(0);
 
     expect(formulaCalc('min(1)')).toBe(1);
     expect(formulaCalc('min(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(-1);
@@ -166,6 +188,16 @@ describe('function test', () => {
     expect(formulaCalc('avg(1)')).toBe(1);
     expect(formulaCalc('avg(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(2.5);
     expect(formulaCalc('avg(-1, -1.2, 0, 1, 1.3)')).toBe(0.02);
+    expect(formulaCalc('avg(a)', {
+      params: {
+        a: []
+      }
+    })).toBe(0);
+    expect(formulaCalc('avg(a)', {
+      params: {
+        a: [1]
+      }
+    })).toBe(1);
 
     expect(formulaCalc('avg(3, 2, 1, 0, -1, a)', {
       params: {

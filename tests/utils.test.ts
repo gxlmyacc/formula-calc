@@ -1,17 +1,17 @@
 import { describe, expect, test } from '@jest/globals';
 import Decimal from 'decimal.js';
-import { toRound, getValueByPath, removeFormArray } from '../src';
+import { getValueByPath, removeFormArray, formulaUtils } from '../src';
 
 import FormulaBool from '../src/formula/values/bool';
 
 describe('utils test', () => {
   test('utils', () => {
-    expect(Number(toRound(3.335))).toBe(3.34);
-    expect(Number(toRound(3.331, 2, 'CEIL'))).toBe(3.34);
+    expect(Number(formulaUtils.round(3.335))).toBe(3.34);
+    expect(Number(formulaUtils.round(3.331, 2, 'CEIL'))).toBe(3.34);
     // @ts-ignore
-    expect(Number(toRound(3.331, 2, 'CEIL1'))).toBe(3.33);
+    expect(Number(formulaUtils.round(3.331, 2, 'CEIL1'))).toBe(3.33);
 
-    expect(Number(toRound(3.331, 2, Decimal.ROUND_CEIL))).toBe(3.34);
+    expect(Number(formulaUtils.round(3.331, 2, Decimal.ROUND_CEIL))).toBe(3.34);
 
     expect(getValueByPath({
       a: {
@@ -41,6 +41,22 @@ describe('utils test', () => {
     expect(array).toEqual([2, 3]);
     removeFormArray(array, 4);
     expect(array).toEqual([2, 3]);
+  });
+
+  test('formulaUtils', () => {
+    expect(formulaUtils.sum([1, 2, 3])).toBe(6);
+    expect(formulaUtils.sum([new Decimal(1), new Decimal(2), new Decimal(3)])).toBe(6);
+    expect(formulaUtils.sum([])).toBe(0);
+    expect(formulaUtils.sum([1, 2, 3, null, undefined, ''])).toBe(6);
+    expect(formulaUtils.avg([1, 2, 3])).toBe(2);
+    expect(formulaUtils.avg([new Decimal(1), new Decimal(2), new Decimal(3)])).toBe(2);
+    expect(formulaUtils.avg([])).toBe(0);
+    expect(formulaUtils.min([1, 2, 3])).toBe(1);
+    expect(formulaUtils.min([new Decimal(1), new Decimal(2), new Decimal(3)])).toBe(1);
+    expect(formulaUtils.min([])).toBe(0);
+    expect(formulaUtils.max([1, 2, 3])).toBe(3);
+    expect(formulaUtils.max([new Decimal(1), new Decimal(2), new Decimal(3)])).toBe(3);
+    expect(formulaUtils.max([])).toBe(0);
   });
 });
 

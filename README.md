@@ -375,9 +375,11 @@ console.log(result); // 1
 
 ### API
 
-- formulaCalc
+#### formulaCalc
 
-```ts
+`formulaCalc` is default export.
+
+```tsx
 type RoundingType = 'UP'|'DOWN'|'CEIL'|'FLOOR'|'HALF_UP'|'HALF_DOWN'|'HALF_EVEN'|'HALF_CEIL'|'HALF_FLOOR'|'EUCLID';
 
 type FormulaValueOptions = {
@@ -410,14 +412,16 @@ interface FormulaCalcOptions extends FormulaOptions {
   cache?: boolean,
 }
 
-function formulaCalc<T extends any = any>(
+declare function formulaCalc<T extends any = any>(
   expressionOrFormula: string|Formula,
   options: FormulaCalcOptions = {},
   returnReferenceType?: T|((result: any) => T)
 ): T;
+
+export default formulaCalc;
 ```
 
-#### expressionOrFormula
+##### expressionOrFormula
 
 Supports the following types:
 
@@ -444,7 +448,7 @@ const result = formulaCalc('1 + a', { params: [1, 2, 3].map(a => ({ a }))  });
 console.log(result); // [2, 3, 4]
 ```
 
-#### options
+##### options
 
 The following is a tabular description of the parameters supported by options in formulaCalc:
 
@@ -465,7 +469,7 @@ The following is a tabular description of the parameters supported by options in
 | nullIfParamNotFound | boolean | false | Whether to return null if a parameter is not found. If false, an exception will be thrown when a parameter is not found. |
 | eval | null\|Function | - | Custom expression eval function. |
 
-##### returnReferenceType
+###### returnReferenceType
 
 The return value type of `formulaCalc` can be referenced in the parameters. In js code, users can set `returnReferenceType` to the corresponding type to facilitate IDE type hints.
 
@@ -477,6 +481,30 @@ const result = formulaCalc('1 + 1', {}, 0);
 ```
 
 If `returnReferenceType` is a function, it can process the result value before formulaCalc returns, and the return value of that function will be the final return value.
+
+#### formulaUtils
+
+`formulaUtils` is a set of helper utility functions (`sum`, `avg`, `min`, `max`, `round`) designed to facilitate simple calculations that don't need to be performed through expressions.
+
+```tsx
+type FormulaUtils = {
+  sum: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  avg: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  min: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  max: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  round: (
+    value: Decimal.Value,
+    decimalPlaces: number = 2,
+    rounding: Decimal.Rounding|RoundingType = Decimal.ROUND_HALF_UP,
+  ) => number
+}
+
+declare const formulaUtils: FormulaUtils;
+
+export {
+  formulaUtils
+}
+```
 
 
 ## Values

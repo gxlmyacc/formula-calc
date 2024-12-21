@@ -1,5 +1,6 @@
+import type Decimal from 'decimal.js';
 import Formula, { registorFormulaFunction, TokenType } from './formula';
-import { getValueByPath, hasOwnProp, isFunction, isPlainObject, isString } from './formula/utils';
+import { getValueByPath, hasOwnProp, toRound, isFunction, isPlainObject, isString } from './formula/utils';
 import type { FormulaOptions, IFormulaDataSource, FormulaCustomFunctionItem } from './formula';
 import { FormulaValueOptions } from './formula/type';
 
@@ -123,6 +124,36 @@ function formulaCalc<T extends any = any>(
 }
 
 
+const formulaUtilsNames = ['sum', 'avg', 'max', 'min'] as const;
+type FormulaUtils = Record<
+(typeof formulaUtilsNames)[number],
+(
+  params: Array<number|string|null|undefined|Decimal>,
+  options?: Omit<FormulaCalcOptions, 'params'>
+) => number
+> & {
+  round: (...args: Parameters<typeof toRound>) => number,
+}
+
+const formulaUtils = formulaUtilsNames.reduce(
+  (p, name) => {
+    p[name] = (params, options) => formulaCalc(`${name}(a)`, {
+      nullAsZero: true,
+      tryStringToNumber: true,
+      nullIfParamNotFound: true,
+      cache: true,
+      ...options,
+      params: {
+        a: params,
+      }
+    });
+    return p;
+  },
+{} as FormulaUtils
+);
+
+formulaUtils.round = (...args) => Number(toRound(...args));
+
 export {
   Formula,
   TokenType,
@@ -130,6 +161,7 @@ export {
   createParamsDataSource,
   createFormulaEval,
   registorFormulaFunction,
+  formulaUtils,
 };
 
 export type {

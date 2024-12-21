@@ -358,9 +358,11 @@ console.log(result); // 1
 
 ### API
 
-- formulaCalc
+#### formulaCalc
 
-```ts
+`formulaCalc`是默认的导出方法。它是进行公式计算的核心函数。
+
+```tsx
 type RoundingType = 'UP'|'DOWN'|'CEIL'|'FLOOR'|'HALF_UP'|'HALF_DOWN'|'HALF_EVEN'|'HALF_CEIL'|'HALF_FLOOR'|'EUCLID';
 
 type FormulaValueOptions = {
@@ -393,14 +395,16 @@ interface FormulaCalcOptions extends FormulaOptions {
   cache?: boolean,
 }
 
-function formulaCalc<T extends any = any>(
+declare function formulaCalc<T extends any = any>(
   expressionOrFormula: string|Formula,
   options: FormulaCalcOptions = {},
   returnReferenceType?: T|((result: any) => T)
 ): T;
+
+export default formulaCalc;
 ```
 
-#### expressionOrFormula
+##### expressionOrFormula
 
 支持以下类型：
 
@@ -428,7 +432,7 @@ const result = formulaCalc('1 + a', { params: [1, 2, 3].map(a => ({ a }))  });
 console.log(result); // [2, 3, 4]
 ```
 
-#### options
+##### options
 
 以下是 `formulaCalc` 中 `options` 支持的参数的表格式说明文档：
 
@@ -449,7 +453,7 @@ console.log(result); // [2, 3, 4]
 | nullIfParamNotFound | boolean | false | 如果参数未找到，是否返回 `null`。若为false时，未找到参数将抛出异常。 |
 | eval | null\|Function | - | 自定义的表达式eval函数。 |
 
-#### returnReferenceType
+##### returnReferenceType
 
 `formulaCalc`的返回值类型参考参数。在`js`代码中，使用者可以通过预判的返回值类型设置`returnReferenceType`为对应的类型，以方便ide实现类型提示。
 
@@ -461,6 +465,30 @@ const result = formulaCalc('1 + 1', {}, 0);
 ```
 
 若`returnReferenceType`为函数，则可以在`formulaCalc`返回之前对结果值做一些处理，而该函数返回值将作为最终返回值。
+
+#### formulaUtils
+
+`formulaUtils`是一些辅助工具函数(`sum`、`avg`、`min`、`max`、`round`)，以方便一些简单的不想通过表达式进行计算的场景。
+
+```tsx
+type FormulaUtils = {
+  sum: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  avg: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  min: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  max: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  round: (
+    value: Decimal.Value,
+    decimalPlaces: number = 2,
+    rounding: Decimal.Rounding|RoundingType = Decimal.ROUND_HALF_UP,
+  ) => number
+}
+
+declare const formulaUtils: FormulaUtils;
+
+export {
+  formulaUtils
+}
+```
 
 ## 值
 

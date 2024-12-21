@@ -18,7 +18,7 @@ class FormulaFunctionAVG extends AbsFormulaFunction {
       },
       true
     );
-    return nextWithPrimise(value, a => a.div(paramCount));
+    return nextWithPrimise(value, a => (paramCount ? a.div(paramCount) : a));
   }
 
 }
