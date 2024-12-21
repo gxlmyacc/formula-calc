@@ -1,6 +1,6 @@
-# 公式计算库
+# formula-calc
 
-公式计算库是一个用于通过字符串进行公式计算的 JavaScript/TypeScript 库。
+`formula-calc`是一个用于通过字符串进行公式计算的 JavaScript/TypeScript 库。
 
 [![NPM 版本](https://img.shields.io/npm/v/formula-calc.svg?style=flat)](https://npmjs.com/package/formula-calc)
 [![NPM 下载量](https://img.shields.io/npm/dm/formula-calc.svg?style=flat)](https://npmjs.com/package/formula-calc)
