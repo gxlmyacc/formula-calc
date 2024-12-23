@@ -510,6 +510,8 @@ Note: The `sum`, `avg`, `min`, and `max` functions in `formulaUtils` are configu
 Below is an example:
 
 ```ts
+import { formulaUtils } from 'formula-calc';
+
 const result = formulaUtils.sum([1, 2, 3]);
 console.log(result); // 6
 

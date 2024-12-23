@@ -495,6 +495,8 @@ export {
 下面是示例：
 
 ```ts
+import { formulaUtils } from 'formula-calc';
+
 const result = formulaUtils.sum([1, 2, 3]);
 console.log(result); // 6
 
