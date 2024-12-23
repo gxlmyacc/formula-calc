@@ -537,6 +537,9 @@ console.log(result); // 3
 const result = formulaUtils.max([]);
 console.log(result); // 0
 
+const result = formulaUtils.round(1.2345, 3);
+console.log(result); // 1.235
+
 ```
 
 
