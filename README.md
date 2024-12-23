@@ -505,6 +505,39 @@ export {
   formulaUtils
 }
 ```
+Note: The `sum`, `avg`, `min`, and `max` functions in `formulaUtils` are configured by default with `nullAsZero`, `tryStringToNumber`, and `nullIfParamNotFound` set to `true`.
+
+Below is an example:
+
+```ts
+const result = formulaUtils.sum([1, 2, 3]);
+console.log(result); // 6
+
+const result = formulaUtils.sum([1, 2, 3, null, undefined, '']);
+console.log(result); // 6
+
+const result = formulaUtils.sum([]);
+console.log(result); // 0
+
+const result = formulaUtils.avg([1, 2, 3]);
+console.log(result); // 2
+
+const result = formulaUtils.avg([]);
+console.log(result); // 0
+
+const result = formulaUtils.min([1, 2, 3]);
+console.log(result); // 1
+
+const result = formulaUtils.min([]);
+console.log(result); // 0
+
+const result = formulaUtils.max([1, 2, 3]);
+console.log(result); // 3
+
+const result = formulaUtils.max([]);
+console.log(result); // 0
+
+```
 
 
 ## Values

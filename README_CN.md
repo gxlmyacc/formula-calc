@@ -490,6 +490,40 @@ export {
 }
 ```
 
+注意：`formulaUtils`中的`sum`、`avg`、`min`、`max`函数，默认配置了`nullAsZero`、`tryStringToNumber`、`nullIfParamNotFound`为`true`。
+
+下面是示例：
+
+```ts
+const result = formulaUtils.sum([1, 2, 3]);
+console.log(result); // 6
+
+const result = formulaUtils.sum([1, 2, 3, null, undefined, '']);
+console.log(result); // 6
+
+const result = formulaUtils.sum([]);
+console.log(result); // 0
+
+const result = formulaUtils.avg([1, 2, 3]);
+console.log(result); // 2
+
+const result = formulaUtils.avg([]);
+console.log(result); // 0
+
+const result = formulaUtils.min([1, 2, 3]);
+console.log(result); // 1
+
+const result = formulaUtils.min([]);
+console.log(result); // 0
+
+const result = formulaUtils.max([1, 2, 3]);
+console.log(result); // 3
+
+const result = formulaUtils.max([]);
+console.log(result); // 0
+
+```
+
 ## 值
 
 支持以下值
