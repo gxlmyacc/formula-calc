@@ -471,16 +471,49 @@ const result = formulaCalc('1 + 1', {}, 0);
 `formulaUtils`是一些辅助工具函数(`sum`、`avg`、`min`、`max`、`round`)，以方便一些简单的不想通过表达式进行计算的场景。
 
 ```tsx
+type FormulaUtilsParam = number|string|null|undefined|Decimal;
+
 type FormulaUtils = {
-  sum: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  avg: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  min: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  max: (params: Array<number|string|null|undefined|Decimal>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  sum: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  avg: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  min: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  max: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  
+  add(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  sub(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  mul(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  div(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  divToInt(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  pow(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  mod(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+
+  abs(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  ceil(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  floor(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  trunc(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  sqrt(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  cbrt(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  
+  clamp(a: FormulaUtilsParam, min: FormulaUtilsParam, max: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+
   round: (
     value: Decimal.Value,
     decimalPlaces: number = 2,
     rounding: Decimal.Rounding|RoundingType = Decimal.ROUND_HALF_UP,
-  ) => number
+  ) => number,
+
+  toFixed: (
+    value: Decimal.Value|null|undefined, 
+    options: {
+      precision?: number|[min: number, max: number],
+      comma?: boolean,
+      commaStr?: string,
+      nullStr?: string,
+      trimTrailingZero?: boolean,
+      trimTrailingZeroIfInt?: boolean,
+      rounding?: Decimal.Rounding|RoundingType,
+    } = {}
+  ) => number,
 }
 
 declare const formulaUtils: FormulaUtils;

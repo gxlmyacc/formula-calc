@@ -51,25 +51,78 @@ function toDecimal(value: any, options: FormulaValueOptions) {
       : new (options.Decimal || Decimal)(NaN);
 }
 
+function toRounding(rounding: Decimal.Rounding|RoundingType) {
+  if (isString(rounding)) {
+    const r = (Decimal as any)[rounding] || (Decimal as any)[`ROUND_${rounding}`];
+    rounding = r === undefined
+      ? Decimal.ROUND_HALF_UP
+      : r as Decimal.Rounding;
+  }
+  return rounding;
+}
+
 function toRound(
   value: Decimal.Value,
   decimalPlaces: number = 2,
   rounding: Decimal.Rounding|RoundingType = Decimal.ROUND_HALF_UP,
 ) {
-  let result: Decimal = new Decimal(value);
-  let _rounding = isNumber(rounding)
-    ? rounding
-    : Decimal.ROUND_HALF_UP;
-  if (isString(rounding)) {
-    const r = (Decimal as any)[rounding] || (Decimal as any)[`ROUND_${rounding}`];
-    if (isNumber(r)) _rounding = r as Decimal.Rounding;
-  }
-  result = result.toDecimalPlaces(
+  return new Decimal(value).toDecimalPlaces(
     decimalPlaces,
-    _rounding
+    toRounding(rounding)
   );
-  return result;
 }
+
+const digitsRE = /(\d{3})(?=\d)/g;
+function toFixed(value: Decimal.Value|null|undefined, options: {
+  precision?: number|[min: number, max: number],
+  comma?: boolean,
+  commaStr?: string,
+  nullStr?: string,
+  trimTrailingZero?: boolean,
+  trimTrailingZeroIfInt?: boolean,
+  rounding?: Decimal.Rounding|RoundingType,
+} = {}) {
+  const {
+    precision = 2,
+    comma, commaStr = ',', nullStr = '',
+    trimTrailingZero, trimTrailingZeroIfInt,
+    rounding = Decimal.ROUND_HALF_UP,
+  } = options;
+  value = Decimal.isDecimal(value) ? value : new Decimal(parseFloat(value as any));
+  if (value.isNaN() || !value.isFinite()) {
+    return nullStr;
+  }
+  let [min, max] = Array.isArray(precision)
+    ? precision
+    : [precision, precision];
+  if (min < 0) min = 0;
+  if (max < 0) max = 0;
+  const decimalValue = new Decimal(value);
+  const decimalPlaces = min === max
+    ? min
+    : Decimal.clamp(decimalValue.decimalPlaces(), min, max).toNumber();
+  const stringified = decimalValue.abs().toFixed(decimalPlaces, toRounding(rounding));
+  let _int = decimalPlaces
+    ? stringified.slice(0, -1 - decimalPlaces)
+    : stringified;
+  if (comma) {
+    const i = _int.length % 3;
+    const head =  i ? _int.slice(0, i) : '';
+    const tail = i ? _int.slice(i) : _int;
+    _int = head + (head && tail ? commaStr : '') + tail.replace(digitsRE, '$1' + commaStr);
+  }
+  let _float = decimalPlaces ? stringified.slice(-1 - decimalPlaces) : '';
+  if (decimalValue.isInt()) {
+    if (trimTrailingZeroIfInt || trimTrailingZero) {
+      _float = _float.replace(/\.0*$/, '');
+    }
+  } else if (trimTrailingZero) {
+    _float = _float.replace(/0*$/, '');
+  }
+  const sign = decimalValue.isNegative() ? '-' : '';
+  return sign + _int + _float;
+}
+
 
 // function getTokenTypeByValue(value: any) {
 //   switch (typeof value) {
@@ -218,6 +271,7 @@ export {
   isDecimalValue,
   toDecimal,
   toRound,
+  toFixed,
   hasOwnProp,
   isStringNumber,
   // getTokenTypeByValue,

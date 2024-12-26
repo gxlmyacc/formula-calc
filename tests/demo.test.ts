@@ -1,21 +1,9 @@
 import { describe, expect } from '@jest/globals';
-import formulaCalc from '../src';
+import { formulaUtils } from '../src';
 
 describe('demo test', () => {
   test('demo', () => {
-    expect(formulaCalc(
-      `
-        a > 0
-        ? eval(planA)
-        : eval(planB)
-      `, {
-        params: {
-          a: -3,
-          planA: 'a + 1',
-          planB: '0 - a + 1',
-        }
-      }
-    )).toBe(4);
+    expect(formulaUtils.toFixed(1_000_000.234, { comma: true })).toBe('1,000,000.23');
   });
 });
 
