@@ -591,6 +591,9 @@ console.log(result); // '1.234'
 const result = formulaUtils.toFixed(1.23456, { pecision: [2, 4] });
 console.log(result); // '1.2346'
 
+const result = formulaUtils.toFixed(1.23456, { pecision: [2, 4], rounding: 'FLOOR' });
+console.log(result); // '1.2345'
+
 const result = formulaUtils.toFixed(1000.2, { comma: true });
 console.log(result); // '1,000.20'
 
