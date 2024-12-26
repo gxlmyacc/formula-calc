@@ -575,6 +575,24 @@ console.log(result); // 0
 const result = formulaUtils.round(1.2345, 3);
 console.log(result); // 1.235
 
+```
+
+##### formulaUtils.toFixed
+
+`formulaUtils.toFixed` 是一个用于格式化数字的工具函数，它将数字转换为字符串，并添加千位分隔符、小数点、精度等。它的`options`参数支持以下格式化参数：
+
+| 参数名称 | 类型 | 默认值 | 描述 |
+|----------|------|--------|------|
+| precision | number \| [min: number, max: number] | - | Sets the precision. Can be a single number or an array containing minimum and maximum precision values. |
+| comma | boolean | false | Whether to add a thousands separator in the number. |
+| commaStr | string | ',' | The string used as the thousands separator, defaults to a comma. |
+| nullStr | string | '' | The string returned If the value is `null`, `undefined`, `NaN`, `Infinity`, or other content that cannot be converted to a numeric type. |
+| trimTrailingZero | boolean | false | Whether to trim trailing zeros after the decimal point. |
+| trimTrailingZeroIfInt | boolean | false | Whether to trim trailing zeros after the decimal point if the value is an integer. |
+| rounding | Decimal.Rounding \| RoundingType | Decimal.ROUND_HALF_UP | Sets the rounding type. Optional values include: UP, DOWN, CEIL, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, HALF_CEIL, HALF_FLOOR, EUCLID. |
+
+```ts
+import { formulaUtils } from 'formula-calc';
 
 const result = formulaUtils.toFixed(1.2);
 console.log(result); // '1.20'
@@ -610,7 +628,6 @@ const result = formulaUtils.toFixed(1.2, { trimTrailingZeroIfInt: true });
 console.log(result); // '1.20'
 
 ```
-
 
 ## Values
 

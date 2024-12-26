@@ -560,6 +560,25 @@ console.log(result); // 0
 const result = formulaUtils.round(1.2345, 3);
 console.log(result); // 1.235
 
+```
+
+##### formulaUtils.toFixed
+
+`formulaUtils.toFixed` 是一个用于格式化数字的工具函数，它将数字转换为字符串，并添加千位分隔符、小数点、精度等。它的`options`参数支持以下格式化参数：
+
+| 参数名称 | 类型 | 默认值 | 描述 |
+|----------|------|--------|------|
+| precision | number \| [min: number, max: number] | - | 设置精度，可以是一个数字或一个包含最小和最大精度的数组。 |
+| comma | boolean | false | 是否在数字中添加千位分隔符。 |
+| commaStr | string | ',' | 千位分隔符的字符串，默认为逗号。 |
+| nullStr | string | '' | 如果值为 `null`、`undefined`、`NaN`、`Infinity`或其他无法转成数字类型的内容，返回的字符串。 |
+| trimTrailingZero | boolean | false | 是否去除小数点后的多余零。 |
+| trimTrailingZeroIfInt | boolean | false | 如果值为整数，是否去除小数点后的零。 |
+| rounding | Decimal.Rounding \| RoundingType | Decimal.ROUND_HALF_UP | 设置舍入类型。可选值包括：UP、DOWN、CEIL、FLOOR、HALF_UP、HALF_DOWN、HALF_EVEN、HALF_CEIL、HALF_FLOOR、EUCLID。 |
+
+```ts
+import { formulaUtils } from 'formula-calc';
+
 const result = formulaUtils.toFixed(1.2);
 console.log(result); // '1.20'
 
