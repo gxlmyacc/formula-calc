@@ -155,6 +155,7 @@ describe('utils test', () => {
     expect(formulaUtils.toFixed(NaN, { nullStr: '-' })).toBe('-');
     expect(formulaUtils.toFixed(Infinity, { nullStr: '-' })).toBe('-');
     expect(formulaUtils.toFixed('-', { nullStr: '-' })).toBe('-');
+    expect(formulaUtils.toFixed('', { nullStr: '-' })).toBe('-');
     expect(formulaUtils.toFixed(new Decimal(NaN), { nullStr: '-' })).toBe('-');
     expect(formulaUtils.toFixed(new Decimal(Infinity), { nullStr: '-' })).toBe('-');
 

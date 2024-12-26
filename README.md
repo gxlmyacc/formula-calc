@@ -575,6 +575,37 @@ console.log(result); // 0
 const result = formulaUtils.round(1.2345, 3);
 console.log(result); // 1.235
 
+
+const result = formulaUtils.toFixed(1.2);
+console.log(result); // '1.20'
+
+const result = formulaUtils.toFixed(1.2, { pecision: 3 });
+console.log(result); // '1.200'
+
+const result = formulaUtils.toFixed(1.2, { pecision: [2, 4] });
+console.log(result); // '1.20'
+
+const result = formulaUtils.toFixed(1.234, { pecision: [2, 4] });
+console.log(result); // '1.234'
+
+const result = formulaUtils.toFixed(1.23456, { pecision: [2, 4] });
+console.log(result); // '1.2346'
+
+const result = formulaUtils.toFixed(1000.2, { comma: true });
+console.log(result); // '1,000.20'
+
+const result = formulaUtils.toFixed(null, { nullStr: '--' });
+console.log(result); // '--'
+
+const result = formulaUtils.toFixed(1);
+console.log(result); // '1.00'
+
+const result = formulaUtils.toFixed(1, { trimTrailingZeroIfInt: true });
+console.log(result); // '1'
+
+const result = formulaUtils.toFixed(1.2, { trimTrailingZeroIfInt: true });
+console.log(result); // '1.20'
+
 ```
 
 
