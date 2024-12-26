@@ -579,9 +579,9 @@ console.log(result); // 1.235
 
 ##### formulaUtils.toFixed
 
-`formulaUtils.toFixed` 是一个用于格式化数字的工具函数，它将数字转换为字符串，并添加千位分隔符、小数点、精度等。它的`options`参数支持以下格式化参数：
+`formulaUtils.toFixed` is a utility function used to format numbers. It converts a number to a string and adds thousand separators, decimal points, precision, etc. Its `options` parameter supports the following formatting options:
 
-| 参数名称 | 类型 | 默认值 | 描述 |
+| Parameter Name | Type | Default Value | Description |
 |----------|------|--------|------|
 | precision | number \| [min: number, max: number] | - | Sets the precision. Can be a single number or an array containing minimum and maximum precision values. |
 | comma | boolean | false | Whether to add a thousands separator in the number. |
