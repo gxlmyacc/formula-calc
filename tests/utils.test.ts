@@ -131,6 +131,27 @@ describe('utils test', () => {
     expect(formulaUtils.toFixed(1234.5, { precision: [2, 4] })).toBe('1234.50');
     expect(formulaUtils.toFixed(1234, { precision: [2, 4] })).toBe('1234.00');
 
+
+    expect(formulaUtils.toFixed(1, { comma: true })).toBe('1.00');
+    expect(formulaUtils.toFixed(10, { comma: true })).toBe('10.00');
+    expect(formulaUtils.toFixed(100, { comma: true })).toBe('100.00');
+    expect(formulaUtils.toFixed(1_000, { comma: true })).toBe('1,000.00');
+    expect(formulaUtils.toFixed(10_000, { comma: true })).toBe('10,000.00');
+    expect(formulaUtils.toFixed(100_000, { comma: true })).toBe('100,000.00');
+    expect(formulaUtils.toFixed(1_000_000, { comma: true })).toBe('1,000,000.00');
+    expect(formulaUtils.toFixed(10_000_000, { comma: true })).toBe('10,000,000.00');
+    expect(formulaUtils.toFixed(100_000_000, { comma: true })).toBe('100,000,000.00');
+
+    expect(formulaUtils.toFixed(1, { comma: true, precision: 0 })).toBe('1');
+    expect(formulaUtils.toFixed(10, { comma: true, precision: 0 })).toBe('10');
+    expect(formulaUtils.toFixed(100, { comma: true, precision: 0 })).toBe('100');
+    expect(formulaUtils.toFixed(1_000, { comma: true, precision: 0 })).toBe('1,000');
+    expect(formulaUtils.toFixed(10_000, { comma: true, precision: 0 })).toBe('10,000');
+    expect(formulaUtils.toFixed(100_000, { comma: true, precision: 0 })).toBe('100,000');
+    expect(formulaUtils.toFixed(1_000_000, { comma: true, precision: 0 })).toBe('1,000,000');
+    expect(formulaUtils.toFixed(10_000_000, { comma: true, precision: 0 })).toBe('10,000,000');
+    expect(formulaUtils.toFixed(100_000_000, { comma: true, precision: 0 })).toBe('100,000,000');
+
     expect(formulaUtils.toFixed(1.234, { comma: true })).toBe('1.23');
     expect(formulaUtils.toFixed(10.234, { comma: true })).toBe('10.23');
     expect(formulaUtils.toFixed(100.234, { comma: true })).toBe('100.23');
@@ -140,6 +161,7 @@ describe('utils test', () => {
     expect(formulaUtils.toFixed(1_000_000.234, { comma: true })).toBe('1,000,000.23');
     expect(formulaUtils.toFixed(10_000_000.234, { comma: true })).toBe('10,000,000.23');
     expect(formulaUtils.toFixed(100_000_000.234, { comma: true })).toBe('100,000,000.23');
+    expect(formulaUtils.toFixed(1_000_000_000.234, { comma: true })).toBe('1,000,000,000.23');
     expect(formulaUtils.toFixed('1000000.234', { comma: true })).toBe('1,000,000.23');
     expect(formulaUtils.toFixed(new Decimal(1_000_000.234), { comma: true })).toBe('1,000,000.23');
     expect(formulaUtils.toFixed(1_000_000.2, { comma: true })).toBe('1,000,000.20');
