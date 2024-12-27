@@ -110,10 +110,10 @@ function toFixed(value: Decimal.Value|null|undefined, options: {
   if (comma && commaStr && commaDigit > 0) {
     const commas = [];
     let len = _int.length;
-    const startInterval = (len % commaDigit) || commaDigit;
+    const startDigit = (len % commaDigit) || commaDigit;
     let start = 0;
     while (start < len) {
-      const interval = start ? commaDigit : startInterval;
+      const interval = start ? commaDigit : startDigit;
       commas.push(_int.substr(start, interval));
       start += interval;
     }
