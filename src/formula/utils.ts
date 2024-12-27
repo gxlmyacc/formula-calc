@@ -1,5 +1,6 @@
 import Decimal from 'decimal.js';
 import type { FormulaValueOptions, RoundingType } from './type';
+import { DEFAULT_DECIMAL_PLACES } from './constant';
 
 const _toString = Object.prototype.toString;
 function isPlainObject(obj: any): obj is Record<string, any> {
@@ -61,9 +62,10 @@ function toRounding(rounding: Decimal.Rounding|RoundingType) {
   return rounding;
 }
 
+
 function toRound(
   value: Decimal.Value,
-  decimalPlaces: number = 2,
+  decimalPlaces: number = DEFAULT_DECIMAL_PLACES,
   rounding: Decimal.Rounding|RoundingType = Decimal.ROUND_HALF_UP,
 ) {
   return new Decimal(value).toDecimalPlaces(
@@ -72,19 +74,19 @@ function toRound(
   );
 }
 
-const digitsRE = /(\d{3})(?=\d)/g;
 function toFixed(value: Decimal.Value|null|undefined, options: {
   precision?: number|[min: number, max: number],
   comma?: boolean,
   commaStr?: string,
+  commaDigit?: number,
   nullStr?: string,
   trimTrailingZero?: boolean,
   trimTrailingZeroIfInt?: boolean,
   rounding?: Decimal.Rounding|RoundingType,
 } = {}) {
   const {
-    precision = 2,
-    comma, commaStr = ',', nullStr = '',
+    precision = DEFAULT_DECIMAL_PLACES,
+    comma, commaStr = ',', commaDigit = 3, nullStr = '',
     trimTrailingZero, trimTrailingZeroIfInt,
     rounding = Decimal.ROUND_HALF_UP,
   } = options;
@@ -105,11 +107,17 @@ function toFixed(value: Decimal.Value|null|undefined, options: {
   let _int = decimalPlaces
     ? stringified.slice(0, -1 - decimalPlaces)
     : stringified;
-  if (comma) {
-    const i = _int.length % 3;
-    const head =  i ? _int.slice(0, i) : '';
-    const tail = i ? _int.slice(i) : _int;
-    _int = head + (head && tail ? commaStr : '') + tail.replace(digitsRE, '$1' + commaStr);
+  if (comma && commaStr && commaDigit > 0) {
+    const commas = [];
+    let len = _int.length;
+    const startInterval = (len % commaDigit) || commaDigit;
+    let start = 0;
+    while (start < len) {
+      const interval = start ? commaDigit : startInterval;
+      commas.push(_int.substr(start, interval));
+      start += interval;
+    }
+    _int = commas.join(commaStr);
   }
   let _float = decimalPlaces ? stringified.slice(-1 - decimalPlaces) : '';
   if (decimalValue.isInt()) {

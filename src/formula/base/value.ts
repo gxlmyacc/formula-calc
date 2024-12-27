@@ -2,10 +2,11 @@ import Decimal from 'decimal.js';
 import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions } from '../type';
 import { FormulaExecuteState, TokenType } from '../type';
 import { isDecimal, isNumber, isPromise, isStringNumber, toDecimal, toRound } from '../utils';
+import { DEFAULT_DECIMAL_PLACES } from '../constant';
 
 function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaValue, forArithmetic?: boolean) {
   if (!item || item.arithmetic || forArithmetic || options.tryStringToNumber) {
-    let precision = options.precision;
+    let precision = options.precision ?? DEFAULT_DECIMAL_PLACES;
     let stepPrecision = isNumber(options.stepPrecision) || options.stepPrecision;
     if (stepPrecision && isNumber(options.stepPrecision)) {
       precision =  options.stepPrecision;
@@ -14,7 +15,7 @@ function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaV
       value = toDecimal(value, options);
     }
     if (isDecimal(value, options)) {
-      if (stepPrecision) {
+      if (stepPrecision && value.decimalPlaces() > precision) {
         value = toRound(value, precision, options.rounding);
       } else if (options.nullAsZero && value.isNaN()) {
         value = new Decimal(0);

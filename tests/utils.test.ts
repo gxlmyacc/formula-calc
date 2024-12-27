@@ -166,6 +166,9 @@ describe('utils test', () => {
     expect(formulaUtils.toFixed(new Decimal(1_000_000.234), { comma: true })).toBe('1,000,000.23');
     expect(formulaUtils.toFixed(1_000_000.2, { comma: true })).toBe('1,000,000.20');
     expect(formulaUtils.toFixed(1_000_000.2, { comma: true, commaStr: '_' })).toBe('1_000_000.20');
+    expect(formulaUtils.toFixed(1_000_000.2, { comma: true, commaStr: '`', commaDigit: 4 })).toBe('100`0000.20');
+    expect(formulaUtils.toFixed(1_000_000.2, { comma: true, commaStr: '' })).toBe('1000000.20');
+    expect(formulaUtils.toFixed(1_000_000.2, { comma: true, commaDigit: 0 })).toBe('1000000.20');
 
     expect(formulaUtils.toFixed(-1_000_000.234, { comma: true })).toBe('-1,000,000.23');
     expect(formulaUtils.toFixed('-1000000.234', { comma: true })).toBe('-1,000,000.23');

@@ -472,29 +472,30 @@ const result = formulaCalc('1 + 1', {}, 0);
 
 ```tsx
 type FormulaUtilsParam = number|string|null|undefined|Decimal;
+type FormulaUtilsOptions = Omit<FormulaCalcOptions, 'params'|'onCreateParam'>;
 
 type FormulaUtils = {
-  sum: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  avg: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  min: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  max: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  sum: (params: Array<FormulaUtilsParam>, options?: FormulaUtilsOptions) => number,
+  avg: (params: Array<FormulaUtilsParam>, options?: FormulaUtilsOptions) => number,
+  min: (params: Array<FormulaUtilsParam>, options?: FormulaUtilsOptions) => number,
+  max: (params: Array<FormulaUtilsParam>, options?: FormulaUtilsOptions) => number,
   
-  add(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  sub(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  mul(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  div(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  divToInt(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  pow(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  mod(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  add(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  sub(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  mul(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  div(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  divToInt(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  pow(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  mod(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
 
-  abs(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  ceil(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  floor(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  trunc(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  sqrt(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  cbrt(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  abs(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  ceil(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  floor(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  trunc(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  sqrt(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  cbrt(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
   
-  clamp(a: FormulaUtilsParam, min: FormulaUtilsParam, max: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  clamp(a: FormulaUtilsParam, min: FormulaUtilsParam, max: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
 
   round: (
     value: Decimal.Value,
@@ -571,6 +572,7 @@ console.log(result); // 1.235
 | precision | number \| [min: number, max: number] | - | 设置精度，可以是一个数字或一个包含最小和最大精度的数组。 |
 | comma | boolean | false | 是否在数字中添加千位分隔符。 |
 | commaStr | string | ',' | 千位分隔符的字符串，默认为逗号。 |
+| commaDigit | number | 3 | 千位分隔符的间隔，默认为3。 |
 | nullStr | string | '' | 如果值为 `null`、`undefined`、`NaN`、`Infinity`或其他无法转成数字类型的内容，返回的字符串。 |
 | trimTrailingZero | boolean | false | 是否去除小数点后的多余零。 |
 | trimTrailingZeroIfInt | boolean | false | 如果值为整数，是否去除小数点后的零。 |

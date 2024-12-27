@@ -3,6 +3,7 @@ import Formula, { registorFormulaFunction, TokenType } from './formula';
 import { getValueByPath, hasOwnProp, toRound, toFixed, isFunction, isPlainObject, isString } from './formula/utils';
 import type { FormulaOptions, IFormulaDataSource, FormulaCustomFunctionItem } from './formula';
 import { FormulaValueOptions } from './formula/type';
+import { FormulaParamValue } from './formula/values/param';
 
 export {
   getValueByPath,
@@ -139,41 +140,56 @@ const UTILS_OPERATOR_NAMES = [
 const UTILS_ONE_PARAMS_NAMES = ['abs', 'ceil', 'floor', 'trunc', 'sqrt', 'cbrt'] as const;
 
 type FormulaUtilsParam = number|string|null|undefined|Decimal;
+type FormulaUtilsOptions = Omit<FormulaCalcOptions, 'params'|'onCreateParam'>;
 
 type FormulaUtils = Record<
 (typeof UTILS_ARRAY_NAMES)[number],
 (
   params: Array<FormulaUtilsParam>,
-  options?: Omit<FormulaCalcOptions, 'params'>
+  options?: FormulaUtilsOptions
 ) => number
 > & Record<
  (typeof UTILS_OPERATOR_NAMES)[number]['name'],
- (a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number
+ (a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number
 > & Record<
  (typeof UTILS_ONE_PARAMS_NAMES)[number],
- (a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number
+ (a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number
 > &{
   round: (...args: Parameters<typeof toRound>) => number,
   toFixed: (...args: Parameters<typeof toFixed>) => string,
-  abs: (a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  clamp: (a: FormulaUtilsParam, min: FormulaUtilsParam, max: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  abs: (a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  clamp: (a: FormulaUtilsParam, min: FormulaUtilsParam, max: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
 }
 
-function createUtilMethod(expression: string, paramNames: string[]) {
-  return (...args: any[]) => {
-    const params = paramNames.reduce((p, v, i) => {
-      p[v] = args[i];
-      return p;
-    }, {} as Record<string, Decimal.Value>);
-    const options = args[paramNames.length] as Omit<FormulaCalcOptions, 'params'>;
-    let formula: Formula|null = null;
-    return formulaCalc(formula || expression, {
+
+type FormulaUtilMethodArgs<P = FormulaUtilsParam, A extends string[] = string[]> = A extends [infer T, ...infer U] ?
+T extends string
+  ? U extends string[]
+    ? [T: P, ...FormulaUtilMethodArgs<P, U>]
+    : [T: P]
+  : never
+: [options?: FormulaUtilsOptions];
+
+function createUtilMethod<P, A extends string[]>(expression: string, paramNames: A) {
+  let formula: Formula|null = null;
+  let params: FormulaParamValue[] = [];
+  return (...args: FormulaUtilMethodArgs<P, A>)  => {
+    let argIndex = 0;
+    const options = args[paramNames.length] as FormulaUtilsOptions;
+    params.forEach((param, i) => {
+      param.updateValue(args[i], options);
+    });
+    return formulaCalc<number>(formula || expression, {
       onFormulaCreated: f => formula = f,
       nullAsZero: true,
       tryStringToNumber: true,
       nullIfParamNotFound: true,
       ...options,
-      params
+      onCreateParam(token, options) {
+        const param = new FormulaParamValue(token, args[argIndex++], options);
+        params.push(param);
+        return param;
+      },
     });
   };
 }
@@ -181,15 +197,15 @@ function createUtilMethod(expression: string, paramNames: string[]) {
 const formulaUtils = {} as FormulaUtils;
 
 UTILS_ARRAY_NAMES.forEach(name => {
-  formulaUtils[name] = createUtilMethod(`${name}(a)`, ['a']);
+  formulaUtils[name] = createUtilMethod(`${name}(a)`, ['a'] as const);
 });
 UTILS_OPERATOR_NAMES.forEach(item => {
-  formulaUtils[item.name] = createUtilMethod(`a ${item.operator} b`, ['a', 'b']);
+  formulaUtils[item.name] = createUtilMethod(`a ${item.operator} b`, ['a', 'b'] as const);
 });
 UTILS_ONE_PARAMS_NAMES.forEach(name => {
-  formulaUtils[name] = createUtilMethod(`${name}(a)`, ['a']);
+  formulaUtils[name] = createUtilMethod(`${name}(a)`, ['a'] as const);
 });
-formulaUtils.clamp = createUtilMethod('clamp(a, min, max)', ['a', 'min', 'max']);
+formulaUtils.clamp = createUtilMethod('clamp(a, min, max)', ['a', 'min', 'max'] as const);
 formulaUtils.round = (...args) => Number(toRound(...args));
 formulaUtils.toFixed = toFixed;
 
@@ -199,8 +215,10 @@ export {
   createFormula,
   createParamsDataSource,
   createFormulaEval,
+  createUtilMethod,
   registorFormulaFunction,
   formulaUtils,
+  FormulaParamValue,
 };
 
 export type {

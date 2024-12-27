@@ -27,7 +27,7 @@ import { ERROR_FORMULA_STR } from './constant';
 import { isDecimal, isDecimalValue, isNumber, nextWithPrimise, removeFormArray, toRound } from './utils';
 
 interface FormulaOptions extends FormulaValueOptions {
-
+  onCreateParam?: (token: string,  options: FormulaValueOptions) => IFormulaValue;
 }
 
 function isOperatorUncomplete(operator: IFormulaOperator) {
@@ -276,7 +276,9 @@ class Formula {
           } else if (tokenType === TokenType.ttRef) {
             item = new FormulaRef(tokenItem.token, refs, options);
           } else /* if (tokenType === TokenType.ttName) */{
-            item = new FormulaParam(tokenItem.token, tokenItem.token, tokenItem.tokenType, options);
+            item = options.onCreateParam
+              ? options.onCreateParam(tokenItem.token, options)
+              : new FormulaParam(tokenItem.token, tokenItem.token, tokenItem.tokenType, options);
           }
 
           // If the previous one was an operator

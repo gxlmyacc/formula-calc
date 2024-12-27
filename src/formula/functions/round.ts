@@ -3,6 +3,7 @@ import Decimal from 'decimal.js';
 import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
 import { toRound, nextWithPrimise, isDecimal } from '../utils';
+import { DEFAULT_DECIMAL_PLACES } from '../constant';
 
 
 class FormulaFunctionROUND extends AbsFormulaFunction {
@@ -16,7 +17,7 @@ class FormulaFunctionROUND extends AbsFormulaFunction {
         const value = params[0];
         let decimalPlaces = params.length > 1
           ? params[1]
-          : 2;
+          : (options.precision ?? DEFAULT_DECIMAL_PLACES);
         if (isDecimal(decimalPlaces, options)) {
           decimalPlaces = decimalPlaces.toNumber();
         }

@@ -488,29 +488,30 @@ If `returnReferenceType` is a function, it can process the result value before f
 
 ```tsx
 type FormulaUtilsParam = number|string|null|undefined|Decimal;
+type FormulaUtilsOptions = Omit<FormulaCalcOptions, 'params'|'onCreateParam'>;
 
 type FormulaUtils = {
-  sum: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  avg: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  min: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  max: (params: Array<FormulaUtilsParam>, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  sum: (params: Array<FormulaUtilsParam>, options?: FormulaUtilsOptions) => number,
+  avg: (params: Array<FormulaUtilsParam>, options?: FormulaUtilsOptions) => number,
+  min: (params: Array<FormulaUtilsParam>, options?: FormulaUtilsOptions) => number,
+  max: (params: Array<FormulaUtilsParam>, options?: FormulaUtilsOptions) => number,
   
-  add(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  sub(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  mul(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  div(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  divToInt(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  pow(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  mod(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  add(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  sub(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  mul(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  div(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  divToInt(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  pow(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  mod(a: FormulaUtilsParam, b: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
 
-  abs(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  ceil(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  floor(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  trunc(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  sqrt(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
-  cbrt(a: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  abs(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  ceil(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  floor(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  trunc(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  sqrt(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
+  cbrt(a: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
   
-  clamp(a: FormulaUtilsParam, min: FormulaUtilsParam, max: FormulaUtilsParam, options?: Omit<FormulaCalcOptions, 'params'>) => number,
+  clamp(a: FormulaUtilsParam, min: FormulaUtilsParam, max: FormulaUtilsParam, options?: FormulaUtilsOptions) => number,
 
   round: (
     value: Decimal.Value,
@@ -586,6 +587,7 @@ console.log(result); // 1.235
 | precision | number \| [min: number, max: number] | - | Sets the precision. Can be a single number or an array containing minimum and maximum precision values. |
 | comma | boolean | false | Whether to add a thousands separator in the number. |
 | commaStr | string | ',' | The string used as the thousands separator, defaults to a comma. |
+| commaDigit | number | 3 | The ithousands separator is added every `commaDigit` digits. |
 | nullStr | string | '' | The string returned If the value is `null`, `undefined`, `NaN`, `Infinity`, or other content that cannot be converted to a numeric type. |
 | trimTrailingZero | boolean | false | Whether to trim trailing zeros after the decimal point. |
 | trimTrailingZeroIfInt | boolean | false | Whether to trim trailing zeros after the decimal point if the value is an integer. |

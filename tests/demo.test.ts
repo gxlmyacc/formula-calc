@@ -3,7 +3,7 @@ import { formulaUtils } from '../src';
 
 describe('demo test', () => {
   test('demo', () => {
-    expect(formulaUtils.toFixed(1_000_000.234, { comma: true })).toBe('1,000,000.23');
+    expect(formulaUtils.toFixed(10_000, { comma: true })).toBe('10,000.00');
   });
 });
 

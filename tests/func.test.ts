@@ -425,6 +425,8 @@ describe('function test', () => {
 
   test('round', () => {
     expect(formulaCalc('round(2.111)')).toBe(2.11);
+    expect(formulaCalc('round(2.111)', { precision: 1 })).toBe(2.1);
+    expect(formulaCalc('round(2.111)', { precision: 0 })).toBe(2);
     expect(formulaCalc('round(2.491)')).toBe(2.49);
     expect(formulaCalc('round(2.4949999)')).toBe(2.49);
     expect(formulaCalc('round(2.495)')).toBe(2.5);

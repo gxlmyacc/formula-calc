@@ -11,6 +11,8 @@ const REGX_NAME_CHAR = /[a-zA-Z0-9_]/;
 
 const ERROR_FORMULA_STR = 'The formula is incorrect';
 
+const DEFAULT_DECIMAL_PLACES = 2;
+
 
 export {
   EmptyStr,
@@ -23,4 +25,6 @@ export {
 
   REGX_NAME_CHAR,
   ERROR_FORMULA_STR,
+
+  DEFAULT_DECIMAL_PLACES,
 };
