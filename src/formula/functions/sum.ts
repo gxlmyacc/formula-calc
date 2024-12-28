@@ -22,7 +22,7 @@ function sumExecute(
     (itemValue, index, isArray) => {
       onWalk && onWalk(itemValue, index, isArray);
       if (isArray) {
-        (itemValue as Decimal[]).forEach(v => {
+        (itemValue as Decimal[]).forEach((v) => {
           value = value.add(v);
         });
       } else {

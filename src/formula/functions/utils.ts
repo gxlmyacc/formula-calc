@@ -14,7 +14,7 @@ function walkValues<T = any>(
 ) {
   return nextWithPrimise(
     params.map(v => v.execute(dataSource, options, forArithmetic)),
-    params => {
+    (params) => {
       let result;
       let isFirst = true;
       for (let i = 0; i < params.length; i++) {

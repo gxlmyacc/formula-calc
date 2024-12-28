@@ -36,7 +36,7 @@ describe('utils test', () => {
   });
 
   test('removeFormArray', () => {
-    let array = [1, 2, 3];
+    const array = [1, 2, 3];
     removeFormArray(array, 1);
     expect(array).toEqual([2, 3]);
     removeFormArray(array, 4);

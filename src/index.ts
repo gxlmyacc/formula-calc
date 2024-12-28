@@ -64,11 +64,11 @@ function createFormulaEval(params: FormulaCalcParams|undefined, _options?: Formu
 }
 
 function createFormula(expression: string,  options: FormulaCreateOptions = {}) {
-  let { customFunctions, ...restOptions } = options;
+  const { customFunctions, ...restOptions } = options;
   const formula = new Formula();
 
   if (isPlainObject(customFunctions)) {
-    Object.keys(customFunctions).forEach(name => {
+    Object.keys(customFunctions).forEach((name) => {
       customFunctions && formula.registorFunction(name, customFunctions[name], { force: true });
     });
   }
@@ -83,11 +83,11 @@ function formulaCalcWithParams<T = any>(
   params: FormulaCalcParams|undefined,
   options: FormulaCalcCommonOptions
 ): T {
-  let { customFunctions, dataSource, ...restOptions } = options;
-
-  if (!dataSource) {
-    dataSource = createParamsDataSource(params);
-  }
+  const {
+    customFunctions,
+    dataSource = createParamsDataSource(params),
+    ...restOptions
+  } = options;
 
   if (!hasOwnProp(restOptions, 'eval')) {
     restOptions.eval = createFormulaEval(params, options);
@@ -172,7 +172,7 @@ T extends string
 
 function createUtilMethod<P, A extends string[]>(expression: string, paramNames: A) {
   let formula: Formula|null = null;
-  let params: FormulaParamValue[] = [];
+  const params: FormulaParamValue[] = [];
   return (...args: FormulaUtilMethodArgs<P, A>)  => {
     let argIndex = 0;
     const options = args[paramNames.length] as FormulaUtilsOptions;
@@ -196,13 +196,13 @@ function createUtilMethod<P, A extends string[]>(expression: string, paramNames:
 
 const formulaUtils = {} as FormulaUtils;
 
-UTILS_ARRAY_NAMES.forEach(name => {
+UTILS_ARRAY_NAMES.forEach((name) => {
   formulaUtils[name] = createUtilMethod(`${name}(a)`, ['a'] as const);
 });
-UTILS_OPERATOR_NAMES.forEach(item => {
+UTILS_OPERATOR_NAMES.forEach((item) => {
   formulaUtils[item.name] = createUtilMethod(`a ${item.operator} b`, ['a', 'b'] as const);
 });
-UTILS_ONE_PARAMS_NAMES.forEach(name => {
+UTILS_ONE_PARAMS_NAMES.forEach((name) => {
   formulaUtils[name] = createUtilMethod(`${name}(a)`, ['a'] as const);
 });
 formulaUtils.clamp = createUtilMethod('clamp(a, min, max)', ['a', 'min', 'max'] as const);

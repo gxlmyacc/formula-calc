@@ -7,7 +7,7 @@ import { DEFAULT_DECIMAL_PLACES } from '../constant';
 function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaValue, forArithmetic?: boolean) {
   if (!item || item.arithmetic || forArithmetic || options.tryStringToNumber) {
     let precision = options.precision ?? DEFAULT_DECIMAL_PLACES;
-    let stepPrecision = isNumber(options.stepPrecision) || options.stepPrecision;
+    const stepPrecision = isNumber(options.stepPrecision) || options.stepPrecision;
     if (stepPrecision && isNumber(options.stepPrecision)) {
       precision =  options.stepPrecision;
     }
@@ -50,7 +50,7 @@ abstract class FormulaValue implements IFormulaValue {
     this.state = FormulaExecuteState.fesExecuting;
     let prom = false;
     try {
-      let value = this._execute(dataSource, options);
+      const value = this._execute(dataSource, options);
       prom = isPromise(value);
       const _next = (value: any) => {
         this.value = resolveValue(value, options, this, forArithmetic);

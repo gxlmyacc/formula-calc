@@ -794,7 +794,34 @@ Supports the following built in functions:
 
 ## Custom Functions
 
-Custom functions can be used to extend the formula language. due to the formula supporting promise calculation, you can even provide UI related interactions in custom methods
+Custom functions can be used to extend the formula language. due to the formula supporting promise calculation, you can even provide UI related interactions in custom methods.
+
+Custom functions must include the following properties:
+```ts
+type FormulaCustomFunctionItem = {
+  preExecute?: true,
+  arithmetic?: boolean,
+  argMin: number
+  argMax: number;
+  execute: (params: any[], dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any
+} | {
+  preExecute: false,
+  arithmetic?: boolean,
+  argMin: number
+  argMax: number;
+  execute: (params: FormulaValues, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any
+}
+```
+
+| Property Name | Type | Default Value | Description |
+|---------------|------|---------------|-------------|
+| preExecute | boolean | true | Whether to preprocess parameters before execution. If `true`, all parameters will be executed to get results before executing `execute`. If set to `false`, the `params` passed to `execute` will be `FormulaValues` objects, and the user needs to call the parameter's execute method themselves (e.g., `params[0].execute(dataSource, options)`) to get the parameter values. |
+| arithmetic | boolean | false | The arithmetic nature of the custom function. If `true`, it indicates that the return value of this function will be a `number` type (or `Decimal` type). If this function is used as one of the parameters of a comparison operator, it will attempt to convert the other side's parameter to a number for comparison. If `false`, it indicates unknown. |
+| argMin | number | - | Minimum number of parameters. |
+| argMax | number | - | Maximum number of parameters. |
+| execute | (params, dataSource, options, forArithmetic) => any | - | Execution function, including parameters, data source, and options. Additionally, the `forArithmetic` parameter indicates whether the current function is being executed as one of the parameters in an arithmetic operation. |
+
+Example:
 
 ```js
 import formulaCalc from 'formula-calc';

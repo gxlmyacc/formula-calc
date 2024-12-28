@@ -96,7 +96,7 @@ class Tokenizer {
     // newToken?: string
   ) {
     if (!this.length || index >= this.length) return;
-    let item =  this.items[this.length - 1 - index];
+    const item =  this.items[this.length - 1 - index];
     item.tokenType = tokenType;
     // if (newToken !== undefined) {
     //   item.token = newToken;
@@ -122,8 +122,8 @@ class Tokenizer {
   doNumber(i: number) {
     let dot = false;
     let e = false;
-    let len = this.len;
-    let value = this.value;
+    const len = this.len;
+    const value = this.value;
     let result = i;
 
     if (value[result] === '-') result++;
@@ -183,8 +183,8 @@ class Tokenizer {
 
   doQuoted(i: number, quoteChar: string, tokenType: TokenType, errorCode: number) {
     let result = i + 1;
-    let len = this.len;
-    let value = this.value;
+    const len = this.len;
+    const value = this.value;
     let quoted = false;
     let j = result;
     let token = '';
@@ -227,11 +227,11 @@ class Tokenizer {
   }
 
   doRef(i: number) {
-    let len = this.len;
-    let value = this.value;
+    const len = this.len;
+    const value = this.value;
 
     let result = i + 1;
-    let j = result;
+    const j = result;
     while ((result < len) && /[0-9]/.test(value[result])) {
       result++;
     }
@@ -252,11 +252,11 @@ class Tokenizer {
 
   doName(i: number) {
     let result = i;
-    let len = this.len;
-    let value = this.value;
+    const len = this.len;
+    const value = this.value;
 
     while ((result < len)) {
-      let char = value[result];
+      const char = value[result];
       if (NAME_SEPARATOR.includes(char)) {
         if (char !== '?' || value[result + 1] !== '.') {
           break;
@@ -278,13 +278,13 @@ class Tokenizer {
   tokenize(value: string) {
     this.clear();
     this.value = value;
-    let len = this.len = value.length;
+    const len = this.len = value.length;
     let hasSpace = false;
 
     let i = 0;
 
     while ((i < len) && !this.lastError) {
-      let char = value[i];
+      const char = value[i];
       if (['\t', ' '].includes(char)) {
         hasSpace = true;
         i += this.addOperator(char, TokenType.ttSpace, i, char.length);
@@ -295,7 +295,7 @@ class Tokenizer {
           i += this.addOperator('\n', TokenType.ttLine, i, 1);
         }
       } else if (/[0-9]/.test(char)) {
-        let lastTokenType = this.getLast();
+        const lastTokenType = this.getLast();
         if ((lastTokenType === TokenType.ttMinus) && TokenNegatives.includes(this.getLast(1))) {
           this.items.pop();
           i = this.doNumber(i - 1);
@@ -305,10 +305,10 @@ class Tokenizer {
       } else if (char === '+') {
         i += this.addOperator(char, TokenType.ttAdd, i, char.length);
       } else if (char === '&') {
-        let doubleOperator = value[i + 1] === char;
+        const doubleOperator = value[i + 1] === char;
         i += this.addOperator(doubleOperator ? '&&' : char, TokenType.ttAnd, i, doubleOperator ? 2 : char.length);
       } else if (char === '|') {
-        let doubleOperator = value[i + 1] === char;
+        const doubleOperator = value[i + 1] === char;
         i += this.addOperator(doubleOperator ? '||' : char, TokenType.ttOr, i, doubleOperator ? 2 : char.length);
       } else if (char === '-') {
         i += this.addOperator(char, TokenType.ttMinus, i, char.length);
@@ -364,11 +364,11 @@ class Tokenizer {
       } else if (char === '$') {
         i = this.doRef(i);
       } else if (/[_a-zA-z]/.test(char)) {
-        let itemList = LITERAL_MAP[char];
-        if (itemList?.some(item => {
+        const itemList = LITERAL_MAP[char];
+        if (itemList?.some((item) => {
           if (i + item.label.length - 1 < len) {
-            let literalValue = value.substr(i, item.label.length);
-            let literalValueNextChar = value[i + item.label.length];
+            const literalValue = value.substr(i, item.label.length);
+            const literalValueNextChar = value[i + item.label.length];
             if (literalValue === item.label && (!literalValueNextChar || !REGX_NAME_CHAR.test(literalValueNextChar))) {
               i += this.addOperator(literalValue, item.tokenType, i, literalValue.length);
               return true;
@@ -395,7 +395,7 @@ class Tokenizer {
 
     this.items.forEach((item, i) => {
       if (item.tokenType !== TokenType.ttPercent || i === this.items.length - 1) return;
-      let nextItem = this.items[i + 1];
+      const nextItem = this.items[i + 1];
       if (!TokenPercents.includes(nextItem.tokenType)) {
         item.tokenType = TokenType.ttMod;
       }

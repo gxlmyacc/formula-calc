@@ -77,7 +77,7 @@ class Formula {
 
 
   private expression(options: FormulaOptions) {
-    let tokenizer = this.tokenizer;
+    const tokenizer = this.tokenizer;
     const formulas = this.formulas;
     const refs = this.refs;
     const customFunctions = this.customFunctions;
@@ -87,8 +87,8 @@ class Formula {
       let operator: IFormulaOperator|null = null;
       let i = 0;
       while (i < tokenizer.items.length) {
-        let tokenItem = tokenizer.items[i];
-        let tokenType = tokenItem.tokenType;
+        const tokenItem = tokenizer.items[i];
+        const tokenType = tokenItem.tokenType;
         let item: IFormulaValue|null = null;
 
         if ([
@@ -138,7 +138,7 @@ class Formula {
 
             let k = formulas.length - 1;
             while (k > j) {
-              let formulaValue = formulas[k];
+              const formulaValue = formulas[k];
               func.params.unshift(formulaValue);
               formulas.splice(k, 1);
               k--;
@@ -240,7 +240,7 @@ class Formula {
               }
 
               let operatorTemp1: IFormulaOperator = operatorPrev;
-              while (isFormulaOperator(operatorTemp1.params[operatorTemp1.params.length - 1], v => {
+              while (isFormulaOperator(operatorTemp1.params[operatorTemp1.params.length - 1], (v) => {
                 v && (operatorTemp1 = v);
               })
               && operatorTemp1.priority < operator.priority) {
@@ -311,7 +311,7 @@ class Formula {
     }
 
     for (let i = 0; i < this.formulas.length; i++) {
-      let item = formulas[i];
+      const item = formulas[i];
       if (item.tokenType === TokenType.ttParenL) {
         if (!(item as FormulaOperatorPAREN).closed) {
           throw new Error(ERROR_FORMULA_STR + ': unclosed parentheses!');
@@ -324,7 +324,7 @@ class Formula {
       //   }
       // }
     }
-    this.operators.forEach(operator => {
+    this.operators.forEach((operator) => {
       if (isOperatorUncomplete(operator)) {
         // eslint-disable-next-line max-len
         throw new Error(ERROR_FORMULA_STR + `: uncomplete operator "${operator.name}": expected ${operator.paramsCount} parameters, but got ${operator.params.length}!`);
@@ -374,7 +374,7 @@ class Formula {
   execute(dataSource?: IFormulaDataSource, options: FormulaValueOptions = {}) {
     return nextWithPrimise(
       this._execute(dataSource, options),
-      result => {
+      (result) => {
         const _resolveResult = (result: any): any => {
           if (Array.isArray(result)) {
             return result.map(_resolveResult);

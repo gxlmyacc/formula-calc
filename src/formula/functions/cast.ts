@@ -23,7 +23,7 @@ class FormulaFunctionCAST extends AbsFormulaFunction {
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       this.params.map(param => param.execute(dataSource, options, this.arithmetic)),
-      value => {
+      (value) => {
         if (isDecimal(value, options)) {
           value = value.toNumber();
         }

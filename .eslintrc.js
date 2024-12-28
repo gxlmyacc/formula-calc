@@ -32,7 +32,7 @@ module.exports = {
   rules: {
     "@typescript-eslint/no-unused-vars": ["error"],
     'array-callback-return': 0,
-    'arrow-parens': [2, 'as-needed'],
+    'arrow-parens': [2],
     'class-methods-use-this': 0,
     'comma-dangle': [0, {
       arrays: 'ignore',
@@ -45,14 +45,12 @@ module.exports = {
     'curly': [0, 'multi-or-nest'],
     'default-case': 2,
     'eol-last': 0,
-    'eqeqeq': 0,
     'func-names': 0,
     'global-require': 0,
     'implicit-arrow-linebreak': 0,
     'import/extensions': 0,
     'import/no-dynamic-require': 0,
     'import/no-extraneous-dependencies': 0,
-    'import/no-mutable-exports': 0,
     'import/no-unresolved': 0,
     'import/prefer-default-export': 0,
     'indent': [2, 2, {
@@ -61,7 +59,6 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': ['warn', {
       aspects: ['invalidHref']
     }],
-    'jsx-a11y/href-no-hash': 'off',
     'jsx-quotes': 2,
     'linebreak-style': 0,
     'max-len': [2, {
@@ -71,7 +68,6 @@ module.exports = {
     }],
     'no-async-promise-executor': 0,
     'no-await-in-loop': 0,
-    'no-bitwise': 0,
     'no-case-declarations': 2,
     'no-cond-assign': 0,
     'no-console': 0,
@@ -136,7 +132,7 @@ module.exports = {
       switches: 'never'
     }],
     'prefer-arrow-callback': 0,
-    'prefer-const': 0,
+    'prefer-const': 2,
     'prefer-destructuring': 0,
     'prefer-promise-reject-errors': 0,
     'prefer-rest-params': 0,

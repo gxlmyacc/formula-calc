@@ -261,6 +261,7 @@ describe('operator test', () => {
     expect(formulaCalc('0 = a', { params: { a: null }, nullAsZero: true })).toBe(true);
     expect(formulaCalc('0 = a', { params: { }, nullAsZero: true })).toBe(true);
     expect(formulaCalc('a = 0', { params: { }, nullAsZero: true })).toBe(true);
+    expect(formulaCalc('a = null', { params: { }, nullAsZero: true })).toBe(true);
     expect(formulaCalc('0 = a.b', { params: { a: { } } })).toBe(false);
     expect(formulaCalc('a.b = 0', { params: { a: { } } })).toBe(false);
   });

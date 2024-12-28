@@ -13,7 +13,7 @@ class FormulaFunctionROUND extends AbsFormulaFunction {
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPrimise(
       this.params.map(v => v.execute(dataSource, options, true)),
-      params => {
+      (params) => {
         const value = params[0];
         let decimalPlaces = params.length > 1
           ? params[1]

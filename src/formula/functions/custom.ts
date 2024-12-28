@@ -18,7 +18,7 @@ class FormulaFunctionCUSTOM extends AbsFormulaFunction {
       return this.item.execute(this.params, dataSource, options);
     }
     return nextWithPrimise(
-      this.params.map(v => {
+      this.params.map((v) => {
         let result = v.execute(dataSource, options);
         if (isDecimal(result, options)) {
           result = result.toNumber();

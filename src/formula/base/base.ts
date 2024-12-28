@@ -14,7 +14,7 @@ abstract class AbsFormulaBase extends FormulaValue implements IFormulaValue, IFo
   }
 
 
-  protected checkArgVaild(): string {
+  protected checkArgVaild() {
     return '';
   }
 

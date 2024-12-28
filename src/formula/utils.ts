@@ -109,13 +109,13 @@ function toFixed(value: Decimal.Value|null|undefined, options: {
     : stringified;
   if (comma && commaStr && commaDigit > 0) {
     const commas = [];
-    let len = _int.length;
+    const len = _int.length;
     const startDigit = (len % commaDigit) || commaDigit;
     let start = 0;
     while (start < len) {
-      const interval = start ? commaDigit : startDigit;
-      commas.push(_int.substr(start, interval));
-      start += interval;
+      const digit = start ? commaDigit : startDigit;
+      commas.push(_int.substr(start, digit));
+      start += digit;
     }
     _int = commas.join(commaStr);
   }
@@ -166,7 +166,7 @@ function getValueByPath(
   let paresedPath = '';
   let value: any;
   let pre = data;
-  let paths = path.split('.');
+  const paths = path.split('.');
   let isLeaf = false;
   paths.some((path, index) => {
     isLeaf = index === paths.length - 1;
@@ -225,7 +225,7 @@ function nextWithPrimise<T, R>(
   spread: boolean = true
 ): R|Promise<R> {
   if (Array.isArray(proms)) {
-    let promCount = proms.reduce((p, v) => (isPromise(v) ? p + 1 : p), 0);
+    const promCount = proms.reduce((p, v) => (isPromise(v) ? p + 1 : p), 0);
     // eslint-disable-next-line arrow-body-style
     const _next = (proms: any[]) => {
       return spread ? next(...proms) : next(proms);
@@ -252,8 +252,8 @@ function flatten(array: any[]) {
 }
 
 function removeFormArray<T>(array: T[], value: T) {
-  let idx = array.indexOf(value);
-  let find = idx > -1;
+  const idx = array.indexOf(value);
+  const find = idx > -1;
   if (find) {
     array.splice(idx, 1);
   }

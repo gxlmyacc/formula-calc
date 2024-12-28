@@ -10,7 +10,7 @@ class FormulaFunctionEVAL extends AbsFormulaFunction {
       [
         this.params[0].execute(dataSource, options),
       ],
-      expr => {
+      (expr) => {
         const _eval = options.eval || this.options.eval;
         if (!_eval) {
           throw new Error('eval function is not supported!');

@@ -79,7 +79,7 @@ function createFormulaOperator(
 }
 
 function isFormulaOperator(value: any, onSupport?: (value: IFormulaOperator|null) => void): value is IFormulaOperator {
-  let ret = value && (value as IFormulaOperator).operatorType != null;
+  const ret = value && (value as IFormulaOperator).operatorType != null;
   onSupport && onSupport(ret ? value : null);
   return ret;
 }

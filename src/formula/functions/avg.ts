@@ -9,7 +9,7 @@ class FormulaFunctionAVG extends AbsFormulaFunction {
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     let paramCount = this.params.length;
-    let value = sumExecute(
+    const value = sumExecute(
       this.params,
       dataSource,
       options,
