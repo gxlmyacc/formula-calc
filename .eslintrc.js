@@ -1,8 +1,8 @@
 module.exports = {
   root: true,
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    parser: 'babel-eslint',
-    ecmaVersion: 2020,
+    ecmaVersion: 2022,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true
@@ -30,7 +30,6 @@ module.exports = {
     '__WATCH__': true,
   },
   rules: {
-    "@typescript-eslint/no-unused-vars": ["error"],
     'array-callback-return': 0,
     'arrow-parens': [2],
     'class-methods-use-this': 0,

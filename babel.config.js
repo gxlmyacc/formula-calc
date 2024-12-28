@@ -6,32 +6,21 @@ const config = {
         modules: false,
         useBuiltIns: 'usage',
         corejs: 2,
-        targets: { browsers: ['Chrome >= 49'] }
+        targets: { browsers: ['chrome >= 49', 'firefox >= 52'] }
       }
     ],
-    '@babel/typescript',
+    '@babel/preset-typescript',
     '@babel/preset-react'
   ],
   plugins: [
-    ['@babel/plugin-proposal-decorators', { legacy: true }],
-    ['@babel/plugin-transform-class-properties', { loose: true }],
-    ['@babel/plugin-transform-classes', { loose: true }],
     '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-transform-strict-mode',
-    '@babel/plugin-transform-parameters',
-    '@babel/plugin-transform-destructuring',
-    '@babel/plugin-transform-modules-commonjs',
     '@babel/plugin-proposal-object-rest-spread',
-    '@babel/plugin-proposal-json-strings',
-    '@babel/plugin-transform-spread',
-    '@babel/plugin-proposal-export-default-from',
-    '@babel/plugin-proposal-export-namespace-from',
     '@babel/plugin-syntax-dynamic-import',
-    '@babel/plugin-syntax-import-meta',
-    '@babel/plugin-transform-arrow-functions',
-    'babel-plugin-define-variables',
+    ['@babel/plugin-transform-runtime', { useESModules: false, }],
+    'babel-plugin-define-variables'
   ]
 };
+
 
 module.exports = process.env.BUILD_ENV === 'es'
   ? {
@@ -42,16 +31,16 @@ module.exports = process.env.BUILD_ENV === 'es'
           modules: false,
           useBuiltIns: 'usage',
           corejs: 2,
-          targets: { browsers: ['Chrome >= 106'] }
+          targets: { browsers: ['chrome >= 122'] }
         }
       ],
-      '@babel/typescript',
+      '@babel/preset-typescript',
+      '@babel/preset-react'
     ],
     plugins: [
-      '@babel/proposal-class-properties',
-      ['@babel/plugin-transform-class-properties', { loose: true }],
-      ['@babel/plugin-transform-classes', { loose: true }],
-      '@babel/proposal-object-rest-spread'
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-proposal-object-rest-spread',
+      'babel-plugin-define-variables'
     ]
   }
   : config;
