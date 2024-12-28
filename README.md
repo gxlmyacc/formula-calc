@@ -617,6 +617,9 @@ console.log(result); // '1.2345'
 const result = formulaUtils.toFixed(1000.2, { comma: true });
 console.log(result); // '1,000.20'
 
+const result = formulaUtils.toFixed(100000.2, { comma: true, commaDigit: 4, commaStr: '`' });
+console.log(result); // '10`0000.20'
+
 const result = formulaUtils.toFixed(null, { nullStr: '--' });
 console.log(result); // '--'
 
