@@ -800,7 +800,7 @@ type FormulaCustomFunctionItem = {
 ```
 
 | 属性名 | 类型 | 默认值 | 说明 |
-|------|-----|-------------------|
+|------|-----|---------|----------|
 | preExecute | boolean | true | 是否在执行前预处理参数，为`true`时，所有参数将会先执行出结果后再执行`execute`。若配置了`false`时，传递给`execute`的`params`将是`FormulaValues`对象，使用者需要自己调用参数的execute方法(如`params[0].execute(dataSource, options)`)来获取参数的值。|
 | arithmetic | boolean | false | 该自定义函数的运算性，为`true`时，则表示这个函数返回值将是一个数字类型(或`Decimal`类型)，若该函数作为比较操作符的参数之一时，则会尝试将另一边的参数尝试转换为数字进行比较。若为`false`时，则表示未知。|
 | argMin | number | - | 最小参数数量。|
