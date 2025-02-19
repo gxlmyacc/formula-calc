@@ -123,6 +123,7 @@ const TokenPercents = [
   TokenType.ttEQ,
   TokenType.ttNE,
   TokenType.ttParenR,
+  TokenType.ttListSeparator,
 ];
 
 const TokenValues = [

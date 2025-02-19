@@ -4,6 +4,7 @@ import formulaCalc, {
   Formula, createParamsDataSource,
   createFormula
 } from '../src';
+import FormulaParam from '../src/formula/values/param';
 
 describe('formula test', () => {
   test('formula options', () => {
@@ -129,6 +130,34 @@ describe('formula test', () => {
       }
     })).toBe(540.02);
 
+    expect(formulaCalc('max(a * b - a * c%, 0)', {
+      stepPrecision: 2,
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 7.5
+      }
+    })).toBe(540.02);
+
+    expect(formulaCalc('max(a * b% - a * c%, 0)', {
+      stepPrecision: 2,
+      params: {
+        a: 4500.22,
+        b: 20,
+        c: 7.5
+      }
+    })).toBe(540.02);
+
+    expect(formulaCalc('max(a * b - a * c, 0)', {
+      ignoreRoundingParams: (name) => name === 'c',
+      stepPrecision: (item) => ((item as FormulaParam).name === 'c' ? 3 : 2),
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 0.075
+      }
+    })).toBe(562.52);
+
     expect(formulaCalc('max(a * b - a * c, 0)', {
       ignoreRoundingOriginalValue: true,
       stepPrecision: 2,
@@ -136,6 +165,16 @@ describe('formula test', () => {
         a: 4500.22,
         b: 0.2,
         c: 0.075
+      }
+    })).toBe(562.52);
+
+    expect(formulaCalc('max(a * b - a * c%, 0)', {
+      ignoreRoundingOriginalValue: true,
+      stepPrecision: 2,
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 7.5
       }
     })).toBe(562.52);
 
