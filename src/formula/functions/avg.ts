@@ -1,11 +1,13 @@
 import type { IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { nextWithPrimise } from '../utils';
+import { nextWithPromise } from '../utils';
 import { sumExecute } from './sum';
 
 class FormulaFunctionAVG extends AbsFormulaFunction {
 
   public arithmetic = true;
+
+  public mayChange = true;
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     let paramCount = this.params.length;
@@ -18,7 +20,7 @@ class FormulaFunctionAVG extends AbsFormulaFunction {
       },
       true
     );
-    return nextWithPrimise(value, a => (paramCount ? a.div(paramCount) : a));
+    return nextWithPromise(value, (a) => (paramCount ? a.div(paramCount) : a));
   }
 
 }

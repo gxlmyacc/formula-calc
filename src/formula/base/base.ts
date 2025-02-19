@@ -14,12 +14,12 @@ abstract class AbsFormulaBase extends FormulaValue implements IFormulaValue, IFo
   }
 
 
-  protected checkArgVaild() {
+  protected checkArgValid() {
     return '';
   }
 
   public execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean): any {
-    const error = this.checkArgVaild();
+    const error = this.checkArgValid();
     if (error) {
       throw new Error(`[${this.name}]${error}`);
     }

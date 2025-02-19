@@ -2,7 +2,7 @@
 import { TokenType, } from '../type';
 import type { IFormulaDataSource, FormulaValueOptions  } from '../type';
 import AbsFormulaOperator from '../base/operator';
-import { nextWithPrimise } from '../utils';
+import { nextWithPromise } from '../utils';
 
 class FormulaOperatorPAREN extends AbsFormulaOperator {
 
@@ -11,9 +11,9 @@ class FormulaOperatorPAREN extends AbsFormulaOperator {
   public closed: boolean = false;
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) {
-    const result = nextWithPrimise(
-      this.params.map(v => v.execute(dataSource, options, forArithmetic)),
-      params => params,
+    const result = nextWithPromise(
+      this.params.map((v) => v.execute(dataSource, options, forArithmetic)),
+      (params) => params,
       false
     );
     return result.length <= 1 ? result[0] : result;

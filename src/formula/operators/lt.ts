@@ -2,7 +2,7 @@
 import { TokenType, } from '../type';
 import type { IFormulaDataSource, FormulaValueOptions  } from '../type';
 import AbsFormulaOperator from '../base/operator';
-import { isDecimal, nextWithPrimise, toDecimal } from '../utils';
+import { isDecimal, nextWithPromise, toDecimal } from '../utils';
 
 class FormulaOperatorGT extends AbsFormulaOperator {
 
@@ -10,7 +10,7 @@ class FormulaOperatorGT extends AbsFormulaOperator {
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const forArithmetic = this.params.some(v => v.arithmetic);
-    const result = nextWithPrimise(
+    const result = nextWithPromise(
       [
         this.params[0].execute(dataSource, options, forArithmetic),
         this.params[1].execute(dataSource, options, forArithmetic),

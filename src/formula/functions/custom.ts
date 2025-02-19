@@ -1,7 +1,7 @@
 
 import type { IFormulaDataSource, FormulaValueOptions, FormulaCustomFunctionItem } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { isDecimal, nextWithPrimise } from '../utils';
+import { isDecimal, nextWithPromise } from '../utils';
 
 class FormulaFunctionCUSTOM extends AbsFormulaFunction {
 
@@ -11,13 +11,14 @@ class FormulaFunctionCUSTOM extends AbsFormulaFunction {
     super(origText, options, name, item.argMin, item.argMax);
     this.item = item;
     this.arithmetic = item.arithmetic ?? Boolean(item.arithmetic);
+    this.mayChange = item.mayChange ?? true;
   }
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic: boolean) {
     if (this.item.preExecute === false) {
       return this.item.execute(this.params, dataSource, options);
     }
-    return nextWithPrimise(
+    return nextWithPromise(
       this.params.map((v) => {
         let result = v.execute(dataSource, options);
         if (isDecimal(result, options)) {
@@ -25,7 +26,7 @@ class FormulaFunctionCUSTOM extends AbsFormulaFunction {
         }
         return result;
       }),
-      params => this.item.execute(params, dataSource, options, forArithmetic),
+      (params) => this.item.execute(params, dataSource, options, forArithmetic),
       false,
     );
   }

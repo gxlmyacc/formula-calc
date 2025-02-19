@@ -388,6 +388,8 @@ type FormulaValueOptions = {
   rounding?: RoundingType,
   stepPrecision?: boolean|number,
   tryStringToNumber?: boolean,
+  ignoreRoundingOriginalValue?: boolean,
+  ignoreRoundingParams?: boolean|(name: string) => boolean,
   returnDecimal?: boolean,
   nullAsZero?: boolean,
   nullIfParamNotFound?: boolean,
@@ -464,6 +466,8 @@ The following is a tabular description of the parameters supported by options in
 | rounding | RoundingType | 'HALF_UP' | Sets the rounding type. Optional values include: UP, DOWN, CEIL, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, HALF_CEIL, HALF_FLOOR, EUCLID. |
 | stepPrecision | boolean \| number | - | Whether to round at each step of the operation, or set the precision for each step. |
 | tryStringToNumber | boolean | false | Whether to attempt to convert strings to numbers. |
+| ignoreRoundingOriginalValue | boolean | false | Whether to ignore rounding of primitive values (number, string, boolean, params, ref). |
+| ignoreRoundingParams | boolean \|(name) => boolean | false | Whether to ignore rounding of parameters. |
 | returnDecimal | boolean | false | Whether to return the number type as Decimal type. |
 | nullAsZero | boolean | false | Whether to treat null, undefined, NaN, and empty strings as zero in calculations. |
 | nullIfParamNotFound | boolean | false | Whether to return null if a parameter is not found. If false, an exception will be thrown when a parameter is not found. |
@@ -587,7 +591,7 @@ console.log(result); // 1.235
 | precision | number \| [min: number, max: number] | - | Sets the precision. Can be a single number or an array containing minimum and maximum precision values. |
 | comma | boolean | false | Whether to add a thousands separator in the number. |
 | commaStr | string | ',' | The string used as the thousands separator, defaults to a comma. |
-| commaDigit | number | 3 | The ithousands separator is added every `commaDigit` digits. |
+| commaDigit | number | 3 | The thousands separator is added every `commaDigit` digits. |
 | nullStr | string | '' | The string returned If the value is `null`, `undefined`, `NaN`, `Infinity`, or other content that cannot be converted to a numeric type. |
 | trimTrailingZero | boolean | false | Whether to trim trailing zeros after the decimal point. |
 | trimTrailingZeroIfInt | boolean | false | Whether to trim trailing zeros after the decimal point if the value is an integer. |
@@ -599,19 +603,19 @@ import { formulaUtils } from 'formula-calc';
 const result = formulaUtils.toFixed(1.2);
 console.log(result); // '1.20'
 
-const result = formulaUtils.toFixed(1.2, { pecision: 3 });
+const result = formulaUtils.toFixed(1.2, { precision: 3 });
 console.log(result); // '1.200'
 
-const result = formulaUtils.toFixed(1.2, { pecision: [2, 4] });
+const result = formulaUtils.toFixed(1.2, { precision: [2, 4] });
 console.log(result); // '1.20'
 
-const result = formulaUtils.toFixed(1.234, { pecision: [2, 4] });
+const result = formulaUtils.toFixed(1.234, { precision: [2, 4] });
 console.log(result); // '1.234'
 
-const result = formulaUtils.toFixed(1.23456, { pecision: [2, 4] });
+const result = formulaUtils.toFixed(1.23456, { precision: [2, 4] });
 console.log(result); // '1.2346'
 
-const result = formulaUtils.toFixed(1.23456, { pecision: [2, 4], rounding: 'FLOOR' });
+const result = formulaUtils.toFixed(1.23456, { precision: [2, 4], rounding: 'FLOOR' });
 console.log(result); // '1.2345'
 
 const result = formulaUtils.toFixed(1000.2, { comma: true });
@@ -761,7 +765,7 @@ Supports the following built in functions:
 
 - `atanh(x)` - Returns the inverse hyperbolic tangent of x
 
-### String Funcionts
+### String Functions
 
 - `concat(n1, n2, ..., n99)` - return all parameters into a string
 

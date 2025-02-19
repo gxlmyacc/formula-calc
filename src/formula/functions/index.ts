@@ -111,16 +111,16 @@ function createFormulaFunction(
 
 
 /**
- * registor a custom function
+ * register a custom function
  */
-function registorFormulaFunction(originFuncName: string, item: FormulaCustomFunctionItem, options: {
+function registerFormulaFunction(originFuncName: string, item: FormulaCustomFunctionItem, options: {
   force?: boolean,
   customFunctions?: Record<string, FormulaCustomFunctionItem>,
 } = {}) {
   const { force, customFunctions } = options;
   const funcName = originFuncName;
   if (FormulaCustomFunctionMap[funcName] && !force) {
-    throw new Error(`registor custom function fail: "${originFuncName}" already exist!`);
+    throw new Error(`register custom function fail: "${originFuncName}" already exist!`);
   }
   if (customFunctions) customFunctions[funcName] = item;
   else FormulaCustomFunctionMap[funcName] = item;
@@ -128,5 +128,5 @@ function registorFormulaFunction(originFuncName: string, item: FormulaCustomFunc
 
 export {
   createFormulaFunction,
-  registorFormulaFunction
+  registerFormulaFunction
 };

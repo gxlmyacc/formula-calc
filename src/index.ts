@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import Formula, { registorFormulaFunction, TokenType } from './formula';
+import Formula, { registerFormulaFunction, TokenType } from './formula';
 import { getValueByPath, hasOwnProp, toRound, toFixed, isFunction, isPlainObject, isString } from './formula/utils';
 import type { FormulaOptions, IFormulaDataSource, FormulaCustomFunctionItem } from './formula';
 import { FormulaValueOptions } from './formula/type';
@@ -37,9 +37,9 @@ function createParamsDataSource(params: FormulaCalcOptions['params']): IFormulaD
       return getValueByPath(
         params || {},
         name,
-        (path, { paresedPath, isLeaf }) => {
+        (path, { parsedPath, isLeaf }) => {
           if (nullAsZero
-          || ((nullIfParamNotFound || paresedPath) && isLeaf)
+          || ((nullIfParamNotFound || parsedPath) && isLeaf)
           ) {
             return (nullIfParamNotFound || nullAsZero) ? null : undefined;
           }
@@ -69,7 +69,7 @@ function createFormula(expression: string,  options: FormulaCreateOptions = {}) 
 
   if (isPlainObject(customFunctions)) {
     Object.keys(customFunctions).forEach((name) => {
-      customFunctions && formula.registorFunction(name, customFunctions[name], { force: true });
+      customFunctions && formula.registerFunction(name, customFunctions[name], { force: true });
     });
   }
 
@@ -98,10 +98,10 @@ function formulaCalcWithParams<T = any>(
 
 function formulaCalc<T extends any = any>(
   expressionOrFormula: string|Formula,
-  options: FormulaCalcOptions = {},
+  options?: FormulaCalcOptions,
   returnReferenceType?: T|((result: any) => T)
 ): T {
-  const { onFormulaCreated, params, ...restOptions } = options;
+  const { onFormulaCreated, params, ...restOptions } = options || {};
 
   let formula: Formula = null as any;
   if (isString(expressionOrFormula)) {
@@ -117,7 +117,7 @@ function formulaCalc<T extends any = any>(
 
   let result = (
     Array.isArray(params)
-      ? params.map(item => formulaCalcWithParams(formula, item, restOptions)) as T
+      ? params.map((item) => formulaCalcWithParams(formula, item, restOptions)) as T
       : formulaCalcWithParams<T>(formula, params, restOptions)
   );
   if (isFunction(returnReferenceType)) {
@@ -180,7 +180,7 @@ function createUtilMethod<P, A extends string[]>(expression: string, paramNames:
       param.updateValue(args[i], options);
     });
     return formulaCalc<number>(formula || expression, {
-      onFormulaCreated: f => formula = f,
+      onFormulaCreated: (f) => formula = f,
       nullAsZero: true,
       tryStringToNumber: true,
       nullIfParamNotFound: true,
@@ -216,7 +216,7 @@ export {
   createParamsDataSource,
   createFormulaEval,
   createUtilMethod,
-  registorFormulaFunction,
+  registerFormulaFunction,
   formulaUtils,
   FormulaParamValue,
 };

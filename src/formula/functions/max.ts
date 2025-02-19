@@ -7,9 +7,12 @@ class FormulaFunctionMAX extends AbsFormulaFunction {
 
   public arithmetic = true;
 
+  public mayChange = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     let result: any;
     return walkValues<Decimal>(
+      this,
       this.params,
       dataSource,
       options,

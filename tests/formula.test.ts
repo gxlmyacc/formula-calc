@@ -7,27 +7,13 @@ import formulaCalc, {
 
 describe('formula test', () => {
   test('formula options', () => {
-    expect(formulaCalc('3.334 + 3.335', {
-      precision: 2,
-      stepPrecision: true,
-    })).toBe(6.67);
     expect(formulaCalc('sum(1.141, 1.141, a)', {
       precision: 2,
       params: {
         a: [1.141, 1.141, 1.141]
       }
     })).toBe(5.71);
-    expect(formulaCalc('sum(1.141, 1.141, a)', {
-      precision: 2,
-      stepPrecision: true,
-      params: {
-        a: [1.141, 1.141, 1.141]
-      }
-    })).toBe(5.7);
-    expect(formulaCalc('3.3334 + 3.3315', {
-      precision: 2,
-      stepPrecision: 3,
-    })).toBe(6.67);
+
     expect(formulaCalc('3.334', {
       precision: 2,
     })).toBe(3.33);
@@ -83,7 +69,7 @@ describe('formula test', () => {
       params: {
         a: 1
       },
-      onFormulaCreated: f => formula = f
+      onFormulaCreated: (f) => formula = f
     });
     const result2 = formula && formulaCalc(formula, {
       params: {
@@ -101,9 +87,82 @@ describe('formula test', () => {
     expect(formulaCalc(createFormula('1 + 1'))).toBe(2);
   });
 
-  test('registorFunction', () => {
+  test('stepPrecision', () => {
+    expect(formulaCalc('3.334 + 3.335', {
+      precision: 2,
+      stepPrecision: true,
+    })).toBe(6.67);
+    expect(formulaCalc('sum(1.141, 1.141, a)', {
+      precision: 2,
+      stepPrecision: true,
+      params: {
+        a: [1.141, 1.141, 1.141]
+      }
+    })).toBe(5.7);
+    expect(formulaCalc('3.3334 + 3.3315', {
+      precision: 2,
+      stepPrecision: 3,
+    })).toBe(6.67);
+    expect(formulaCalc('max(a * b - a * c, 0)', {
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 0.075
+      }
+    })).toBe(562.5275);
+
+    expect(formulaCalc('max(a * b - a * c, 0)', {
+      precision: 2,
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 0.075
+      }
+    })).toBe(562.53);
+
+    expect(formulaCalc('max(a * b - a * c, 0)', {
+      stepPrecision: 2,
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 0.075
+      }
+    })).toBe(540.02);
+
+    expect(formulaCalc('max(a * b - a * c, 0)', {
+      ignoreRoundingOriginalValue: true,
+      stepPrecision: 2,
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 0.075
+      }
+    })).toBe(562.52);
+
+    expect(formulaCalc('max(a * b - a * c, 0)', {
+      ignoreRoundingParams: true,
+      stepPrecision: 2,
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 0.075
+      }
+    })).toBe(562.52);
+
+    expect(formulaCalc('max(a * b - a * c, 0)', {
+      ignoreRoundingParams: (name) => name === 'c',
+      stepPrecision: 2,
+      params: {
+        a: 4500.22,
+        b: 0.2,
+        c: 0.075
+      }
+    })).toBe(562.52);
+  });
+
+  test('registerFunction', () => {
     const formula = new Formula();
-    formula.registorFunction('add1', {
+    formula.registerFunction('add1', {
       argMin: 1,
       argMax: 1,
       execute(params, dataSource, options) {
@@ -167,7 +226,7 @@ describe('formula test', () => {
       },
       returnDecimal: true
     });
-    expect(Array.isArray(result) && result.every(v => Decimal.isDecimal(v))).toBe(true);
+    expect(Array.isArray(result) && result.every((v) => Decimal.isDecimal(v))).toBe(true);
 
     result = formulaCalc('a', {
       params: {

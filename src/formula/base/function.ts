@@ -20,7 +20,7 @@ abstract class AbsFormulaFunction extends AbsFormulaBase implements IFormulaFunc
     this.argMax = argMax;
   }
 
-  checkArgVaild() {
+  checkArgValid() {
     const paramsLen = this.params.length;
     return paramsLen >= this.argMin && paramsLen <= this.argMax
       ? ''

@@ -345,19 +345,17 @@ describe('operator test', () => {
         a: -3
       }
     })).toBe(1);
-    expect(formulaCalc(
-      `
+    expect(formulaCalc(`
         a > 0
         ? eval(planA)
         : eval(planB)
       `, {
-        params: {
-          a: -3,
-          planA: 'a + 1',
-          planB: '0 - a + 1',
-        }
+      params: {
+        a: -3,
+        planA: 'a + 1',
+        planB: '0 - a + 1',
       }
-    )).toBe(4);
+    })).toBe(4);
 
     expect(formulaCalc('"a" ? 1 : 2')).toBe(1);
     expect(formulaCalc('false ? 1 : 2')).toBe(2);
@@ -379,8 +377,8 @@ describe('operator test', () => {
     })).toBe(2);
 
     expect(() => formulaCalc('?')).toThrow('The formula is incorrect!');
-    expect(() => formulaCalc('1 ?')).toThrow('The formula is incorrect: uncomplete operator "?": expected 3 parameters, but got 1!');
-    expect(() => formulaCalc('1 ? 2 :')).toThrow('The formula is incorrect: uncomplete operator "?": expected 3 parameters, but got 2!');
+    expect(() => formulaCalc('1 ?')).toThrow('The formula is incorrect: not complete operator "?": expected 3 parameters, but got 1!');
+    expect(() => formulaCalc('1 ? 2 :')).toThrow('The formula is incorrect: not complete operator "?": expected 3 parameters, but got 2!');
     expect(() => formulaCalc('1 ? :')).toThrow('The formula is incorrect!');
     expect(() => formulaCalc('1 :')).toThrow('The formula is incorrect!');
   });

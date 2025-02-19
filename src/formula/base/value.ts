@@ -1,13 +1,17 @@
 import Decimal from 'decimal.js';
 import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions } from '../type';
 import { FormulaExecuteState, TokenType } from '../type';
-import { isDecimal, isNumber, isPromise, isStringNumber, toDecimal, toRound } from '../utils';
+import { isDecimal, isFunction, isNumber, isPromise, isStringNumber, toDecimal, toRound } from '../utils';
 import { DEFAULT_DECIMAL_PLACES } from '../constant';
+import FormulaParam from '../values/param';
 
-function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaValue, forArithmetic?: boolean) {
+function resolveValue(value: any, options: FormulaValueOptions, item: IFormulaValue, forArithmetic?: boolean) {
   if (!item || item.arithmetic || forArithmetic || options.tryStringToNumber) {
     let precision = options.precision ?? DEFAULT_DECIMAL_PLACES;
-    const stepPrecision = isNumber(options.stepPrecision) || options.stepPrecision;
+    const _stepPrecision = isFunction(options.stepPrecision)
+      ? options.stepPrecision(item, value)
+      : options.stepPrecision;
+    const stepPrecision = isNumber(_stepPrecision) || _stepPrecision;
     if (stepPrecision && isNumber(options.stepPrecision)) {
       precision =  options.stepPrecision;
     }
@@ -15,7 +19,17 @@ function resolveValue(value: any, options: FormulaValueOptions, item?: IFormulaV
       value = toDecimal(value, options);
     }
     if (isDecimal(value, options)) {
-      if (stepPrecision && value.decimalPlaces() > precision) {
+      const { ignoreRoundingOriginalValue, ignoreRoundingParams } = options;
+      const shouldStepPrecision = (stepPrecision && value.decimalPlaces() > precision)
+       && (!ignoreRoundingOriginalValue || !item || item.mayChange)
+       && (
+         !(item as FormulaParam)?.isParam || (
+           ignoreRoundingParams
+             ? !(isFunction(ignoreRoundingParams) ? ignoreRoundingParams((item as FormulaParam).name) : true)
+             : true
+         )
+       );
+      if (shouldStepPrecision) {
         value = toRound(value, precision, options.rounding);
       } else if (options.nullAsZero && value.isNaN()) {
         value = new Decimal(0);
@@ -43,6 +57,8 @@ abstract class FormulaValue implements IFormulaValue {
   public tokenType: TokenType;
 
   public arithmetic: boolean = false;
+
+  public mayChange: boolean = false;
 
   protected abstract _execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions, forArithmetic?: boolean): any;
 

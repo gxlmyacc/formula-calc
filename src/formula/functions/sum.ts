@@ -16,6 +16,7 @@ function sumExecute(
 ) {
   let value = new (options.Decimal || Decimal)(0);
   return walkValues<Decimal>(
+    this,
     params,
     dataSource,
     options,
@@ -37,6 +38,8 @@ function sumExecute(
 class FormulaFunctionSUM extends AbsFormulaFunction {
 
   public arithmetic = true;
+
+  public mayChange = true;
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     return sumExecute(this.params, dataSource, options, undefined, true);

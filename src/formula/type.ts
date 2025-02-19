@@ -54,7 +54,7 @@ enum FormulaExecuteState {
 
 const TokenUnaryLefts = [TokenType.ttNot];
 const TokenUnaryRights = [TokenType.ttPercent];
-const TokenBinarys = [
+const TokenBinaries = [
   TokenType.ttAdd,
   TokenType.ttMinus,
   TokenType.ttMul,
@@ -156,8 +156,10 @@ type FormulaValueOptions = {
   Decimal?: typeof Decimal,
   precision?: number,
   rounding?: RoundingType,
-  stepPrecision?: boolean|number,
+  stepPrecision?: boolean|number|((item: IFormulaValue, value: any) => boolean|number),
   tryStringToNumber?: boolean,
+  ignoreRoundingOriginalValue?: boolean,
+  ignoreRoundingParams?: boolean|((name: string) => boolean)
   returnDecimal?: boolean,
   nullAsZero?: boolean,
   nullIfParamNotFound?: boolean,
@@ -167,12 +169,14 @@ type FormulaValueOptions = {
 type FormulaCustomFunctionItem = {
   preExecute?: true,
   arithmetic?: boolean,
+  mayChange?: boolean,
   argMin: number
   argMax: number;
   execute: (params: any[], dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any
 } | {
   preExecute: false,
   arithmetic?: boolean,
+  mayChange?: boolean,
   argMin: number
   argMax: number;
   execute: (params: FormulaValues, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any
@@ -182,9 +186,9 @@ interface IFormulaValue {
   origText: string;
   value: any,
   state: FormulaExecuteState,
-
   readonly arithmetic: boolean,
-  readonly tokenType: TokenType;
+  readonly tokenType: TokenType,
+  readonly mayChange: boolean,
   execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions, forArithmetic?: boolean): any;
 }
 
@@ -222,7 +226,7 @@ export {
   TokenValues,
   TokenUnaryLefts,
   TokenUnaryRights,
-  TokenBinarys,
+  TokenBinaries,
   TokenOperators,
   TokenNegatives,
   TokenPercents,

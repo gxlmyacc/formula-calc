@@ -2,13 +2,13 @@
 import Decimal from 'decimal.js';
 import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { isDecimal, nextWithPrimise } from '../utils';
+import { isDecimal, nextWithPromise } from '../utils';
 
 class FormulaFunctionRANDOM extends AbsFormulaFunction {
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
-    const result = nextWithPrimise(
-      this.params.map(v => v.execute(dataSource, options, true)),
+    const result = nextWithPromise(
+      this.params.map((v) => v.execute(dataSource, options, true)),
       (params) => {
         let significantDigits = params.length
           ? params[0]

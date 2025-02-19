@@ -1,6 +1,6 @@
 import type {  IFormulaDataSource, FormulaValueOptions, FormulaValues } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { isDecimalTrue, nextWithPrimise } from '../utils';
+import { isDecimalTrue, nextWithPromise } from '../utils';
 
 function ifExecute(
   params: FormulaValues,
@@ -8,12 +8,12 @@ function ifExecute(
   options: FormulaValueOptions,
   forArithmetic?: boolean
 ) {
-  return nextWithPrimise(
+  return nextWithPromise(
     params[0].execute(dataSource, options),
-    a => (
+    (a) => (
       isDecimalTrue(a, options)
-        ? nextWithPrimise(params[1].execute(dataSource, options, forArithmetic))
-        : params[2] && nextWithPrimise(params[2].execute(dataSource, options, forArithmetic))
+        ? nextWithPromise(params[1].execute(dataSource, options, forArithmetic))
+        : params[2] && nextWithPromise(params[2].execute(dataSource, options, forArithmetic))
     )
   );
 }

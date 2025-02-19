@@ -1,13 +1,13 @@
 
 import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { getValueByPath, isDecimal, isString, isValueType, nextWithPrimise } from '../utils';
+import { getValueByPath, isDecimal, isString, isValueType, nextWithPromise } from '../utils';
 
 
 class FormulaFunctionEXIST extends AbsFormulaFunction {
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
-    const result = nextWithPrimise(
+    const result = nextWithPromise(
       [
         this.params[0].execute(dataSource, options),
         this.params[1].execute(dataSource, options),

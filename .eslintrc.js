@@ -23,11 +23,11 @@ module.exports = {
 
   },
   globals: {
-    'define': true,
-    '__DEV__': true,
-    '__ENV__': true,
-    '__VERSION__': true,
-    '__WATCH__': true,
+    define: true,
+    __DEV__: true,
+    __ENV__: true,
+    __VERSION__: true,
+    __WATCH__: true,
   },
   rules: {
     'array-callback-return': 0,
@@ -41,7 +41,7 @@ module.exports = {
       objects: 'ignore'
     }],
     'consistent-return': 0,
-    'curly': [0, 'multi-or-nest'],
+    curly: [0, 'multi-or-nest'],
     'default-case': 2,
     'eol-last': 0,
     'func-names': 0,
@@ -52,7 +52,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 0,
     'import/no-unresolved': 0,
     'import/prefer-default-export': 0,
-    'indent': [2, 2, {
+    indent: [2, 2, {
       SwitchCase: 1
     }],
     'jsx-a11y/anchor-is-valid': ['warn', {
@@ -60,6 +60,7 @@ module.exports = {
     }],
     'jsx-quotes': 2,
     'linebreak-style': 0,
+    'max-classes-per-file': 0,
     'max-len': [2, {
       code: 150,
       ignoreRegExpLiterals: true,
@@ -106,26 +107,26 @@ module.exports = {
       vars: 'all'
     }],
     'no-useless-escape': 2,
-    "object-curly-newline": [2, {
+    'object-curly-newline': [2, {
       consistent: true,
       multiline: true
     }],
-    "object-property-newline": [2, {
+    'object-property-newline': [2, {
       allowAllPropertiesOnSameLine: true
     }],
-    "object-shorthand": [2, 'always'],
-    "one-var": [2, {
+    'object-shorthand': [2, 'always'],
+    'one-var': [2, {
       initialized: 'never',
       uninitialized: 'never'
     }],
-    "one-var-declaration-per-line": [2, 'initializations'],
-    "operator-linebreak": [2, 'before', {
+    'one-var-declaration-per-line': [2, 'initializations'],
+    'operator-linebreak': [2, 'before', {
       overrides: {
         ':': 'before',
         '?': 'before'
       }
     }],
-    "padded-blocks": [2, {
+    'padded-blocks': [2, {
       blocks: 'never',
       classes: 'always',
       switches: 'never'
@@ -136,7 +137,7 @@ module.exports = {
     'prefer-promise-reject-errors': 0,
     'prefer-rest-params': 0,
     'prefer-template': 0,
-    'radix': [2, 'as-needed'],
+    radix: [2, 'as-needed'],
     'wrap-iife': [2, 'inside']
   }
-}
+};

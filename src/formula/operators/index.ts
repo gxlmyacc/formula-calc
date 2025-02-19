@@ -69,7 +69,7 @@ function createFormulaOperator(
   tokenIndex: number,
   options?: FormulaValueOptions
 ): IFormulaOperator {
-  const item = FormulaOperatorArray.find(item => item.operatorToken === operatorToken);
+  const item = FormulaOperatorArray.find((item) => item.operatorToken === operatorToken);
   // if (!item) {
   //   throw new Error(`unsupported operator: "${operatorToken}"unsupported operator: "${operatorToken}"`);
   // }

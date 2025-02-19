@@ -372,6 +372,8 @@ type FormulaValueOptions = {
   stepPrecision?: boolean|number,
   tryStringToNumber?: boolean,
   returnDecimal?: boolean,
+  ignoreRoundingOriginalValue?: boolean,
+  ignoreRoundingParams?: boolean|(name: string) => boolean,
   nullAsZero?: boolean,
   nullIfParamNotFound?: boolean,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any),
@@ -446,8 +448,10 @@ console.log(result); // [2, 3, 4]
 | Decimal | typeof Decimal | - | 用于数值计算的 Decimal.js 自定义实例。 |
 | precision | number | 2 | 设置计算结果的精度。 |
 | rounding | RoundingType | 'HALF_UP' | 设置舍入类型。可选值包括：UP、DOWN、CEIL、FLOOR、HALF_UP、HALF_DOWN、HALF_EVEN、HALF_CEIL、HALF_FLOOR、EUCLID。 |
-| stepPrecision | boolean \| number | - | 是否在每一步操作中进行四舍五入，或设置每一步的精度。 |
+| stepPrecision | boolean \| number | - | 是否在每一步操作中进行舍入，或设置每一步的精度。 |
 | tryStringToNumber | boolean | false | 是否尝试将字符串转换为数字。 |
+| ignoreRoundingOriginalValue | boolean | false | 是否忽略对原始值(number、string、boolean、params、ref)的舍入。 |
+| ignoreRoundingParams | boolean \|(name) => boolean | false | 是否忽略对参数的舍入。 |
 | returnDecimal | boolean | false | 是否将返回的数字类型作为 Decimal 类型进行返回。 |
 | nullAsZero | boolean | false | 是否将 `null`、`undefined`、`NaN` 、`空字符串` 视为零参与计算。 |
 | nullIfParamNotFound | boolean | false | 如果参数未找到，是否返回 `null`。若为false时，未找到参数将抛出异常。 |
@@ -584,19 +588,19 @@ import { formulaUtils } from 'formula-calc';
 const result = formulaUtils.toFixed(1.2);
 console.log(result); // '1.20'
 
-const result = formulaUtils.toFixed(1.2, { pecision: 3 });
+const result = formulaUtils.toFixed(1.2, { precision: 3 });
 console.log(result); // '1.200'
 
-const result = formulaUtils.toFixed(1.2, { pecision: [2, 4] });
+const result = formulaUtils.toFixed(1.2, { precision: [2, 4] });
 console.log(result); // '1.20'
 
-const result = formulaUtils.toFixed(1.234, { pecision: [2, 4] });
+const result = formulaUtils.toFixed(1.234, { precision: [2, 4] });
 console.log(result); // '1.234'
 
-const result = formulaUtils.toFixed(1.23456, { pecision: [2, 4] });
+const result = formulaUtils.toFixed(1.23456, { precision: [2, 4] });
 console.log(result); // '1.2346'
 
-const result = formulaUtils.toFixed(1.23456, { pecision: [2, 4], rounding: 'FLOOR' });
+const result = formulaUtils.toFixed(1.23456, { precision: [2, 4], rounding: 'FLOOR' });
 console.log(result); // '1.2345'
 
 const result = formulaUtils.toFixed(1000.2, { comma: true });

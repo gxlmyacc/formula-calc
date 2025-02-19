@@ -9,6 +9,7 @@ class FormulaParam extends FormulaValue implements IFormulaParam {
 
   public tokenType: TokenType;
 
+  public isParam: boolean = true;
 
   constructor(origText: string, name: string, tokenType: TokenType, options?: FormulaValueOptions) {
     super(origText, options);

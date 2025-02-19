@@ -12,7 +12,7 @@ import type {
   FormulaCustomFunctionItem
 } from './type';
 import AbsFormulaFunction from './base/function';
-import { createFormulaFunction, registorFormulaFunction } from './functions';
+import { createFormulaFunction, registerFormulaFunction } from './functions';
 import { createFormulaOperator, isFormulaOperator } from './operators';
 import FormulaOperatorPAREN from './operators/paren';
 import FormulaOperatorIF from './operators/if';
@@ -24,13 +24,13 @@ import FormulaParam from './values/param';
 import FormulaRef from './values/ref';
 import FormulaNaN from './values/nan';
 import { ERROR_FORMULA_STR } from './constant';
-import { isDecimal, isDecimalValue, isNumber, nextWithPrimise, removeFormArray, toRound } from './utils';
+import { isDecimal, isDecimalValue, isNumber, nextWithPromise, removeFormArray, toRound } from './utils';
 
 interface FormulaOptions extends FormulaValueOptions {
   onCreateParam?: (token: string,  options: FormulaValueOptions) => IFormulaValue;
 }
 
-function isOperatorUncomplete(operator: IFormulaOperator) {
+function isOperatorUnComplete(operator: IFormulaOperator) {
   return operator.paramsCount !== null && operator.params.length < operator.paramsCount;
 }
 
@@ -70,10 +70,10 @@ class Formula {
     this.tokenizer = new Tokenizer();
   }
 
-  public registorFunction: typeof registorFormulaFunction = (originFuncName, item, options = {}) => registorFormulaFunction(originFuncName, item, {
+  public registerFunction: typeof registerFormulaFunction = (originFuncName, item, options = {}) => registerFormulaFunction(originFuncName, item, {
     ...options,
     customFunctions: this.customFunctions,
-  })
+  });
 
 
   private expression(options: FormulaOptions) {
@@ -164,19 +164,19 @@ class Formula {
             paren.origText = tokenizer.value.substr(paren.tokenIndex, tokenItem.index + 1 - paren.tokenIndex);
           }
 
-          if ((j - 1 >= 0) && isFormulaOperator(formulas[j - 1], v => operator = v)) {
+          if ((j - 1 >= 0) && isFormulaOperator(formulas[j - 1], (v) => operator = v)) {
             if (operator && OperatorWithRightParams.includes(operator.operatorType)) {
-              if (isOperatorUncomplete(operator)) {
+              if (isOperatorUnComplete(operator)) {
                 operator.params.push(formulas[j]);
                 formulas.splice(j, 1);
               } else {
                 let operatorTemp2: IFormulaOperator|null = null;
                 let operatorTemp1: IFormulaOperator|null = operator;
                 do {
-                  if (isOperatorUncomplete(operatorTemp1)) {
+                  if (isOperatorUnComplete(operatorTemp1)) {
                     operatorTemp2 = operatorTemp1;
                   }
-                } while (isFormulaOperator(operatorTemp1.params[operatorTemp1.params.length - 1], v => operatorTemp1 = v));
+                } while (isFormulaOperator(operatorTemp1.params[operatorTemp1.params.length - 1], (v) => operatorTemp1 = v));
 
                 if (operatorTemp2) {
                   operatorTemp2.params.push(formulas[j]);
@@ -216,7 +216,7 @@ class Formula {
           if (operator.operatorType === FormulaOperatorType.fotUnaryLeft) {
             if (operatorNear
               && (OperatorWithRightParams.includes(operatorNear.operatorType))
-              &&  isOperatorUncomplete(operatorNear)) {
+              &&  isOperatorUnComplete(operatorNear)) {
               operatorNear.params.push(operator);
             } else {
               formulas.push(operator);
@@ -231,7 +231,7 @@ class Formula {
             if (operatorPrev
               && (OperatorWithRightParams.includes(operatorPrev.operatorType))
               && (operator.priority > operatorPrev.priority)) {
-              if (isOperatorUncomplete(operatorPrev) && (
+              if (isOperatorUnComplete(operatorPrev) && (
                 operatorPrev.tokenType !== TokenType.ttIf
                 || (operatorPrev as FormulaOperatorIF).withElse
                 || operatorPrev.params.length < 1
@@ -249,7 +249,7 @@ class Formula {
               operator.params.push(operatorTemp1.params[operatorTemp1.params.length - 1]);
               operatorTemp1.params[operatorTemp1.params.length - 1] = operator as IFormulaOperator;
             } else {
-              if (operatorPrev === formulas[formulas.length - 1] && isOperatorUncomplete(operatorPrev)) {
+              if (operatorPrev === formulas[formulas.length - 1] && isOperatorUnComplete(operatorPrev)) {
                 throw new Error(ERROR_FORMULA_STR + '!');
               }
               operator.params.push(formulas[formulas.length - 1]);
@@ -325,9 +325,9 @@ class Formula {
       // }
     }
     this.operators.forEach((operator) => {
-      if (isOperatorUncomplete(operator)) {
+      if (isOperatorUnComplete(operator)) {
         // eslint-disable-next-line max-len
-        throw new Error(ERROR_FORMULA_STR + `: uncomplete operator "${operator.name}": expected ${operator.paramsCount} parameters, but got ${operator.params.length}!`);
+        throw new Error(ERROR_FORMULA_STR + `: not complete operator "${operator.name}": expected ${operator.paramsCount} parameters, but got ${operator.params.length}!`);
       }
     });
     this.verifyFormulaCount();
@@ -339,7 +339,7 @@ class Formula {
     this.formulas.splice(0, this.formulas.length);
     this.operators.splice(0, this.operators.length);
     const refs = this.refs.splice(0, this.refs.length);
-    refs.forEach(value => value.state = FormulaExecuteState.fesNone);
+    refs.forEach((value) => value.state = FormulaExecuteState.fesNone);
   }
 
   parse(formula: string, options: FormulaOptions = {}) {
@@ -372,7 +372,7 @@ class Formula {
   }
 
   execute(dataSource?: IFormulaDataSource, options: FormulaValueOptions = {}) {
-    return nextWithPrimise(
+    return nextWithPromise(
       this._execute(dataSource, options),
       (result) => {
         const _resolveResult = (result: any): any => {
@@ -410,7 +410,7 @@ class Formula {
 
 export {
   AbsFormulaFunction,
-  registorFormulaFunction,
+  registerFormulaFunction,
   TokenType,
 };
 

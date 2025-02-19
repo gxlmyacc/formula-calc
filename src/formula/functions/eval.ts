@@ -1,12 +1,14 @@
 
 import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
 import AbsFormulaFunction from '../base/function';
-import { nextWithPrimise } from '../utils';
+import { nextWithPromise } from '../utils';
 
 class FormulaFunctionEVAL extends AbsFormulaFunction {
 
+  public mayChange = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) {
-    const result = nextWithPrimise(
+    const result = nextWithPromise(
       [
         this.params[0].execute(dataSource, options),
       ],

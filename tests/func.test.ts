@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import formulaCalc, { registorFormulaFunction } from '../src';
+import formulaCalc, { registerFormulaFunction } from '../src';
 
 describe('function test', () => {
   test('max', () => {
@@ -391,19 +391,17 @@ describe('function test', () => {
         a: -3
       }
     })).toBe(1);
-    expect(formulaCalc(
-      `if(
+    expect(formulaCalc(`if(
         a > 0,
         eval(planA),
         eval(planB)
       )`, {
-        params: {
-          a: -3,
-          planA: 'a + 1',
-          planB: '0 - a + 1',
-        }
+      params: {
+        a: -3,
+        planA: 'a + 1',
+        planB: '0 - a + 1',
       }
-    )).toBe(4);
+    })).toBe(4);
 
     expect(formulaCalc('if("a", 1, 2)')).toBe(1);
     expect(formulaCalc('if(false, 1, 2)')).toBe(2);
@@ -523,21 +521,21 @@ describe('function test', () => {
     })).toThrow('"add1" invalid param count, expected: 1 to 2, actual: 0');
 
     expect(() => {
-      registorFormulaFunction('add1', {
+      registerFormulaFunction('add1', {
         argMin: 1,
         argMax: 1,
         execute(params, dataSource, options) {
           return params[0] + 1;
         }
       });
-      registorFormulaFunction('add1', {
+      registerFormulaFunction('add1', {
         argMin: 1,
         argMax: 1,
         execute(params, dataSource, options) {
           return params[0] + 1;
         }
       });
-    }).toThrow('registor custom function fail: "add1" already exist!');
+    }).toThrow('register custom function fail: "add1" already exist!');
   });
 
   test('cast', () => {

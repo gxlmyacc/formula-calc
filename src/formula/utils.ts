@@ -156,14 +156,14 @@ function getValueByPath(
   onNotFind?: (
     path: string,
     options: {
-      paresedPath: string,
+      parsedPath: string,
       pre: any,
       isLeaf: boolean,
       paths: string[],
   }) => void,
   defaultValue?: any,
 ) {
-  let paresedPath = '';
+  let parsedPath = '';
   let value: any;
   let pre = data;
   const paths = path.split('.');
@@ -176,7 +176,7 @@ function getValueByPath(
       path = path.slice(0, -1);
     }
     if (pre && (optional || hasOwnProp(pre, path))) {
-      paresedPath += `${paresedPath ? '.' : ''}${path}`;
+      parsedPath += `${parsedPath ? '.' : ''}${path}`;
       pre = value = pre[path];
       return pre && (typeof pre === 'object' || Array.isArray(pre))
         ? false
@@ -184,7 +184,7 @@ function getValueByPath(
     }
     value = defaultValue;
     if (onNotFind) {
-      value = onNotFind(path, { paresedPath, pre, isLeaf, paths });
+      value = onNotFind(path, { parsedPath, pre, isLeaf, paths });
     }
     return true;
   });
@@ -219,9 +219,9 @@ function isPromise(v: any): v is Promise<any> {
   return v?.then;
 }
 
-function nextWithPrimise<T, R>(
+function nextWithPromise<T, R>(
   proms: T,
-  next: (...args: any[]) => R = v => v,
+  next: (...args: any[]) => R = (v) => v,
   spread: boolean = true
 ): R|Promise<R> {
   if (Array.isArray(proms)) {
@@ -236,19 +236,19 @@ function nextWithPrimise<T, R>(
     return Promise.all(proms).then(_next);
   }
   return isPromise(proms)
-    ? proms.then(v => next(v))
+    ? proms.then((v) => next(v))
     : next(proms);
 }
 
 function flatten(array: any[]) {
-  const flattend: any[] = [];
+  const flattened: any[] = [];
   (function flat(array) {
     array.forEach(function (el) {
       if (Array.isArray(el)) flat(el);
-      else flattend.push(el);
+      else flattened.push(el);
     });
   })(array);
-  return flattend;
+  return flattened;
 }
 
 function removeFormArray<T>(array: T[], value: T) {
@@ -284,7 +284,7 @@ export {
   isStringNumber,
   // getTokenTypeByValue,
   getValueByPath,
-  nextWithPrimise,
+  nextWithPromise,
   flatten,
   removeFormArray,
 };

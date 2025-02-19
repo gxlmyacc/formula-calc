@@ -390,7 +390,7 @@ class Tokenizer {
     }
 
     if (hasSpace) {
-      this.items = this.items.filter(v => ![TokenType.ttSpace, TokenType.ttLine].includes(v.tokenType));
+      this.items = this.items.filter((v) => ![TokenType.ttSpace, TokenType.ttLine].includes(v.tokenType));
     }
 
     this.items.forEach((item, i) => {
