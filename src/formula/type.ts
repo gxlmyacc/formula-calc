@@ -186,6 +186,7 @@ type FormulaCustomFunctionItem = {
 interface IFormulaValue {
   origText: string;
   value: any,
+  name: string,
   state: FormulaExecuteState,
   readonly arithmetic: boolean,
   readonly tokenType: TokenType,
@@ -201,7 +202,6 @@ interface IFormulaParam extends IFormulaValue {
 }
 
 interface IFormulaBase extends IFormulaValue {
-  name: string ;
   params: FormulaValues;
 }
 

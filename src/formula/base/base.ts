@@ -4,8 +4,6 @@ import FormulaValue from './value';
 
 abstract class AbsFormulaBase extends FormulaValue implements IFormulaValue, IFormulaBase {
 
-  public name: string = '';
-
   public params: FormulaValues;
 
   constructor(origText: string,  options: FormulaValueOptions) {

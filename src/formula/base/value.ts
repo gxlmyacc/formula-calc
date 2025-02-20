@@ -12,8 +12,8 @@ function resolveValue(value: any, options: FormulaValueOptions, item: IFormulaVa
       ? options.stepPrecision(item, value)
       : options.stepPrecision;
     const stepPrecision = isNumber(_stepPrecision) || _stepPrecision;
-    if (stepPrecision && isNumber(options.stepPrecision)) {
-      precision =  options.stepPrecision;
+    if (stepPrecision && isNumber(_stepPrecision)) {
+      precision =  _stepPrecision;
     }
     if (isNumber(value) || (options.tryStringToNumber && isStringNumber(value))) {
       value = toDecimal(value, options);
@@ -49,6 +49,8 @@ abstract class FormulaValue implements IFormulaValue {
   public origText: string;
 
   public value: any;
+
+  public name: string = '';
 
   public state: FormulaExecuteState;
 
