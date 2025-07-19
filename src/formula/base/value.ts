@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions } from '../type';
+import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions, Token } from '../type';
 import { FormulaExecuteState, TokenType } from '../type';
 import { isDecimal, isFunction, isNumber, isPromise, isStringNumber, toDecimal, toRound } from '../utils';
 import { DEFAULT_DECIMAL_PLACES } from '../constant';
@@ -46,7 +46,21 @@ function resolveValue(value: any, options: FormulaValueOptions, item: IFormulaVa
 
 abstract class FormulaValue implements IFormulaValue {
 
-  public origText: string;
+  public token: Token;
+
+  public get origText() {
+    return this.token.quoteChar
+      ? `${this.token.quoteChar}${this.token.token}${this.token.quoteChar}`
+      : this.token.token;
+  }
+
+  public get line() {
+    return this.token.line;
+  }
+
+  public get column() {
+    return this.token.column;
+  }
 
   public value: any;
 
@@ -73,6 +87,9 @@ abstract class FormulaValue implements IFormulaValue {
       const _next = (value: any) => {
         this.value = resolveValue(value, options, this, forArithmetic);
         this.state = FormulaExecuteState.fesExecuted;
+        if (options.onTrace) {
+          options.onTrace(this, isDecimal(this.value, options) ? this.value.toNumber() : this.value);
+        }
         return this.value;
       };
       if (prom) return value.then(_next).catch((e: any) => {
@@ -86,8 +103,8 @@ abstract class FormulaValue implements IFormulaValue {
     }
   }
 
-  constructor(origText: string, options: FormulaValueOptions = {}) {
-    this.origText = origText;
+  constructor(token: Token, options: FormulaValueOptions = {}) {
+    this.token = token;
     this.options = options;
     this.value = undefined;
     this.state = FormulaExecuteState.fesNone;

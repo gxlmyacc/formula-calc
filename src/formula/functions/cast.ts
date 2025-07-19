@@ -1,4 +1,4 @@
-import type {  IFormulaDataSource, FormulaValueOptions } from '../type';
+import type {  IFormulaDataSource, FormulaValueOptions, Token } from '../type';
 import AbsFormulaFunction from '../base/function';
 import { isDecimal, nextWithPromise, toDecimal } from '../utils';
 
@@ -17,8 +17,8 @@ class FormulaFunctionCAST extends AbsFormulaFunction {
 
   public mayChange = true;
 
-  constructor(origText: string,  options: FormulaValueOptions, name: string, argMin: number, argMax: number) {
-    super(origText, options, name, argMin, argMax);
+  constructor(token: Token, options: FormulaValueOptions, name: string, argMin: number, argMax: number) {
+    super(token, options, name, argMin, argMax);
     this.arithmetic = name === 'number';
   }
 

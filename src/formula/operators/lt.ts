@@ -9,7 +9,7 @@ class FormulaOperatorGT extends AbsFormulaOperator {
   public tokenType: TokenType = TokenType.ttGT;
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
-    const forArithmetic = this.params.some(v => v.arithmetic);
+    const forArithmetic = this.params.some((v) => v.arithmetic);
     const result = nextWithPromise(
       [
         this.params[0].execute(dataSource, options, forArithmetic),

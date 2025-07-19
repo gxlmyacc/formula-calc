@@ -9,7 +9,8 @@ import {
 } from './type';
 import type {
   IFormulaValue, IFormulaDataSource, IFormulaOperator, IFormulaFunction,
-  FormulaCustomFunctionItem
+  FormulaCustomFunctionItem,
+  Token
 } from './type';
 import AbsFormulaFunction from './base/function';
 import { createFormulaFunction, registerFormulaFunction } from './functions';
@@ -27,7 +28,7 @@ import { ERROR_FORMULA_STR } from './constant';
 import { isDecimal, isDecimalValue, isNumber, nextWithPromise, removeFormArray, toRound } from './utils';
 
 interface FormulaOptions extends FormulaValueOptions {
-  onCreateParam?: (token: string,  options: FormulaValueOptions) => IFormulaValue;
+  onCreateParam?: (token: Token, options: FormulaValueOptions) => IFormulaValue;
 }
 
 function isOperatorUnComplete(operator: IFormulaOperator) {
@@ -101,7 +102,7 @@ class Formula {
 
         // if it is a function name, directly put it into the symbol stack;
         if (tokenType === TokenType.ttFunc) {
-          const func = createFormulaFunction(tokenItem.token, options, {
+          const func = createFormulaFunction(tokenItem.token, tokenItem, options, {
             customFunctions,
           });
           formulas.push(func);
@@ -152,6 +153,7 @@ class Formula {
               i++;
               continue;
             }
+            func.origText = tokenizer.value.substr(func.token.index, tokenItem.index + 1 - func.token.index);
           } else {
             let k = formulas.length - 1;
             while (k > j) {
@@ -161,7 +163,7 @@ class Formula {
               k--;
             }
             paren.closed = true;
-            paren.origText = tokenizer.value.substr(paren.tokenIndex, tokenItem.index + 1 - paren.tokenIndex);
+            paren.origText = tokenizer.value.substr(paren.token.index, tokenItem.index + 1 - paren.token.index);
           }
 
           if ((j - 1 >= 0) && isFormulaOperator(formulas[j - 1], (v) => operator = v)) {
@@ -202,7 +204,7 @@ class Formula {
         } else
         // if it is an operator
         if (TokenOperators.includes(tokenType)) {
-          operator = createFormulaOperator(tokenType, tokenItem.token, tokenItem.index, options);
+          operator = createFormulaOperator(tokenItem, options);
           this.operators.push(operator);
 
           // check if the previous one is an operator
@@ -243,7 +245,8 @@ class Formula {
               while (isFormulaOperator(operatorTemp1.params[operatorTemp1.params.length - 1], (v) => {
                 v && (operatorTemp1 = v);
               })
-              && operatorTemp1.priority < operator.priority) {
+              && operatorTemp1.priority < operator.priority
+              && OperatorWithRightParams.includes(operatorTemp1.operatorType)) {
                 // empty
               }
               operator.params.push(operatorTemp1.params[operatorTemp1.params.length - 1]);
@@ -264,21 +267,21 @@ class Formula {
         } else /* if (TokenValues.includes(tokenType)) */ { // If it is a literal value
           item = null;
           if (tokenType === TokenType.ttNull) {
-            item = new FormulaNull(tokenItem.token, options);
+            item = new FormulaNull(tokenItem, options);
           } else if (tokenType === TokenType.ttBool) {
-            item = new FormulaBool(tokenItem.token, options);
+            item = new FormulaBool(tokenItem, options);
           } else if (tokenType === TokenType.ttNumber) {
-            item = new FormulaNumber(tokenItem.token, options);
+            item = new FormulaNumber(tokenItem, options);
           } else if (tokenType === TokenType.ttNaN) {
-            item = new FormulaNaN(tokenItem.token, options);
+            item = new FormulaNaN(tokenItem, options);
           } else if (tokenType === TokenType.ttString) {
-            item = new FormulaString(`"${tokenItem.token}"`, tokenItem.token, options);
+            item = new FormulaString(tokenItem, options);
           } else if (tokenType === TokenType.ttRef) {
-            item = new FormulaRef(tokenItem.token, refs, options);
+            item = new FormulaRef(tokenItem, refs, options);
           } else /* if (tokenType === TokenType.ttName) */{
             item = options.onCreateParam
-              ? options.onCreateParam(tokenItem.token, options)
-              : new FormulaParam(tokenItem.token, tokenItem.token, tokenItem.tokenType, options);
+              ? options.onCreateParam(tokenItem, options)
+              : new FormulaParam(tokenItem, options);
           }
 
           // If the previous one was an operator

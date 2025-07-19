@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 import Decimal from 'decimal.js';
 import formulaCalc, {
   Formula, createParamsDataSource,
-  createFormula
+  createFormula,
 } from '../src';
 import FormulaParam from '../src/formula/values/param';
 
@@ -285,6 +285,132 @@ describe('formula test', () => {
 
     result = formulaCalc('1 + 1', {}, (result: number) => result + 1);
     expect(result).toBe(3);
+  });
+
+  test('onTrace', () => {
+    let executed: Array<[string, any]> = [];
+    let expression = '';
+    let result = formulaCalc('1 + 1', {
+      onTrace(item, value) {
+        executed.push([`[${item.line}, ${item.column}]: ${item.origText}`, value]);
+      }
+    });
+    expect(result).toBe(2);
+    expect(executed).toEqual([
+      ['[1, 1]: 1', 1],
+      ['[1, 5]: 1', 1],
+      ['[1, 1]: 1 + 1', 2]
+    ]);
+
+    executed = [];
+    result = formulaCalc('(1 + 1)', {
+      onTrace(item, value) {
+        executed.push([`[${item.line}, ${item.column}]: ${item.origText}`, value]);
+      }
+    });
+    expect(result).toBe(2);
+    expect(executed).toEqual([
+      ['[1, 2]: 1', 1],
+      ['[1, 6]: 1', 1],
+      ['[1, 2]: 1 + 1', 2],
+      ['[1, 1]: (1 + 1)', 2]
+    ]);
+
+    executed = [];
+    result = formulaCalc('sum(1, 1)', {
+      onTrace(item, value) {
+        executed.push([`[${item.line}, ${item.column}]: ${item.origText}`, value]);
+      }
+    });
+    expect(result).toBe(2);
+    expect(executed).toEqual([
+      ['[1, 5]: 1', 1],
+      ['[1, 8]: 1', 1],
+      ['[1, 1]: sum(1, 1)', 2]
+    ]);
+
+    executed = [];
+    expression = `sum(
+1,
+1
+)`;
+    result = formulaCalc(
+      expression,
+      {
+        onTrace(item, value) {
+          executed.push([`[${item.line}, ${item.column}]: ${item.origText}`, value]);
+        }
+      }
+    );
+    expect(result).toBe(2);
+    expect(executed).toEqual([
+      ['[2, 1]: 1', 1],
+      ['[3, 1]: 1', 1],
+      [`[1, 1]: ${expression}`, 2]
+    ]);
+
+    const str1 = `张
+    三`;
+    executed = [];
+    expression = `false ? "${str1}"
+: "李四"`;
+    result = formulaCalc(
+      expression,
+      {
+        onTrace(item, value) {
+          executed.push([`[${item.line}, ${item.column}]: ${item.origText}`, value]);
+        }
+      }
+    );
+    expect(result).toBe('李四');
+    expect(executed).toEqual([
+      ['[1, 1]: false', false],
+      ['[3, 3]: "李四"', '李四'],
+      [`[1, 1]: false ? "${str1}" : "李四"`, '李四']
+    ]);
+
+    executed = [];
+
+    expression = `true ? "${str1}"
+: "李四"`;
+    result = formulaCalc(
+      expression,
+      {
+        onTrace(item, value) {
+          executed.push([`[${item.line}, ${item.column}]: ${item.origText}`, value]);
+        }
+      }
+    );
+    expect(result).toBe(str1);
+    expect(executed).toEqual([
+      ['[1, 1]: true', true],
+      [`[1, 8]: "${str1}"`, str1],
+      [`[1, 1]: true ? "${str1}" : "李四"`, str1]
+    ]);
+
+    executed = [];
+    result = formulaCalc('1%', {
+      onTrace(item, value) {
+        executed.push([`[${item.line}, ${item.column}]: ${item.origText}`, value]);
+      }
+    });
+    expect(result).toBe(0.01);
+    expect(executed).toEqual([
+      ['[1, 1]: 1', 1],
+      ['[1, 1]: 1%', 0.01],
+    ]);
+
+    executed = [];
+    result = formulaCalc('!1', {
+      onTrace(item, value) {
+        executed.push([`[${item.line}, ${item.column}]: ${item.origText}`, value]);
+      }
+    });
+    expect(result).toBe(false);
+    expect(executed).toEqual([
+      ['[1, 2]: 1', 1],
+      ['[1, 1]: !1', false],
+    ]);
   });
 });
 

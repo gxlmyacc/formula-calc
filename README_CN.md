@@ -377,6 +377,7 @@ type FormulaValueOptions = {
   nullAsZero?: boolean,
   nullIfParamNotFound?: boolean,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any),
+  onTrace?: (item: IFormulaValue, value: any) => void,
 }
 
 interface FormulaOptions extends FormulaValueOptions {
@@ -456,6 +457,7 @@ console.log(result); // [2, 3, 4]
 | nullAsZero | boolean | false | 是否将 `null`、`undefined`、`NaN` 、`空字符串` 视为零参与计算。 |
 | nullIfParamNotFound | boolean | false | 如果参数未找到，是否返回 `null`。若为false时，未找到参数将抛出异常。 |
 | eval | null\|Function | - | 自定义的表达式eval函数。 |
+| onTrace | null\|Function | - | 计算过程追踪函数。 |
 
 ##### returnReferenceType
 
@@ -661,7 +663,7 @@ console.log(result); // '1.20'
 
 - `%`  -  取模
 
-- `=`  -  等于，如 `a = b`，如果 `a` 或 `b` 为 `undefined`，将视为 `null`
+- `=` 或 `==`  -  等于，如 `a = b`，如果 `a` 或 `b` 为 `undefined`，将视为 `null`
 
 - `!=` 或 `<>`  -  不等于
 

@@ -3,6 +3,7 @@
 import {
   TokenType,
   FormulaOperatorType,
+  Token,
 } from '../type';
 import type {
   FormulaValueOptions,
@@ -64,18 +65,16 @@ const FormulaOperatorArray : Array<FormulaOperatorItem> = [
 
 // 创建一个计算公式运算符
 function createFormulaOperator(
-  operatorToken: TokenType,
-  origText: string,
-  tokenIndex: number,
+  token: Token,
   options?: FormulaValueOptions
 ): IFormulaOperator {
-  const item = FormulaOperatorArray.find((item) => item.operatorToken === operatorToken);
+  const item = FormulaOperatorArray.find((item) => item.operatorToken === token.tokenType);
   // if (!item) {
   //   throw new Error(`unsupported operator: "${operatorToken}"unsupported operator: "${operatorToken}"`);
   // }
   const OperatorClass = (item as FormulaOperatorItem).operatorClass;
   // @ts-ignore
-  return new OperatorClass(origText, tokenIndex, options, item.operatorType, item.priority);
+  return new OperatorClass(token, options, item.operatorType, item.priority);
 }
 
 function isFormulaOperator(value: any, onSupport?: (value: IFormulaOperator|null) => void): value is IFormulaOperator {

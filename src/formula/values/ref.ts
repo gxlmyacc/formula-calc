@@ -1,4 +1,4 @@
-import { FormulaValues, TokenType, FormulaExecuteState } from '../type';
+import { FormulaValues, TokenType, FormulaExecuteState, Token } from '../type';
 import type { IFormulaDataSource, FormulaValueOptions } from '../type';
 import FormulaValue from '../base/value';
 
@@ -10,10 +10,10 @@ class FormulaRef extends FormulaValue {
 
   public order: number;
 
-  constructor(origText: string, refs: FormulaValues, options?: FormulaValueOptions) {
-    super(origText, options);
+  constructor(token: Token, refs: FormulaValues, options?: FormulaValueOptions) {
+    super(token, options);
     this.refs = refs;
-    this.order = Number(origText.substr(1, origText.length));
+    this.order = Number(token.token.substr(1, token.token.length));
   }
 
   _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic: boolean) {

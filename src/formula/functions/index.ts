@@ -1,5 +1,4 @@
-
-import type { FormulaCustomFunctionItem, FormulaValueOptions, IFormulaFunction } from '../type';
+import type { FormulaCustomFunctionItem, FormulaValueOptions, IFormulaFunction, Token } from '../type';
 import { FormulaFunctionItem } from '../base/function';
 import FormulaFunctionIF from './if';
 import FormulaFunctionSUM from './sum';
@@ -87,6 +86,7 @@ function isFormulaFunction(func: any): func is FormulaFunctionItem {
  */
 function createFormulaFunction(
   originFuncName: string,
+  token: Token,
   valueOptions: FormulaValueOptions,
   options: {
     customFunctions?: Record<string, FormulaCustomFunctionItem>,
@@ -103,10 +103,10 @@ function createFormulaFunction(
   if (isFormulaFunction(item)) {
     const FunctionClass = item.functionClass;
     // @ts-ignore
-    return new FunctionClass(funcName, valueOptions, funcName, item.min, item.max);
+    return new FunctionClass(token, valueOptions, funcName, item.min, item.max);
   }
 
-  return new FormulaFunctionCUSTOM(funcName, valueOptions, funcName, item);
+  return new FormulaFunctionCUSTOM(token, valueOptions, funcName, item);
 }
 
 

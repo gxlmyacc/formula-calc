@@ -1,4 +1,4 @@
-import { TokenType,  } from '../type';
+import { Token } from '../type';
 import type { IFormulaParam, IFormulaDataSource,  FormulaValueOptions } from '../type';
 import FormulaValue from '../base/value';
 import { isDecimalValue } from '../utils';
@@ -7,14 +7,11 @@ class FormulaParam extends FormulaValue implements IFormulaParam {
 
   public name: string;
 
-  public tokenType: TokenType;
-
   public isParam: boolean = true;
 
-  constructor(origText: string, name: string, tokenType: TokenType, options?: FormulaValueOptions) {
-    super(origText, options);
-    this.name = name;
-    this.tokenType = tokenType;
+  constructor(token: Token, options?: FormulaValueOptions) {
+    super(token, options);
+    this.name = token.token;
   }
 
   _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic: boolean) {
@@ -27,8 +24,8 @@ class FormulaParam extends FormulaValue implements IFormulaParam {
 
 class FormulaParamValue extends FormulaParam {
 
-  constructor(name: string, value: any, options: FormulaValueOptions) {
-    super(name, name, TokenType.ttName, options);
+  constructor(token: Token, value: any, options: FormulaValueOptions) {
+    super(token, options);
     this.updateValue(value, options);
   }
 

@@ -1,4 +1,4 @@
-import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions, IFormulaBase } from '../type';
+import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions, IFormulaBase, Token } from '../type';
 import { FormulaValues } from '../type';
 import FormulaValue from './value';
 
@@ -6,11 +6,10 @@ abstract class AbsFormulaBase extends FormulaValue implements IFormulaValue, IFo
 
   public params: FormulaValues;
 
-  constructor(origText: string,  options: FormulaValueOptions) {
-    super(origText, options);
+  constructor(token: Token, options: FormulaValueOptions) {
+    super(token, options);
     this.params = [];
   }
-
 
   protected checkArgValid() {
     return '';

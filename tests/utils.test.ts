@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import Decimal from 'decimal.js';
-import { getValueByPath, removeFormArray, formulaUtils } from '../src';
+import { getValueByPath, removeFormArray, formulaUtils, createToken, TokenType } from '../src';
 
 import FormulaBool from '../src/formula/values/bool';
 
@@ -31,7 +31,7 @@ describe('utils test', () => {
   });
 
   test('others', () => {
-    const value = new FormulaBool('true');
+    const value = new FormulaBool(createToken('true', TokenType.ttBool));
     expect(!!value.options).toBe(true);
   });
 

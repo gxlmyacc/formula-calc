@@ -1,41 +1,83 @@
 import type Decimal from 'decimal.js';
 
 enum TokenType {
+  /** none */
   ttNone,
+  /** + */
   ttAdd,
+  /** - */
   ttMinus,
+  /** * */
   ttMul,
+  /** / */
   ttDiv,
+  /** // */
   ttDivInt,
+  /** % */
   ttMod,
+  /** ^ */
   ttPow,
+  /** % */
   ttPercent,
+  /** & */
   ttAnd,
+  /** | */
   ttOr,
+  /** ! */
   ttNot,
+  /** > */
   ttGT,
+  /** >= */
   ttGE,
+  /** < */
   ttLT,
+  /** <= */
   ttLE,
+  /** = */
   ttEQ,
+  /** != */
   ttNE,
+  /** ( */
   ttParenL,
+  /** ) */
   ttParenR,
+  /** , */
   ttListSeparator,
+  /** \n */
   ttLine,
+  /** null */
   ttNull,
+  /** NaN */
   ttNaN,
+  /** true */
   ttBool,
+  /** function */
   ttFunc,
+  /** ref */
   ttRef,
+  /** name */
   ttName,
+  /** number */
   ttNumber,
+  /** string */
   ttString,
+  /** space */
   ttSpace,
+  /** if */
   ttIf,
+  /** else */
   ttIfElse
 }
 
+interface Token {
+  token: string;
+  tokenType: TokenType;
+  quoteChar: string;
+  index: number,
+  column: number,
+  line: number,
+  length: number;
+}
 
 enum FormulaOperatorType {
   fotBinary,
@@ -165,6 +207,7 @@ type FormulaValueOptions = {
   nullAsZero?: boolean,
   nullIfParamNotFound?: boolean,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any),
+  onTrace?: (item: IFormulaValue, value: any) => void,
 }
 
 type FormulaCustomFunctionItem = {
@@ -184,7 +227,10 @@ type FormulaCustomFunctionItem = {
 }
 
 interface IFormulaValue {
-  origText: string;
+  token: Token;
+  readonly origText: string;
+  readonly line: number;
+  readonly column: number;
   value: any,
   name: string,
   state: FormulaExecuteState,
@@ -207,6 +253,7 @@ interface IFormulaBase extends IFormulaValue {
 
 
 interface IFormulaFunction extends IFormulaBase {
+  origText: string;
   argMin: number;
   argMax: number;
   owner: IFormulaValue|null;
@@ -238,6 +285,7 @@ export {
 };
 
 export type {
+  Token,
   IFormulaFunction,
   IFormulaOperator,
   IFormulaValue,

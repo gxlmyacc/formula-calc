@@ -1,9 +1,11 @@
-import type { IFormulaValue, FormulaValueOptions, IFormulaFunction } from '../type';
+import type { IFormulaValue, FormulaValueOptions, IFormulaFunction, Token } from '../type';
 import { TokenType } from '../type';
 import AbsFormulaBase from './base';
 
 
 abstract class AbsFormulaFunction extends AbsFormulaBase implements IFormulaFunction {
+
+  public _origText: string;
 
   public argMin: number;
 
@@ -13,8 +15,17 @@ abstract class AbsFormulaFunction extends AbsFormulaBase implements IFormulaFunc
 
   public owner: IFormulaValue | null = null;
 
-  constructor(origText: string,  options: FormulaValueOptions, name: string, argMin: number, argMax: number) {
-    super(origText, options);
+  public get origText() {
+    return this._origText;
+  }
+
+  public set origText(value: string) {
+    this._origText = value;
+  }
+
+  constructor(token: Token, options: FormulaValueOptions, name: string, argMin: number, argMax: number) {
+    super(token, options);
+    this._origText = token.token;
     this.name = name;
     this.argMin = argMin;
     this.argMax = argMax;

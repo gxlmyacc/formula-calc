@@ -11,7 +11,7 @@ class FormulaOperatorAND extends AbsFormulaOperator {
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) {
     return nextWithPromise(
       this.params[0].execute(dataSource, options, forArithmetic),
-      a => (
+      (a) => (
         isDecimalTrue(a, options)
           ? nextWithPromise(this.params[1].execute(dataSource, options, forArithmetic))
           : a

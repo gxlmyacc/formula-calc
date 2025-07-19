@@ -216,6 +216,14 @@ describe('operator test', () => {
     expect(formulaCalc('a > b', { params: { a: '10',  b: '2' } })).toBe(false);
     expect(formulaCalc('a > b', { params: { a: '10',  b: 2 } })).toBe(true);
     expect(formulaCalc('a > b', { params: { a: 10,  b: '2' } })).toBe(true);
+
+    expect(formulaCalc('a - b% * c > 0', {
+      params: {
+        a: 7,
+        b: 10,
+        c: 80
+      }
+    })).toBe(false);
   });
 
   test('lt', () => {
@@ -239,9 +247,19 @@ describe('operator test', () => {
     expect(formulaCalc('a < b', { params: { a: '10',  b: '2' } })).toBe(true);
     expect(formulaCalc('a < b', { params: { a: '10',  b: 2 } })).toBe(false);
     expect(formulaCalc('a < b', { params: { a: 10,  b: '2' } })).toBe(false);
+
+    expect(formulaCalc('a - b% * c < 0', {
+      params: {
+        a: 7,
+        b: 10,
+        c: 80
+      }
+    })).toBe(true);
   });
 
   test('eq', () => {
+    expect(formulaCalc('1 == 2')).toBe(false);
+    expect(formulaCalc('2 == 2')).toBe(true);
     expect(formulaCalc('1 = 2')).toBe(false);
     expect(formulaCalc('2 = 2')).toBe(true);
     expect(formulaCalc('true = 0')).toBe(false);
@@ -389,6 +407,27 @@ describe('operator test', () => {
     expect(() => formulaCalc('1 + 2) + 1')).toThrow('The formula is incorrect: No matching "(" was found for ")"');
     expect(formulaCalc('(1)')).toBe(1);
     expect(formulaCalc('(1,2,3)')).toStrictEqual([1, 2, 3]);
+    expect(formulaCalc('a - (b / 100) * c', {
+      params: {
+        a: 7,
+        b: 10,
+        c: 80
+      }
+    })).toBe(-1);
+    expect(formulaCalc('a - b% * c', {
+      params: {
+        a: 7,
+        b: 10,
+        c: 80
+      }
+    })).toBe(-1);
+    expect(formulaCalc('a - max(b / 100, 0.2) * c', {
+      params: {
+        a: 7,
+        b: 10,
+        c: 80
+      }
+    })).toBe(-9);
   });
 
   test('precision', () => {

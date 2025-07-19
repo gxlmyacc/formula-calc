@@ -4,6 +4,7 @@ import { getValueByPath, hasOwnProp, toRound, toFixed, isFunction, isPlainObject
 import type { FormulaOptions, IFormulaDataSource, FormulaCustomFunctionItem } from './formula';
 import { FormulaValueOptions } from './formula/type';
 import { FormulaParamValue } from './formula/values/param';
+import { createToken } from './formula/tokenizer';
 
 export {
   getValueByPath,
@@ -212,6 +213,7 @@ formulaUtils.toFixed = toFixed;
 export {
   Formula,
   TokenType,
+  createToken,
   createFormula,
   createParamsDataSource,
   createFormulaEval,

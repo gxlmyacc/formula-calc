@@ -394,6 +394,7 @@ type FormulaValueOptions = {
   nullAsZero?: boolean,
   nullIfParamNotFound?: boolean,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any),
+  onTrace?: (item: IFormulaValue, value: any) => void,
 }
 
 interface FormulaOptions extends FormulaValueOptions {
@@ -472,6 +473,7 @@ The following is a tabular description of the parameters supported by options in
 | nullAsZero | boolean | false | Whether to treat null, undefined, NaN, and empty strings as zero in calculations. |
 | nullIfParamNotFound | boolean | false | Whether to return null if a parameter is not found. If false, an exception will be thrown when a parameter is not found. |
 | eval | null\|Function | - | Custom expression eval function. |
+| onTrace | null\|Function | - | custom trace function. |
 
 ###### returnReferenceType
 
@@ -676,7 +678,7 @@ Supports the following operators
 
 - `%`  -  mod
 
-- `=`  -  equal, like `a = b`, if `a` or `b` is `undefined`, it will be as `null`
+- `=` or `==`  -  equal, like `a = b`, if `a` or `b` is `undefined`, it will be as `null`
 
 - `!=` or `<>`  -  not equal
 

@@ -1,5 +1,4 @@
-
-import type { IFormulaDataSource, FormulaValueOptions, FormulaCustomFunctionItem } from '../type';
+import type { IFormulaDataSource, FormulaValueOptions, FormulaCustomFunctionItem, Token } from '../type';
 import AbsFormulaFunction from '../base/function';
 import { isDecimal, nextWithPromise } from '../utils';
 
@@ -7,8 +6,8 @@ class FormulaFunctionCUSTOM extends AbsFormulaFunction {
 
   public item: FormulaCustomFunctionItem;
 
-  constructor(origText: string, options: FormulaValueOptions, name: string, item: FormulaCustomFunctionItem) {
-    super(origText, options, name, item.argMin, item.argMax);
+  constructor(token: Token, options: FormulaValueOptions, name: string, item: FormulaCustomFunctionItem) {
+    super(token, options, name, item.argMin, item.argMax);
     this.item = item;
     this.arithmetic = item.arithmetic ?? Boolean(item.arithmetic);
     this.mayChange = item.mayChange ?? true;
