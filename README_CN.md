@@ -450,6 +450,7 @@ console.log(result); // [2, 3, 4]
 | precision | number | 2 | 设置计算结果的精度。 |
 | rounding | RoundingType | 'HALF_UP' | 设置舍入类型。可选值包括：UP、DOWN、CEIL、FLOOR、HALF_UP、HALF_DOWN、HALF_EVEN、HALF_CEIL、HALF_FLOOR、EUCLID。 |
 | stepPrecision | boolean \| number | - | 是否在每一步操作中进行舍入，或设置每一步的精度。 |
+| stepPrecisionIgnorePercent | boolean | false | 步骤间的四舍五入是否忽略百分比运算，百分比数字往往会比较小，对精度影响比较大，某些情况下，可以设置为 true 来忽略stepPrecision对百分比操作的影响。 |
 | tryStringToNumber | boolean | false | 是否尝试将字符串转换为数字。 |
 | ignoreRoundingOriginalValue | boolean | false | 是否忽略对原始值(number、string、boolean、params、ref)的舍入。 |
 | ignoreRoundingParams | boolean \|(name) => boolean | false | 是否忽略对参数的舍入。 |

@@ -200,6 +200,7 @@ type FormulaValueOptions = {
   precision?: number,
   rounding?: RoundingType,
   stepPrecision?: boolean|number|((item: IFormulaValue, value: any) => boolean|number),
+  stepPrecisionIgnorePercent?: boolean,
   tryStringToNumber?: boolean,
   ignoreRoundingOriginalValue?: boolean,
   ignoreRoundingParams?: boolean|((name: string) => boolean)

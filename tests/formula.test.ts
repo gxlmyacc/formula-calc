@@ -178,6 +178,7 @@ describe('formula test', () => {
       }
     })).toBe(562.52);
 
+
     expect(formulaCalc('max(a * b - a * c, 0)', {
       ignoreRoundingParams: true,
       stepPrecision: 2,
@@ -197,6 +198,22 @@ describe('formula test', () => {
         c: 0.075
       }
     })).toBe(562.52);
+
+    expect(formulaCalc('a * b%', {
+      stepPrecision: 2,
+      params: {
+        a: 4500.22,
+        b: 7.5
+      }
+    })).toBe(360.02);
+    expect(formulaCalc('a * b%', {
+      stepPrecision: 2,
+      stepPrecisionIgnorePercent: true,
+      params: {
+        a: 4500.22,
+        b: 7.5
+      }
+    })).toBe(337.52);
   });
 
   test('registerFunction', () => {

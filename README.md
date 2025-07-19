@@ -466,6 +466,7 @@ The following is a tabular description of the parameters supported by options in
 | precision | number | 2 | Sets the precision of the calculation results. |
 | rounding | RoundingType | 'HALF_UP' | Sets the rounding type. Optional values include: UP, DOWN, CEIL, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, HALF_CEIL, HALF_FLOOR, EUCLID. |
 | stepPrecision | boolean \| number | - | Whether to round at each step of the operation, or set the precision for each step. |
+| stepPrecisionIgnorePercent | boolean | false | Whether to ignore percentage operations in step-by-step rounding. Percentage numbers are often very small and have a significant impact on precision. In certain cases, you can set this to true to ignore the effect of stepPrecision on percentage operations. |
 | tryStringToNumber | boolean | false | Whether to attempt to convert strings to numbers. |
 | ignoreRoundingOriginalValue | boolean | false | Whether to ignore rounding of primitive values (number, string, boolean, params, ref). |
 | ignoreRoundingParams | boolean \|(name) => boolean | false | Whether to ignore rounding of parameters. |

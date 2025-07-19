@@ -19,8 +19,9 @@ function resolveValue(value: any, options: FormulaValueOptions, item: IFormulaVa
       value = toDecimal(value, options);
     }
     if (isDecimal(value, options)) {
-      const { ignoreRoundingOriginalValue, ignoreRoundingParams } = options;
+      const { ignoreRoundingOriginalValue, ignoreRoundingParams, stepPrecisionIgnorePercent } = options;
       const shouldStepPrecision = (stepPrecision && value.decimalPlaces() > precision)
+       && (!stepPrecisionIgnorePercent || item.tokenType !== TokenType.ttPercent)
        && (!ignoreRoundingOriginalValue || !item || item.mayChange)
        && (
          !(item as FormulaParam)?.isParam || (

@@ -7,7 +7,7 @@ import { nextWithPromise } from '../utils';
 
 class FormulaOperatorPERCENT extends AbsFormulaOperator {
 
-  public tokenType: TokenType = TokenType.ttMul;
+  public tokenType: TokenType = TokenType.ttPercent;
 
   public arithmetic = true;
 
