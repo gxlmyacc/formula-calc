@@ -489,6 +489,30 @@ const result = formulaCalc('1 + 1', {}, 0);
 
 If `returnReferenceType` is a function, it can process the result value before formulaCalc returns, and the return value of that function will be the final return value.
 
+#### onTrace
+
+If you need to get the calculation process, you can configure the `onTrace` function to customize the output of the calculation process.
+
+demo：
+```js
+const executed = [];
+const result = formulaCalc('(1 + 1)', {
+  onTrace(item, value) {
+    console.log(`[${item.line}, ${item.column}]: ${item.origText} =`, value);
+  }
+});
+console.log(result);
+
+/* 
+ * console output:
+ *  [1, 2]: 1 = 1
+ *  [1, 6]: 1 = 1
+ *  [1, 2]: 1 + 1 = 2
+ *  [1, 1]: (1 + 1) = 2
+ *  2
+ */
+```
+
 #### formulaUtils
 
 `formulaUtils` is a set of helper utility functions (`sum`, `avg`, `min`, `max`, `round`) designed to facilitate simple calculations that don't need to be performed through expressions.

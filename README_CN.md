@@ -473,6 +473,31 @@ const result = formulaCalc('1 + 1', {}, 0);
 
 若`returnReferenceType`为函数，则可以在`formulaCalc`返回之前对结果值做一些处理，而该函数返回值将作为最终返回值。
 
+#### onTrace
+
+如果需要获取计算过程，则你可以通过配置`onTrace`自定义输出计算过程的函数。
+
+示例：
+```js
+const executed = [];
+const result = formulaCalc('(1 + 1)', {
+  onTrace(item, value) {
+    console.log(`[${item.line}, ${item.column}]: ${item.origText} =`, value);
+  }
+});
+console.log(result);
+
+/* 
+ * console output:
+ *  [1, 2]: 1 = 1
+ *  [1, 6]: 1 = 1
+ *  [1, 2]: 1 + 1 = 2
+ *  [1, 1]: (1 + 1) = 2
+ *  2
+ */
+```
+
+
 #### formulaUtils
 
 `formulaUtils`是一些辅助工具函数(`sum`、`avg`、`min`、`max`、`round`)，以方便一些简单的不想通过表达式进行计算的场景。
