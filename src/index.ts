@@ -11,7 +11,7 @@ export {
   removeFormArray
 } from './formula/utils';
 
-const formulaCache: Record<string, Formula> = {};
+const formulaCache = new Map<string, Formula>();
 
 type FormulaCalcParams = Record<string, any>|((name: string, options: FormulaValueOptions) => any);
 
@@ -106,10 +106,12 @@ function formulaCalc<T extends any = any>(
 
   let formula: Formula = null as any;
   if (isString(expressionOrFormula)) {
-    if (restOptions.cache) formula = formulaCache[expressionOrFormula];
+    // Custom parsing hooks belong to this call and must not reuse another call's tree.
+    const useCache = restOptions.cache && !restOptions.customFunctions && !restOptions.onCreateParam;
+    if (useCache) formula = formulaCache.get(expressionOrFormula) as Formula;
     if (!formula) {
       formula = createFormula(expressionOrFormula, restOptions);
-      if (restOptions.cache) formulaCache[expressionOrFormula] = formula;
+      if (useCache) formulaCache.set(expressionOrFormula, formula);
     }
     if (onFormulaCreated) onFormulaCreated(formula);
   } else {

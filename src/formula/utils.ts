@@ -90,7 +90,11 @@ function toFixed(value: Decimal.Value|null|undefined, options: {
     trimTrailingZero, trimTrailingZeroIfInt,
     rounding = Decimal.ROUND_HALF_UP,
   } = options;
-  value = Decimal.isDecimal(value) ? value : new Decimal(parseFloat(value as any));
+  value = Decimal.isDecimal(value)
+    ? value
+    : new Decimal(isStringNumber(value as any)
+      ? value as string
+      : parseFloat(value as any));
   if (value.isNaN() || !value.isFinite()) {
     return nullStr;
   }
@@ -125,7 +129,7 @@ function toFixed(value: Decimal.Value|null|undefined, options: {
       _float = _float.replace(/\.0*$/, '');
     }
   } else if (trimTrailingZero) {
-    _float = _float.replace(/0*$/, '');
+    _float = _float.replace(/0*$/, '').replace(/\.$/, '');
   }
   const sign = decimalValue.isNegative() ? '-' : '';
   return sign + _int + _float;

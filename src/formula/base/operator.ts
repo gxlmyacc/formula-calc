@@ -17,20 +17,6 @@ abstract class AbsFormulaOperator extends AbsFormulaBase implements IFormulaOper
 
   public paramsCount: number|null;
 
-  public get origText() {
-    if (this.operatorType === FormulaOperatorType.fotTernary) {
-      return `${this.params[0].origText} ? ${this.params[1].origText} : ${this.params[2].origText}`;
-    }
-    if (this.operatorType === FormulaOperatorType.fotUnaryRight) {
-      return `${this.params[0].origText}${this.token.token}`;
-    }
-    if (this.operatorType === FormulaOperatorType.fotUnaryLeft) {
-      return `${this.token.token}${this.params[0].origText}`;
-    }
-    /** this.operatorType === FormulaOperatorType.fotBinary  */
-    return `${this.params[0].origText} ${this.token.token} ${this.params[1].origText}`;
-  }
-
   public get column() {
     return OperatorWithLeftParams.includes(this.operatorType)
       ? this.params[0].column

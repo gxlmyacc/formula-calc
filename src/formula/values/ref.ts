@@ -1,6 +1,7 @@
 import { FormulaValues, TokenType, FormulaExecuteState, Token } from '../type';
 import type { IFormulaDataSource, FormulaValueOptions } from '../type';
 import FormulaValue from '../base/value';
+import { getReferenceResult } from '../execution';
 
 class FormulaRef extends FormulaValue {
 
@@ -20,6 +21,13 @@ class FormulaRef extends FormulaValue {
     const value = this.refs[this.order - 1];
     if (!value) {
       throw new Error(`can not find ${this.origText}\`s ref value!`);
+    }
+    const execution = getReferenceResult(value, options);
+    if (execution) {
+      if (execution.circular) {
+        throw new Error(`${this.origText} execute failed: exist circular reference!`);
+      }
+      return execution.saved ? execution.saved.result : value.execute(dataSource, options, forArithmetic);
     }
     if (value.state === FormulaExecuteState.fesExecuting) {
       throw new Error(`${this.origText} execute failed: exist circular reference!`);

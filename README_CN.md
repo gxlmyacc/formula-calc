@@ -445,7 +445,7 @@ console.log(result); // [2, 3, 4]
 | dataSource | IFormulaDataSource | - | 传递给表达式的自定义数据源，如果不传递，则使用默认的数据源（处理params参数的获取）。若传递，则params参数的获取将由使用者自己处理。 |
 | customFunctions | Record\<string, FormulaCustomFunctionItem\> | - | 自定义函数映射表，用于注册自定义函数。 |
 | onFormulaCreated | (formula: Formula) => void | - | 创建公式实例后执行的回调函数。 |
-| cache | boolean | false | 是否缓存公式实例，默认为 false。若为 true，则相同表达式的函数实例将被缓存，下次相同表达式调用时，将直接返回缓存的实例，而不会重新创建。 |
+| cache | boolean | false | 是否缓存公式实例，默认为 false。若为 true，则相同表达式会复用公式实例；提供 `customFunctions` 或 `onCreateParam` 时不复用缓存，以保证每次调用使用当前的解析配置。 |
 | Decimal | typeof Decimal | - | 用于数值计算的 Decimal.js 自定义实例。 |
 | precision | number | 2 | 设置计算结果的精度。 |
 | rounding | RoundingType | 'HALF_UP' | 设置舍入类型。可选值包括：UP、DOWN、CEIL、FLOOR、HALF_UP、HALF_DOWN、HALF_EVEN、HALF_CEIL、HALF_FLOOR、EUCLID。 |
@@ -476,6 +476,8 @@ const result = formulaCalc('1 + 1', {}, 0);
 #### onTrace
 
 如果需要获取计算过程，则你可以通过配置`onTrace`自定义输出计算过程的函数。
+
+解析生成的节点 `origText` 是该节点在输入中的原始文本，保留内部的空格、制表符、空行、换行形式和转义字符；函数节点包含完整括号和参数。子节点不包含自身范围之外的首尾空白，完整输入（包括首尾空白）保存在 `Formula.origText` 中。手动通过 `createToken` 创建节点时没有输入原文，默认使用 token 文本，也可以显式设置节点的 `origText`。
 
 示例：
 ```js
@@ -861,6 +863,13 @@ const result = await formulaCalc('confirm("some prompt", 1, 2) + 1', {
   }
 });
 ```
+
+## 开发验证
+
+- `npm test -- --runInBand`：检查源码和测试文件的类型，并运行单元测试。
+- `npm run coverage -- --runInBand`：检查类型，并生成测试覆盖率报告。
+- `npm run typecheck`：单独检查源码和测试文件的类型。
+- `npm run test:build`：生成声明和两套 JS 产物，检查 polyfill 引用、声明入口和实际计算结果。此检查在 Node 中运行，不替代目标浏览器的兼容性测试。
 
 ## 许可证
 

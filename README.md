@@ -461,7 +461,7 @@ The following is a tabular description of the parameters supported by options in
 | dataSource | IFormulaDataSource | - | Custom data source passed to the expression. If not provided, the default data source (which handles the retrieval of params) will be used. If provided, the retrieval of params will be handled by the user. |
 | customFunctions | Record\<string, FormulaCustomFunctionItem\> | - | Custom function mapping table for registering custom functions. |
 | onFormulaCreated | (formula: Formula) => void | - | Callback function executed after creating the formula instance. |
-| cache | boolean | false | Whether to cache the formula instance, default is false. If true, instances of the same expression will be cached, and the next call to the same expression will return the cached instance without recreating it. |
+| cache | boolean | false | Whether to cache the formula instance, default is false. Identical expressions reuse the instance unless `customFunctions` or `onCreateParam` is supplied, so each call uses its current parsing configuration. |
 | Decimal | typeof Decimal | - | Custom instance of Decimal.js used for numerical calculations. |
 | precision | number | 2 | Sets the precision of the calculation results. |
 | rounding | RoundingType | 'HALF_UP' | Sets the rounding type. Optional values include: UP, DOWN, CEIL, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, HALF_CEIL, HALF_FLOOR, EUCLID. |

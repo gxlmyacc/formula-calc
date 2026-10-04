@@ -383,7 +383,7 @@ describe('formula test', () => {
     expect(executed).toEqual([
       ['[1, 1]: false', false],
       ['[3, 3]: "李四"', '李四'],
-      [`[1, 1]: false ? "${str1}" : "李四"`, '李四']
+      [`[1, 1]: ${expression}`, '李四']
     ]);
 
     executed = [];
@@ -402,7 +402,7 @@ describe('formula test', () => {
     expect(executed).toEqual([
       ['[1, 1]: true', true],
       [`[1, 8]: "${str1}"`, str1],
-      [`[1, 1]: true ? "${str1}" : "李四"`, str1]
+      [`[1, 1]: ${expression}`, str1]
     ]);
 
     executed = [];

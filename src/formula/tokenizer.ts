@@ -57,7 +57,7 @@ function createToken(
   line: number = 0,
   length: number = token.length,
   quoteChar: string = ''
-) {
+): Token {
   return {
     token,
     tokenType,
@@ -332,11 +332,11 @@ class Tokenizer {
       if (['\t', ' '].includes(char)) {
         hasSpace = true;
         index += this.addOperator(char, TokenType.ttSpace, index, column, line, char.length);
-      } else if (char === '\n') {
-        if ((index < len) && (value[index + 1] === '\r')) {
-          index += this.addOperator('\n\r', TokenType.ttLine, index, column, line, 2);
+      } else if (char === '\r' || char === '\n') {
+        if ((char === '\r' && value[index + 1] === '\n') || (char === '\n' && value[index + 1] === '\r')) {
+          index += this.addOperator(value.slice(index, index + 2), TokenType.ttLine, index, column, line, 2);
         } else {
-          index += this.addOperator('\n', TokenType.ttLine, index, column, line, 1);
+          index += this.addOperator(char, TokenType.ttLine, index, column, line, 1);
         }
         line += 1;
         column = 1;

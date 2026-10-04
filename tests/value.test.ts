@@ -44,7 +44,7 @@ aa"`)).toBe('string\ndd\naa');
     expect(() => formulaCalc('TRUE')).toThrow('require param: "TRUE" !');
     expect(() => formulaCalc('FALSE')).toThrow('require param: "FALSE" !');
   });
-  test('name/param', () => {
+  test('name/param', async () => {
     expect(formulaCalc('a', {
       params: {
         a: 1
@@ -167,14 +167,14 @@ aa"`)).toBe('string\ndd\naa');
     })).toBe(undefined);
 
 
-    expect(formulaCalc('a.b', {
+    await expect(formulaCalc('a.b', {
       params: {
         a: {
           b: Promise.resolve(2)
         }
       }
     })).resolves.toBe(2);
-    expect(formulaCalc('a.b', {
+    await expect(formulaCalc('a.b', {
       params: {
         a: {
           b: Promise.reject('promise error')
@@ -186,7 +186,7 @@ aa"`)).toBe('string\ndd\naa');
     // expect(() => formulaCalc('a', { dataSource: null })).toThrow('param must have a dataSource!');
   });
 
-  test('ref', () => {
+  test('ref', async () => {
     expect(formulaCalc('(1)+$1')).toBe(2);
     expect(formulaCalc('(a + 1)+$1', {
       params: [
@@ -220,7 +220,7 @@ aa"`)).toBe('string\ndd\naa');
     expect(() => formulaCalc('(1 + 1) + $a')).toThrow('Illegal ref char: invalid char "a"');
 
     expect(() => formulaCalc('1 + true')).toThrow('[DecimalError] Invalid argument: true');
-    expect(() => formulaCalc('1 + a', {
+    await expect(() => formulaCalc('1 + a', {
       params: {
         a: Promise.resolve(true)
       }

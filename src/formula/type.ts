@@ -71,6 +71,8 @@ enum TokenType {
 
 interface Token {
   token: string;
+  /** Exact source text for a parsed formula node. */
+  origText?: string;
   tokenType: TokenType;
   quoteChar: string;
   index: number,

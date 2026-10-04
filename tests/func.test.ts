@@ -184,7 +184,7 @@ describe('function test', () => {
     })).toBe(1);
   });
 
-  test('avg', () => {
+  test('avg', async () => {
     expect(formulaCalc('avg(1)')).toBe(1);
     expect(formulaCalc('avg(-1, 0, 1, 2, 3, 4, 5, 6)')).toBe(2.5);
     expect(formulaCalc('avg(-1, -1.2, 0, 1, 1.3)')).toBe(0.02);
@@ -216,7 +216,7 @@ describe('function test', () => {
         a: [2, 3, 4, 5]
       }
     })).toBe(2.11);
-    expect(formulaCalc('avg(3, 2, 1, 0, -1, a)', {
+    await expect(formulaCalc('avg(3, 2, 1, 0, -1, a)', {
       precision: 2,
       params: {
         a: Promise.resolve([2, 3, 4, 5])

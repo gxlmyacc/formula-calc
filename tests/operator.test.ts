@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 import formulaCalc from '../src';
 
 describe('operator test', () => {
-  test('add', () => {
+  test('add', async () => {
     expect(formulaCalc('1 + 1')).toBe(2);
     expect(formulaCalc('0.1 + 0.2')).toBe(0.3);
     expect(formulaCalc(' 1 + 1 + 1.1')).toBe(3.1);
@@ -22,7 +22,7 @@ describe('operator test', () => {
         }
       }
     })).toBe(1.9);
-    expect(formulaCalc(' -1.1 + 1 + a.b', {
+    await expect(formulaCalc(' -1.1 + 1 + a.b', {
       params: {
         a: {
           b: Promise.resolve(2)
@@ -38,7 +38,7 @@ describe('operator test', () => {
     expect(formulaCalc('1 + NaN', { nullAsZero: true })).toBe(1);
   });
 
-  test('sub', () => {
+  test('sub', async () => {
     expect(formulaCalc('1 - 1')).toBe(0);
     expect(formulaCalc(' 1 - 1 - 1.1')).toBe(-1.1);
     expect(formulaCalc(' 1 - (1 - 2)')).toBe(2);
@@ -48,7 +48,7 @@ describe('operator test', () => {
         a: 2
       }
     })).toBe(-0.1);
-    expect(formulaCalc(' -1.1 - 1 + a', {
+    await expect(formulaCalc(' -1.1 - 1 + a', {
       params: {
         a: Promise.resolve(2)
       }
@@ -121,7 +121,7 @@ describe('operator test', () => {
     expect(formulaCalc(' (2 * 3) ^ (2 + 2)')).toBe(1296);
   });
 
-  test('percent', () => {
+  test('percent', async () => {
     expect(formulaCalc('100%')).toBe(1);
     expect(formulaCalc('100% + 100%')).toBe(2);
     expect(formulaCalc('1% + 2% + 30% + 0.1%')).toBe(0.331);
@@ -139,7 +139,7 @@ describe('operator test', () => {
         a: 200
       }
     })).toBe(1);
-    expect(formulaCalc(' 7 % a%', {
+    await expect(formulaCalc(' 7 % a%', {
       params: {
         a: Promise.resolve(200)
       }

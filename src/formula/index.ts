@@ -8,7 +8,7 @@ import {
   FormulaExecuteState
 } from './type';
 import type {
-  IFormulaValue, IFormulaDataSource, IFormulaOperator, IFormulaFunction,
+  IFormulaValue, IFormulaDataSource, IFormulaOperator, IFormulaFunction, IFormulaBase,
   FormulaCustomFunctionItem,
   Token
 } from './type';
@@ -26,6 +26,7 @@ import FormulaRef from './values/ref';
 import FormulaNaN from './values/nan';
 import { ERROR_FORMULA_STR } from './constant';
 import { isDecimal, isDecimalValue, isNumber, nextWithPromise, removeFormArray, toRound } from './utils';
+import { createExecutionOptions } from './execution';
 
 interface FormulaOptions extends FormulaValueOptions {
   onCreateParam?: (token: Token, options: FormulaValueOptions) => IFormulaValue;
@@ -82,6 +83,7 @@ class Formula {
     const formulas = this.formulas;
     const refs = this.refs;
     const customFunctions = this.customFunctions;
+    const sourceEnds = new Map<IFormulaValue, number>();
     try {
       this.lastError = '';
       let operatorNear: IFormulaOperator|null = null;
@@ -148,12 +150,12 @@ class Formula {
             formulas.splice(j, 1);
             j--;
 
+            sourceEnds.set(func, tokenItem.index + tokenItem.length);
             if (func.owner) {
               formulas.splice(j, 1);
               i++;
               continue;
             }
-            func.origText = tokenizer.value.substr(func.token.index, tokenItem.index + 1 - func.token.index);
           } else {
             let k = formulas.length - 1;
             while (k > j) {
@@ -163,7 +165,7 @@ class Formula {
               k--;
             }
             paren.closed = true;
-            paren.origText = tokenizer.value.substr(paren.token.index, tokenItem.index + 1 - paren.token.index);
+            sourceEnds.set(paren, tokenItem.index + tokenItem.length);
           }
 
           if ((j - 1 >= 0) && isFormulaOperator(formulas[j - 1], (v) => operator = v)) {
@@ -201,9 +203,8 @@ class Formula {
           }
           (operatorPrev as FormulaOperatorIF).withElse = true;
           operatorNear = operatorPrev;
-        } else
-        // if it is an operator
-        if (TokenOperators.includes(tokenType)) {
+        } else if (TokenOperators.includes(tokenType)) {
+          // if it is an operator
           operator = createFormulaOperator(tokenItem, options);
           this.operators.push(operator);
 
@@ -223,9 +224,8 @@ class Formula {
             } else {
               formulas.push(operator);
             }
-          } else
-          // if it is a right monocular or binocular operator
-          if (OperatorWithLeftParams.includes(operator.operatorType)) {
+          } else if (OperatorWithLeftParams.includes(operator.operatorType)) {
+            // if it is a right monocular or binocular operator
             if (!formulas.length) {
               throw new Error(ERROR_FORMULA_STR + '!');
             }
@@ -293,6 +293,20 @@ class Formula {
 
         i++;
       }
+
+      // Restore every node from the original source, including whitespace and escapes.
+      const restoreText = (item: IFormulaValue): [number, number] => {
+        let start = item.token.index;
+        let end = sourceEnds.get(item) ?? start + item.token.length;
+        (item as Partial<IFormulaBase>).params?.forEach((param) => {
+          const [paramStart, paramEnd] = restoreText(param);
+          start = Math.min(start, paramStart);
+          end = Math.max(end, paramEnd);
+        });
+        item.token.origText = tokenizer.value.slice(start, end);
+        return [start, end];
+      };
+      formulas.forEach(restoreText);
     } catch (e: any) {
       this.lastError = e.message;
       throw e;
@@ -375,6 +389,7 @@ class Formula {
   }
 
   execute(dataSource?: IFormulaDataSource, options: FormulaValueOptions = {}) {
+    options = createExecutionOptions(options);
     return nextWithPromise(
       this._execute(dataSource, options),
       (result) => {

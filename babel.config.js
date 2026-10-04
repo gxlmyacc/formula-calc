@@ -5,7 +5,7 @@ const config = {
       {
         modules: false,
         useBuiltIns: 'usage',
-        corejs: 2,
+        corejs: '3.0',
         targets: { browsers: ['chrome >= 49', 'firefox >= 52'] }
       }
     ],
@@ -30,7 +30,7 @@ module.exports = process.env.BUILD_ENV === 'es'
         {
           modules: false,
           useBuiltIns: 'usage',
-          corejs: 2,
+          corejs: '3.0',
           targets: { browsers: ['chrome >= 122'] }
         }
       ],

@@ -10,6 +10,7 @@ analyzer/
 */.DS_Store
 /esm
 /es
+/.codegraph
 /.history
 /dist
 /misc

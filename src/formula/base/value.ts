@@ -4,6 +4,7 @@ import { FormulaExecuteState, TokenType } from '../type';
 import { isDecimal, isFunction, isNumber, isPromise, isStringNumber, toDecimal, toRound } from '../utils';
 import { DEFAULT_DECIMAL_PLACES } from '../constant';
 import FormulaParam from '../values/param';
+import { enterExecution, saveExecutionResult } from '../execution';
 
 function resolveValue(value: any, options: FormulaValueOptions, item: IFormulaValue, forArithmetic?: boolean) {
   if (!item || item.arithmetic || forArithmetic || options.tryStringToNumber) {
@@ -50,9 +51,14 @@ abstract class FormulaValue implements IFormulaValue {
   public token: Token;
 
   public get origText() {
+    if (this.token.origText !== undefined) return this.token.origText;
     return this.token.quoteChar
       ? `${this.token.quoteChar}${this.token.token}${this.token.quoteChar}`
       : this.token.token;
+  }
+
+  public set origText(value: string) {
+    this.token.origText = value;
   }
 
   public get line() {
@@ -80,6 +86,7 @@ abstract class FormulaValue implements IFormulaValue {
   protected abstract _execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions, forArithmetic?: boolean): any;
 
   public execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean): any {
+    options = enterExecution(this, options);
     this.state = FormulaExecuteState.fesExecuting;
     let prom = false;
     try {
@@ -93,11 +100,17 @@ abstract class FormulaValue implements IFormulaValue {
         }
         return this.value;
       };
-      if (prom) return value.then(_next).catch((e: any) => {
-        this.state = FormulaExecuteState.fesExecuted;
-        return Promise.reject(e);
-      });
-      return _next(value);
+      if (prom) {
+        const result = value.then(_next).catch((e: any) => {
+          this.state = FormulaExecuteState.fesExecuted;
+          return Promise.reject(e);
+        });
+        saveExecutionResult(this, options, result);
+        return result;
+      }
+      const result = _next(value);
+      saveExecutionResult(this, options, result);
+      return result;
     } catch (e) {
       this.state = FormulaExecuteState.fesExecuted;
       throw e;
@@ -105,7 +118,7 @@ abstract class FormulaValue implements IFormulaValue {
   }
 
   constructor(token: Token, options: FormulaValueOptions = {}) {
-    this.token = token;
+    this.token = { ...token };
     this.options = options;
     this.value = undefined;
     this.state = FormulaExecuteState.fesNone;
