@@ -32,6 +32,12 @@ Note: The internal numerical calculation uses the [decimal.js](https://mikemcl.g
 9. Result referencing: Supports referencing the results of calculations in order using `$1...$n`, similar to regular expressions.
 
 
+## Online playground
+
+The playground supports formula highlighting and completion, function parameter hints, bracket reference numbers and nesting colors, parameter forms / JSON batch input, calculation settings, and execution logs for each parameter group.
+
+Online playground: [https://gxlmyacc.github.io/formula-calc/](https://gxlmyacc.github.io/formula-calc/).
+
 ## Install
 
 ```bash
@@ -903,8 +909,6 @@ Final `precision` is independent. Decimal's own significant-digit precision stil
 The parameter callback decides each parameter independently of the original-value switch.
 Custom functions accept `useStepPrecision?: boolean` (default `true`), separately from `arithmetic`.
 `getFormulaFunctionDefinitions(customFunctions?)` lists effective function names and argument count ranges.
-
-See [website/README.md](website/README.md) for the React 16 formula playground and GitHub Pages setup.
 
 ## Trace conversion details
 

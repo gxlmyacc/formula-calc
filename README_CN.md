@@ -28,6 +28,12 @@
 
 9. 结果引用：支持类似正则表达式中通过`$1...$n`按顺序引用括弧内的计算结果。
 
+## 在线调试网站
+
+网站支持公式高亮和补全、函数参数提示、括号引用序号及层级颜色、参数表单 / JSON 批量输入、计算配置和逐组执行日志。
+
+在线地址：[https://gxlmyacc.github.io/formula-calc/](https://gxlmyacc.github.io/formula-calc/)
+
 ## 安装
 
 ```bash
@@ -954,7 +960,3 @@ formulaCalc('initial + npv(10%, flows)', {
 }); // 1307.29
 ```
 
-## 在线调试网站
-
-网站支持公式高亮和补全、函数参数提示、括号引用序号及层级颜色、参数表单 / JSON 批量输入、计算配置和逐组执行日志。
-运行方式与 GitHub Pages 发布配置见 [website/README.md](website/README.md)。
