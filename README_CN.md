@@ -40,6 +40,13 @@ yarn add formula-calc
 
 ## 使用
 
+默认入口为兼容 Chrome 49 的 ESM 构建；现代浏览器（Chrome 86+）可以选择 `formula-calc/es`。两个入口使用相同的 TypeScript 类型声明，由项目的打包工具加载。
+
+```js
+import formulaCalc from 'formula-calc';
+const { default: modernFormulaCalc } = await import('formula-calc/es');
+```
+
 1. 基本用法
 
 ```js
@@ -305,7 +312,7 @@ const result = formulaCalc('3.3334 + 3.3315', {
   precision: 2,
   stepPrecision: 3,
 });
-console.log(result); // 6.67
+console.log(result); // 6.66
 ```
 
 9. 值的类型转换
@@ -449,11 +456,11 @@ console.log(result); // [2, 3, 4]
 | Decimal | typeof Decimal | - | 用于数值计算的 Decimal.js 自定义实例。 |
 | precision | number | 2 | 设置计算结果的精度。 |
 | rounding | RoundingType | 'HALF_UP' | 设置舍入类型。可选值包括：UP、DOWN、CEIL、FLOOR、HALF_UP、HALF_DOWN、HALF_EVEN、HALF_CEIL、HALF_FLOOR、EUCLID。 |
-| stepPrecision | boolean \| number | - | 是否在每一步操作中进行舍入，或设置每一步的精度。 |
+| stepPrecision | boolean \| number \| (item, value) => boolean \| number | - | 对参与步骤舍入的节点设置精度；true 跟随 precision（默认 2），数字 0 表示舍入到整数。 |
 | stepPrecisionIgnorePercent | boolean | false | 步骤间的四舍五入是否忽略百分比运算，百分比数字往往会比较小，对精度影响比较大，某些情况下，可以设置为 true 来忽略stepPrecision对百分比操作的影响。 |
 | tryStringToNumber | boolean | false | 是否尝试将字符串转换为数字。 |
-| ignoreRoundingOriginalValue | boolean | false | 是否忽略对原始值(number、string、boolean、params、ref)的舍入。 |
-| ignoreRoundingParams | boolean \|(name) => boolean | false | 是否忽略对参数的舍入。 |
+| ignoreRoundingOriginalValue | boolean | true | 默认保留数字字面值精度；false 时允许对字面值执行 stepPrecision。 |
+| ignoreRoundingParams | boolean \| (name) => boolean | true | 默认保留参数精度；回调返回 true 跳过该参数舍入，false 允许舍入，独立于原始值开关。 |
 | returnDecimal | boolean | false | 是否将返回的数字类型作为 Decimal 类型进行返回。 |
 | nullAsZero | boolean | false | 是否将 `null`、`undefined`、`NaN` 、`空字符串` 视为零参与计算。 |
 | nullIfParamNotFound | boolean | false | 如果参数未找到，是否返回 `null`。若为false时，未找到参数将抛出异常。 |
@@ -874,3 +881,80 @@ const result = await formulaCalc('confirm("some prompt", 1, 2) + 1', {
 ## 许可证
 
 [MIT](./LICENSE)
+
+## 步骤精度与最终精度
+
+`stepPrecision` 默认不提前舍入数字字面值和参数，只舍入乘除、幂、百分比、avg、开方、对数和三角函数等计算节点的结果。
+加减、取余、sum、max/min、abs/clamp/sign、引用、括号和条件选择不叠加舍入；round/ceil/floor/trunc、整数除法与 random 保持自身规则。
+`precision` 独立作用于最终结果。Decimal 自身的有效数字精度仍由 Decimal 配置控制。
+
+```ts
+formulaCalc('1.234 * 100', { stepPrecision: 2 }); // 123.4
+formulaCalc('max(1.234, 1.235)', { stepPrecision: 2 }); // 1.235
+formulaCalc('2.015%', { stepPrecision: 2 }); // 0.0202（先将 2.015 舍入到 2.02）
+formulaCalc('2.01%', { stepPrecision: 2, precision: 2 }); // 0.02（最终精度独立生效）
+formulaCalc('1.234 * 100', { stepPrecision: 2, ignoreRoundingOriginalValue: false }); // 123
+formulaCalc('a + b', {
+  params: { a: 1.234, b: 2.345 }, stepPrecision: 2,
+  ignoreRoundingParams: (name) => name === 'b',
+}); // 3.575（a 舍入到 1.23，b 保持 2.345）
+```
+
+百分比节点按百分号前的数值舍入，相当于将实际比例结果保留 `stepPrecision + 2` 位小数；
+`stepPrecisionIgnorePercent: true` 跳过该步骤，后续运算不受影响。stepPrecision 回调接收实际结果（百分比时为比例数值）。
+
+自定义函数增加 `useStepPrecision?: boolean`，默认 true，控制其数值结果是否参与全局步骤舍入；
+与控制数值转换的 `arithmetic` 分开。可通过 `getFormulaFunctionDefinitions(customFunctions?)` 获取有效函数的名称与参数数量范围。
+
+## 执行日志的转换详情
+
+`onTrace(item, value, details?)` 保留原有前两个参数，第三个参数提供精确值与转换记录：
+`originalValue` 为节点执行后、统一处理前的值，`value` 为统一处理后的值；Decimal 值不转换为 Number。
+`transformations` 按实际执行顺序记录 `{ type, before, after, precision? }`，type 为 `nullAsZero`、`stepPrecision` 或 `round`。
+单纯构造 Decimal 不算转换，未改变数值的舍入不会产生记录；precision 表示存储值的小数位（百分比比例包含额外两位）。
+最终 `precision` 在节点执行结束后应用，不属于节点的 `onTrace` 事件；网站根据返回结果将其显示为单独一步。
+
+```js
+formulaCalc('a * 1', {
+  params: { a: 2.01 }, stepPrecision: 1,
+  onTrace(item, value, details) {
+    console.log(item.origText, value, details.transformations);
+  },
+}); // 2；乘法节点记录 2.01 → 2.0
+```
+
+## 金融函数
+
+| 函数 | 参数 | 用途 |
+| --- | --- | --- |
+| `fv` | `rate, nper, pmt, pv?, type?` | 终值 |
+| `pv` | `rate, nper, pmt, fv?, type?` | 现值 |
+| `pmt` | `rate, nper, pv, fv?, type?` | 每期固定付款额 |
+| `nper` | `rate, pmt, pv, fv?, type?` | 付款期数，可以返回小数 |
+| `ipmt` | `rate, per, nper, pv, fv?, type?` | 指定期的利息部分 |
+| `ppmt` | `rate, per, nper, pv, fv?, type?` | 指定期的本金部分 |
+| `npv` | `rate, values` | 等间隔现金流的净现值 |
+
+参数顺序与现金流约定参考 [Excel 金融函数](https://support.microsoft.com/en-us/excel/financial-functions-reference)。
+`rate` 为每期利率，必须为有限数且大于 -1；月供使用年利率除以 12，期数也换算为月。
+支出为负、收入为正；可选的 `pv` / `fv` 默认 0，`type` 默认 0（期末付款），1 表示期初付款。
+`fv` / `pv` 的 `nper` 可为 0，`pmt` / `ipmt` / `ppmt` 必须大于 0；`per` 必须为 1 到 `nper` 之间的整数。
+无有限非负期数解、无确定付款额、非法参数或非有限结果会抛出包含函数名的错误。
+
+`npv` 接受非空的一维数组，每个元素代表一期，第一笔在第一期末；初始投入在当前时点时，应单独相加。
+数组中的零值保留对应期数；数值字符串和空值遵循 `tryStringToNumber` / `nullAsZero`，其他非数值元素报错。
+这些函数使用 Decimal 和额外保护位计算，支持自定义 Decimal、异步参数、批量计算和执行日志。
+函数内部不应用步骤舍入，返回值参与 `stepPrecision`；参数表达式仍遵循自身的舍入设置，`precision` 独立作用于最终结果。
+
+```js
+formulaCalc('abs(pmt(6% / 12, 30 * 12, 1000000))', { precision: 2 }); // 5995.51
+formulaCalc('fv(0, 10, -100, -500)'); // 1500
+formulaCalc('initial + npv(10%, flows)', {
+  params: { initial: -10000, flows: [3000, 4200, 6800] }, precision: 2,
+}); // 1307.29
+```
+
+## 在线调试网站
+
+网站支持公式高亮和补全、函数参数提示、括号引用序号及层级颜色、参数表单 / JSON 批量输入、计算配置和逐组执行日志。
+运行方式与 GitHub Pages 发布配置见 [website/README.md](website/README.md)。

@@ -88,8 +88,11 @@ class Tokenizer {
   getLast(lastIndex: number = 0) {
     let result: TokenType;
     const index = this.items.length - 1 - lastIndex;
-    if (index > -1 && index < this.items.length) result = this.items[index].tokenType;
-    else result = TokenType.ttNone;
+    if (index > -1 && index < this.items.length) {
+      result = this.items[index].tokenType;
+    } else {
+      result = TokenType.ttNone;
+    }
     return result;
   }
 
@@ -111,7 +114,9 @@ class Tokenizer {
     index: number = 0,
     // newToken?: string
   ) {
-    if (!this.length || index >= this.length) return;
+    if (!this.length || index >= this.length) {
+      return;
+    }
     const item =  this.items[this.length - 1 - index];
     item.tokenType = tokenType;
     // if (newToken !== undefined) {
@@ -140,7 +145,9 @@ class Tokenizer {
 
   doTokenError(errorId: number, errorStr: string) {
     this.lastError = errorStr;
-    if (this.onTokenError) this.onTokenError(errorId, errorStr);
+    if (this.onTokenError) {
+      this.onTokenError(errorId, errorStr);
+    }
   }
 
   doNumber(i: number, column: number, line: number): number {
@@ -150,7 +157,9 @@ class Tokenizer {
     const value = this.value;
     let newIndex = i;
 
-    if (value[newIndex] === '-') newIndex++;
+    if (value[newIndex] === '-') {
+      newIndex++;
+    }
 
 
     while (newIndex < len) {
@@ -480,7 +489,9 @@ class Tokenizer {
     }
 
     this.items.forEach((item, i) => {
-      if (item.tokenType !== TokenType.ttPercent || i === this.items.length - 1) return;
+      if (item.tokenType !== TokenType.ttPercent || i === this.items.length - 1) {
+        return;
+      }
       const nextItem = this.items[i + 1];
       if (!TokenPercents.includes(nextItem.tokenType)) {
         item.tokenType = TokenType.ttMod;

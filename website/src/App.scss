@@ -1,0 +1,44 @@
+.playground:scope {
+  height: 100vh; display: flex; flex-direction: column;
+  .page-header { background: white; border-bottom: 1px solid #e4eaf3; height: 60px; display: flex; flex-shrink: 0;
+    align-items: center; justify-content: space-between; padding: 0 5%; }
+  .brand { display: flex; align-items: center; color: #24324b; font-weight: 700; font-size: 19px; }
+  .brand-icon { width: 38px; height: 38px; border-radius: 10px; color: white; background: #245edb;
+    text-align: center; line-height: 38px; font: italic 30px/38px Georgia, serif; margin-right: 12px; }
+  .brand small { font-size: 11px; color: #8590a5; display: block; font-weight: 400; letter-spacing: 2px; }
+  nav { display: flex; align-items: center; font-size: 12px; }
+  nav select { color: #465674; background: #f8faff; border: 1px solid #dce3ee; border-radius: 4px; padding: 4px; }
+  nav button, nav a { border: none; background: none; color: #758199; margin-left: 22px; }
+  main { max-width: 1360px; width: 100%; margin: auto; padding: 18px 30px 12px; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .intro { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-shrink: 0; }
+  .intro > div { display: flex; align-items: baseline; flex-wrap: wrap; }
+  .eyebrow { color: #245edb; font: bold 10px/1.5 Consolas, monospace; letter-spacing: 2px; }
+  h1 { font-size: 17px; font-weight: 600; margin: 0 14px 0 0; color: #24324b; }
+  .intro p { color: #8590a5; font-size: 12px; margin: 0; }
+  .reset { background: white; border: 1px solid #dce3ee; border-radius: 5px; padding: 8px 13px; color: #758199; font-size: 12px; }
+  .workspace { display: flex; align-items: flex-start; flex: 1; min-height: 0; }
+  .main-column { flex: 1; min-width: 0; margin-right: 18px; height: 100%; display: flex; flex-direction: column; }
+  .side-column { width: 350px; flex-shrink: 0; height: 100%; overflow-y: auto; margin-bottom: 0; }
+  .panel { padding: 16px; background: white; border: 1px solid #e4eaf3; border-radius: 9px; box-shadow: 0 4px 20px #192e4905; margin-bottom: 14px; }
+  .workspace > .side-column { margin-bottom: 0; }
+  .main-column > .panel:last-child { flex: 1; min-height: 0; margin-bottom: 0; overflow: hidden; }
+  .formula-panel { flex-shrink: 0; }
+  .formula-panel > header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  h2 { font-size: 16px; margin: 0; }
+  .editor-options { display: flex; align-items: center; font-size: 11px; color: #758199; }
+  .editor-options label { margin-right: 14px; }
+  .editor-options select { background: #f8faff; border: 1px solid #dce3ee; border-radius: 4px; padding: 4px 6px; }
+  .editor-footer { display: flex; justify-content: space-between; color: #96a1b4; font-size: 10px; margin-top: 10px; }
+  .page-footer { max-width: 1360px; width: 100%; margin: auto; display: flex; justify-content: space-between; padding: 0 30px 10px; font-size: 10px; color: #96a1b4; flex-shrink: 0; }
+  @media (max-width: 950px) { .side-column { width: 300px; } main { padding: 16px 20px 10px; } .panel { padding: 14px; } }
+  @media (max-width: 760px), (max-height: 600px) { height: auto; min-height: 100vh;
+    .workspace { min-height: 0; } .main-column, .side-column { height: auto; } .result-panel { height: auto; } .traces { max-height: 360px; flex: auto; } }
+  @media (max-width: 760px) { .workspace { display: block; } .main-column { margin-right: 0; } .side-column { width: 100%; overflow: visible; }
+    .intro { align-items: flex-start; } .reset { margin-left: 10px; white-space: nowrap; }
+    .page-header { padding: 0 20px; height: 66px; } nav button, nav a { margin-left: 12px; }
+    .page-footer { display: block; padding: 0 20px 20px; } .page-footer span { display: block; } }
+  @media (max-width: 450px) { main { padding: 22px 12px; } .panel { padding: 14px; }
+    .page-header { height: auto; min-height: 66px; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; } nav { margin-top: 8px; }
+    .formula-panel > header { display: block; } .editor-options { margin-top: 10px; }
+    .intro { display: block; } .reset { margin: 15px 0 0; } .brand { font-size: 15px; } }
+}

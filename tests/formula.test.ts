@@ -99,11 +99,11 @@ describe('formula test', () => {
       params: {
         a: [1.141, 1.141, 1.141]
       }
-    })).toBe(5.7);
+    })).toBe(5.71);
     expect(formulaCalc('3.3334 + 3.3315', {
       precision: 2,
       stepPrecision: 3,
-    })).toBe(6.67);
+    })).toBe(6.66);
     expect(formulaCalc('max(a * b - a * c, 0)', {
       params: {
         a: 4500.22,
@@ -128,7 +128,7 @@ describe('formula test', () => {
         b: 0.2,
         c: 0.075
       }
-    })).toBe(540.02);
+    })).toBe(562.52);
 
     expect(formulaCalc('max(a * b - a * c%, 0)', {
       stepPrecision: 2,
@@ -137,7 +137,7 @@ describe('formula test', () => {
         b: 0.2,
         c: 7.5
       }
-    })).toBe(540.02);
+    })).toBe(562.52);
 
     expect(formulaCalc('max(a * b% - a * c%, 0)', {
       stepPrecision: 2,
@@ -146,7 +146,7 @@ describe('formula test', () => {
         b: 20,
         c: 7.5
       }
-    })).toBe(540.02);
+    })).toBe(562.52);
 
     expect(formulaCalc('max(a * b - a * c, 0)', {
       ignoreRoundingParams: (name) => name === 'c',
@@ -205,7 +205,7 @@ describe('formula test', () => {
         a: 4500.22,
         b: 7.5
       }
-    })).toBe(360.02);
+    })).toBe(337.52);
     expect(formulaCalc('a * b%', {
       stepPrecision: 2,
       stepPrecisionIgnorePercent: true,
@@ -291,7 +291,9 @@ describe('formula test', () => {
       returnDecimal: true
     });
     expect(Array.isArray(result) && result.every((v, i) => {
-      if (i === 1) return v === '2';
+      if (i === 1) {
+        return v === '2';
+      }
       return Decimal.isDecimal(v);
     })).toBe(true);
   });

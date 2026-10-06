@@ -32,6 +32,7 @@ abstract class AbsFormulaFunction extends AbsFormulaBase implements IFormulaFunc
 }
 
 type FormulaFunctionItem = {
+  useStepPrecision?: boolean;
   min: number
   max: number;
   functionClass: typeof AbsFormulaFunction;

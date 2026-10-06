@@ -11,6 +11,8 @@ class FormulaOperatorDIV extends AbsFormulaOperator {
 
   public arithmetic = true;
 
+  public useStepPrecision = true;
+
   public mayChange = true;
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {

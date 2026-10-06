@@ -1,0 +1,14 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #f4f6fa; color: #24324b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+::selection { background: #d1e3ff; }
+* { scrollbar-width: thin; scrollbar-color: #bac5d6 transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #bac5d6; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #8d9db6; }
+::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-button { display: none; }
+.CodeMirror-hints { z-index: 2000; border: 1px solid #d5deec; box-shadow: 0 4px 16px #192e4926; max-height: 260px; }
+.CodeMirror-hint { padding: 5px 9px; font-size: 12px; }

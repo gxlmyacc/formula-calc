@@ -14,41 +14,48 @@ import FormulaFunctionCUSTOM from './custom';
 import FormulaFunctionDecimal from './decimal';
 import FormulaFunctionCAST, { CAST_MAP } from './cast';
 import FormulaFunctionCONCAT from './concat';
+import FormulaFunctionFV from './fv';
+import FormulaFunctionPV from './pv';
+import FormulaFunctionPMT from './pmt';
+import FormulaFunctionNPER from './nper';
+import FormulaFunctionIPMT from './ipmt';
+import FormulaFunctionPPMT from './ppmt';
+import FormulaFunctionNPV from './npv';
 
 const OneArgDecimalMethods = [
-  'abs',
+  { name: 'abs', min: 1, max: 1, useStepPrecision: false },
   'acos',
   'acosh',
   'asin',
   'asinh',
   'atan',
   'atanh',
-  { name: 'atan2', min: 2, max: 2 },
+  { name: 'atan2', min: 2, max: 2, useStepPrecision: true },
   'cbrt',
-  'ceil',
-  { name: 'clamp', min: 3, max: 3 },
+  { name: 'ceil', min: 1, max: 1, useStepPrecision: false },
+  { name: 'clamp', min: 3, max: 3, useStepPrecision: false },
   'cos',
   'cosh',
-  'floor',
-  { name: 'hypot', min: 1, max: 99 },
+  { name: 'floor', min: 1, max: 1, useStepPrecision: false },
+  { name: 'hypot', min: 1, max: 99, useStepPrecision: true },
   'ln',
   'log',
   'log10',
   'log2',
-  'sign',
+  { name: 'sign', min: 1, max: 1, useStepPrecision: false },
   'sin',
   'sinh',
   'sqrt',
   'tan',
   'tanh',
-  'trunc'
+  { name: 'trunc', min: 1, max: 1, useStepPrecision: false }
 ] as const;
 
 const FormulaFunctionDecimalMap = OneArgDecimalMethods.reduce((p, v) => {
   const item = typeof v === 'string'
-    ? { min: 1, max: 1, name: v }
+    ? { min: 1, max: 1, name: v, useStepPrecision: true }
     : v;
-  p[item.name] = { min: item.min, max: item.max, functionClass: FormulaFunctionDecimal };
+  p[item.name] = { min: item.min, max: item.max, useStepPrecision: item.useStepPrecision, functionClass: FormulaFunctionDecimal };
   return p;
 }, {} as Record<string, FormulaFunctionItem>);
 
@@ -58,7 +65,14 @@ const FormulaFunctionCastMap = Object.keys(CAST_MAP).reduce((p, v) => {
 }, {} as Record<string, FormulaFunctionItem>);
 
 const FormulaFunctionMap: Record<string, FormulaFunctionItem> = {
-  avg: { min: 1, max: 99, functionClass: FormulaFunctionAVG },
+  fv: { min: 3, max: 5, useStepPrecision: true, functionClass: FormulaFunctionFV },
+  pv: { min: 3, max: 5, useStepPrecision: true, functionClass: FormulaFunctionPV },
+  pmt: { min: 3, max: 5, useStepPrecision: true, functionClass: FormulaFunctionPMT },
+  nper: { min: 3, max: 5, useStepPrecision: true, functionClass: FormulaFunctionNPER },
+  ipmt: { min: 4, max: 6, useStepPrecision: true, functionClass: FormulaFunctionIPMT },
+  ppmt: { min: 4, max: 6, useStepPrecision: true, functionClass: FormulaFunctionPPMT },
+  npv: { min: 2, max: 2, useStepPrecision: true, functionClass: FormulaFunctionNPV },
+  avg: { min: 1, max: 99, useStepPrecision: true, functionClass: FormulaFunctionAVG },
   eval: { min: 1, max: 1, functionClass: FormulaFunctionEVAL },
   exist: { min: 2, max: 3, functionClass: FormulaFunctionEXIST },
   if: { min: 2, max: 3, functionClass: FormulaFunctionIF },
@@ -76,6 +90,17 @@ const FormulaFunctionMap: Record<string, FormulaFunctionItem> = {
 const FormulaCustomFunctionMap: Record<string, FormulaCustomFunctionItem> = {
 
 };
+
+/** Lists the functions available to a formula without exposing executable implementations. */
+function getFormulaFunctionDefinitions(customFunctions: Record<string, FormulaCustomFunctionItem> = {}) {
+  const functions = { ...FormulaFunctionMap, ...FormulaCustomFunctionMap, ...customFunctions };
+  return Object.keys(functions).map((name) => {
+    const item = functions[name];
+    return isFormulaFunction(item)
+      ? { name, argMin: item.min, argMax: item.max }
+      : { name, argMin: item.argMin, argMax: item.argMax };
+  });
+}
 
 function isFormulaFunction(func: any): func is FormulaFunctionItem {
   return func.functionClass;
@@ -103,7 +128,11 @@ function createFormulaFunction(
   if (isFormulaFunction(item)) {
     const FunctionClass = item.functionClass;
     // @ts-ignore
-    return new FunctionClass(token, valueOptions, funcName, item.min, item.max);
+    const func = new FunctionClass(token, valueOptions, funcName, item.min, item.max);
+    if (item.useStepPrecision !== undefined) {
+      func.useStepPrecision = item.useStepPrecision;
+    }
+    return func;
   }
 
   return new FormulaFunctionCUSTOM(token, valueOptions, funcName, item);
@@ -122,11 +151,15 @@ function registerFormulaFunction(originFuncName: string, item: FormulaCustomFunc
   if (FormulaCustomFunctionMap[funcName] && !force) {
     throw new Error(`register custom function fail: "${originFuncName}" already exist!`);
   }
-  if (customFunctions) customFunctions[funcName] = item;
-  else FormulaCustomFunctionMap[funcName] = item;
+  if (customFunctions) {
+    customFunctions[funcName] = item;
+  } else {
+    FormulaCustomFunctionMap[funcName] = item;
+  }
 }
 
 export {
   createFormulaFunction,
+  getFormulaFunctionDefinitions,
   registerFormulaFunction
 };

@@ -1,0 +1,38 @@
+.result-panel:scope {
+  height: 100%; display: flex; flex-direction: column; min-height: 0;
+  > :not(.traces) { flex-shrink: 0; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  h2 { font-size: 16px; margin: 0; }
+  .status { color: #39805d; font-size: 12px; max-width: 70%; overflow-wrap: break-word; }
+  .error { color: #bd4657; }
+  .result-value { background: #eff5ff; border: 1px solid #dbe7ff; border-radius: 6px; padding: 8px 12px; max-height: 90px; overflow: auto; }
+  .result-value small { color: #8191ab; font-size: 11px; }
+  .result-value pre { margin: 2px 0 0; font: 22px/1.3 Consolas, monospace; white-space: pre-wrap; overflow-wrap: break-word; color: #245edb; overflow: visible; }
+  .error-value { background: #fff6f6; border-color: #f4dfe2; }
+  .error-value pre { color: #bd4657; font-size: 14px; }
+  .empty { padding: 25px 0; color: #8a97ad; }
+  .batch-results { display: flex; flex-wrap: wrap; margin: 0 -4px 6px; max-height: 72px; overflow-y: auto; }
+  .batch-results button { text-align: left; padding: 4px 8px; border: 1px solid #dce3ee; background: white;
+    border-radius: 4px; margin: 0 4px 4px; max-width: 100%; display: flex; align-items: center; }
+  .batch-results .selected { background: #eaf1ff; border-color: #88aaf5; }
+  .batch-results span { display: block; font-size: 11px; color: #8590a5; }
+  .batch-results code { display: block; max-width: 220px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-left: 8px; }
+  .trace-header { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 8px; }
+  h3 { margin: 0; font-size: 14px; } small { color: #8a97ad; }
+  .trace-header > span { font-size: 11px; color: #8a97ad; }
+  .traces { list-style: none; margin: 0; padding: 0; min-height: 0; flex: 1; overflow-y: auto; }
+  .traces button { display: flex; width: 100%; background: none; border: 0; border-bottom: 1px solid #edf0f6;
+    padding: 11px 0; text-align: left; }
+  .traces button:hover { background: #f7faff; }
+  .step { font: 11px/1.8 Consolas, monospace; color: #a0acc0; width: 30px; flex-shrink: 0; }
+  .trace-body { flex: 1; min-width: 0; }
+  .expression { margin: 0 0 5px; color: #465674; font: 13px/1.6 Consolas, 'Microsoft YaHei', monospace; white-space: pre-wrap; overflow-wrap: break-word; overflow: visible; }
+  .expression mark { color: #24324b; background: #fff0b8; border: 1px solid #e0be59; border-radius: 3px; }
+  .dynamic-expression { font-size: 11px; margin-bottom: 6px; color: #8a97ad; }
+  .result-arrow { color: #8a97ad; }
+  .trace-value { display: flex; justify-content: space-between; align-items: baseline; }
+  .trace-value code { color: #245edb; white-space: pre-wrap; overflow-wrap: break-word; max-width: 70%; }
+  .trace-value span { color: #96a1b4; font-size: 10px; }
+  .empty-trace { color: #8a97ad; font-size: 12px; margin-bottom: 0; }
+  @media (max-width: 760px) { height: auto; .traces { flex: auto; max-height: 360px; } }
+}

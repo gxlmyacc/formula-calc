@@ -41,7 +41,8 @@ module.exports = {
       objects: 'ignore'
     }],
     'consistent-return': 0,
-    curly: [0, 'multi-or-nest'],
+    curly: [2, 'all'],
+    'brace-style': [2, '1tbs', { allowSingleLine: false }],
     'default-case': 2,
     'eol-last': 0,
     'func-names': 0,

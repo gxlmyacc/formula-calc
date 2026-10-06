@@ -16,7 +16,9 @@ export function createExecutionOptions(options: FormulaValueOptions) {
 
 export function enterExecution(item: IFormulaValue, options: FormulaValueOptions) {
   const parent = contexts.get(options);
-  if (!parent) return options;
+  if (!parent) {
+    return options;
+  }
   const executionOptions = { ...options };
   const ancestors = new Set(parent.ancestors);
   ancestors.add(item);

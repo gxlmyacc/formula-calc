@@ -5,6 +5,7 @@ import type { FormulaOptions, IFormulaDataSource, FormulaCustomFunctionItem } fr
 import { FormulaValueOptions } from './formula/type';
 import { FormulaParamValue } from './formula/values/param';
 import { createToken } from './formula/tokenizer';
+import { getFormulaFunctionDefinitions } from './formula/functions';
 
 export {
   getValueByPath,
@@ -34,7 +35,9 @@ function createParamsDataSource(params: FormulaCalcOptions['params']): IFormulaD
 
     getParam(name, options) {
       const { nullAsZero, nullIfParamNotFound } = options;
-      if (isFunction(params)) return params(name, options);
+      if (isFunction(params)) {
+        return params(name, options);
+      }
       return getValueByPath(
         params || {},
         name,
@@ -108,12 +111,18 @@ function formulaCalc<T extends any = any>(
   if (isString(expressionOrFormula)) {
     // Custom parsing hooks belong to this call and must not reuse another call's tree.
     const useCache = restOptions.cache && !restOptions.customFunctions && !restOptions.onCreateParam;
-    if (useCache) formula = formulaCache.get(expressionOrFormula) as Formula;
+    if (useCache) {
+      formula = formulaCache.get(expressionOrFormula) as Formula;
+    }
     if (!formula) {
       formula = createFormula(expressionOrFormula, restOptions);
-      if (useCache) formulaCache.set(expressionOrFormula, formula);
+      if (useCache) {
+        formulaCache.set(expressionOrFormula, formula);
+      }
     }
-    if (onFormulaCreated) onFormulaCreated(formula);
+    if (onFormulaCreated) {
+      onFormulaCreated(formula);
+    }
   } else {
     formula = expressionOrFormula;
   }
@@ -223,6 +232,7 @@ export {
   registerFormulaFunction,
   formulaUtils,
   FormulaParamValue,
+  getFormulaFunctionDefinitions,
 };
 
 export type {
@@ -234,3 +244,5 @@ export type {
 };
 
 export default formulaCalc;
+
+export type { FormulaTraceDetails, FormulaValueTransformation } from './formula/type';

@@ -21,7 +21,11 @@ describe('exact original text', () => {
     const source = expression as string;
     const formula = createFormula(source);
     const traced: string[] = [];
-    expect(formulaCalc(formula, { onTrace: (item) => { traced.push(item.origText); } })).toEqual(result);
+    expect(formulaCalc(formula, {
+      onTrace: (item) => {
+        traced.push(item.origText);
+      }
+    })).toEqual(result);
     expect(formula.origText).toBe(source);
     expect(formula.formulas[0].origText).toBe(source);
     expect(traced[traced.length - 1]).toBe(source);
@@ -32,7 +36,9 @@ describe('exact original text', () => {
     const formula = createFormula(expression);
     const traced: Array<[string, number, number]> = [];
     expect(formulaCalc(formula, {
-      onTrace: (item) => { traced.push([item.origText, item.line, item.column]); },
+      onTrace: (item) => {
+        traced.push([item.origText, item.line, item.column]);
+      },
     })).toBe(3);
     expect(formula.origText).toBe(expression);
     expect(traced).toEqual([
@@ -46,7 +52,11 @@ describe('exact original text', () => {
     const expression = '1  +  sum( 2, max(\n 3,  4\n) )';
     const formula = createFormula(expression);
     const traced: string[] = [];
-    expect(formulaCalc(formula, { onTrace: (item) => { traced.push(item.origText); } })).toBe(7);
+    expect(formulaCalc(formula, {
+      onTrace: (item) => {
+        traced.push(item.origText);
+      }
+    })).toBe(7);
     expect(traced).toEqual(['1', '2', '3', '4', 'max(\n 3,  4\n)', 'sum( 2, max(\n 3,  4\n) )', expression]);
     const root = formula.formulas[0] as IFormulaBase;
     const func = root.params[1];
@@ -68,7 +78,9 @@ describe('exact original text', () => {
     for (let i = 0; i < 2; i++) {
       expect(formulaCalc(expression, {
         cache: true,
-        onFormulaCreated: (formula) => { expect(formula.formulas[0].origText).toBe(expression); },
+        onFormulaCreated: (formula) => {
+          expect(formula.formulas[0].origText).toBe(expression);
+        },
       })).toBe(3);
     }
     const formula = createFormula(expression);

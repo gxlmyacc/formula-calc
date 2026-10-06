@@ -9,7 +9,7 @@ describe('demo test', () => {
         a: 4500.22,
         b: 7.5
       }
-    })).toBe(360.02);
+    })).toBe(337.52);
     expect(formulaCalc('a * b%', {
       stepPrecision: 2,
       stepPrecisionIgnorePercent: true,

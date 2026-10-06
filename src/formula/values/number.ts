@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js';
 import { TokenType, Token } from '../type';
 import type { IFormulaValue, IFormulaDataSource,  FormulaValueOptions } from '../type';
 import FormulaValue from '../base/value';
@@ -13,7 +14,7 @@ class FormulaNumber extends FormulaValue implements IFormulaValue {
   }
 
   _execute(dataSource: IFormulaDataSource, options:  FormulaValueOptions) {
-    return this.value;
+    return new (options.Decimal || Decimal)(this.token.token);
   }
 
 }

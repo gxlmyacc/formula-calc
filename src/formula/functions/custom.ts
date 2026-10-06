@@ -11,6 +11,7 @@ class FormulaFunctionCUSTOM extends AbsFormulaFunction {
     this.item = item;
     this.arithmetic = item.arithmetic ?? Boolean(item.arithmetic);
     this.mayChange = item.mayChange ?? true;
+    this.useStepPrecision = item.useStepPrecision ?? true;
   }
 
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic: boolean) {

@@ -1,0 +1,30 @@
+.code-editor:scope {
+  border: 1px solid #dce3ee; border-radius: 6px; overflow: hidden; background: #fff;
+  .CodeMirror { height: 80px; padding: 8px 0; font: 15px/1.9 Consolas, 'Microsoft YaHei', monospace; }
+  .CodeMirror-gutters { background: #f8faff; border-right-color: #edf0f6; }
+  .CodeMirror-linenumber { color: #a2acc0; }
+  .signature { padding: 6px 10px; border-top: 1px solid #edf0f6; color: #758199; font: 12px/1.6 Consolas, 'Microsoft YaHei', monospace; min-height: 32px; }
+  .current-argument { color: #245edb; font-weight: bold; background: #eaf1ff; padding: 2px 4px; }
+  .description { margin-left: 12px; }
+  .fc-function { color: #744cbd; font-weight: 600; }
+  .fc-param { color: #1e629c; }
+  .fc-string { color: #7b641e; }
+  .fc-literal { color: #bc6634; }
+  .fc-depth-0 { color: #b84460; }
+  .fc-depth-1 { color: #396fbd; }
+  .fc-depth-2 { color: #36845e; }
+  .fc-depth-3 { color: #9260b4; }
+  .fc-depth-4 { color: #aa751b; }
+  .fc-depth-5 { color: #277c87; }
+  .fc-reference { font-weight: bold; }
+  .fc-invalid-ref { color: #c92d43; text-decoration: underline wavy; background: #fff0f1; }
+  .fc-active-range { background: #edf3ff; border-top: 1px solid #99b5eb; border-bottom: 1px solid #99b5eb; }
+  .fc-active-start { border-left: 1px solid #99b5eb; border-radius: 3px 0 0 3px; }
+  .fc-active-end { border-right: 1px solid #99b5eb; border-radius: 0 3px 3px 0; }
+  .fc-active-bracket { font-weight: bold; }
+  .fc-active-reference { background: #dce8fc; text-decoration: underline; }
+  .fc-trace-selection { background: #fff0b8; }
+  .fc-ref-badge { display: inline-block; vertical-align: super; font-size: 0.65em; font-weight: bold; line-height: 1;
+    padding: 0 1px; pointer-events: none; -webkit-user-select: none; user-select: none; }
+  &.json-editor .CodeMirror { height: 170px; font-size: 13px; }
+}

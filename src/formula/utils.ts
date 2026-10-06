@@ -101,8 +101,12 @@ function toFixed(value: Decimal.Value|null|undefined, options: {
   let [min, max] = Array.isArray(precision)
     ? precision
     : [precision, precision];
-  if (min < 0) min = 0;
-  if (max < 0) max = 0;
+  if (min < 0) {
+    min = 0;
+  }
+  if (max < 0) {
+    max = 0;
+  }
   const decimalValue = new Decimal(value);
   const decimalPlaces = min === max
     ? min
@@ -248,8 +252,11 @@ function flatten(array: any[]) {
   const flattened: any[] = [];
   (function flat(array) {
     array.forEach(function (el) {
-      if (Array.isArray(el)) flat(el);
-      else flattened.push(el);
+      if (Array.isArray(el)) {
+        flat(el);
+      } else {
+        flattened.push(el);
+      }
     });
   })(array);
   return flattened;

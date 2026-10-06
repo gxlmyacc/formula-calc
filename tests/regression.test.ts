@@ -25,7 +25,9 @@ describe('execution regressions', () => {
   test('concurrent executions keep reference results isolated', async () => {
     const formula = createFormula('(a) + $1');
     let resolveFirst!: (value: number) => void;
-    const firstParam = new Promise<number>((resolve) => { resolveFirst = resolve; });
+    const firstParam = new Promise<number>((resolve) => {
+      resolveFirst = resolve;
+    });
     const first = formulaCalc<Promise<number>>(formula, { params: { a: firstParam } });
     const second = formulaCalc<Promise<number>>(formula, { params: { a: Promise.resolve(3) } });
     await expect(second).resolves.toBe(6);

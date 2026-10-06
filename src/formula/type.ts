@@ -197,6 +197,20 @@ interface IFormulaDataSource {
 
 type RoundingType = 'UP'|'DOWN'|'CEIL'|'FLOOR'|'HALF_UP'|'HALF_DOWN'|'HALF_EVEN'|'HALF_CEIL'|'HALF_FLOOR'|'EUCLID';
 
+type FormulaValueTransformation = {
+  type: 'nullAsZero'|'stepPrecision'|'round';
+  before: any;
+  after: any;
+  /** Decimal places applied to the stored value (percentage ratios include two extra places). */
+  precision?: number;
+};
+
+type FormulaTraceDetails = {
+  originalValue: any;
+  value: any;
+  transformations: FormulaValueTransformation[];
+};
+
 type FormulaValueOptions = {
   Decimal?: typeof Decimal,
   precision?: number,
@@ -204,16 +218,21 @@ type FormulaValueOptions = {
   stepPrecision?: boolean|number|((item: IFormulaValue, value: any) => boolean|number),
   stepPrecisionIgnorePercent?: boolean,
   tryStringToNumber?: boolean,
+  /** Skip step rounding for numeric literals. Defaults to true. */
   ignoreRoundingOriginalValue?: boolean,
+  /** Skip step rounding for parameters. Defaults to true; a callback controls each parameter independently. */
   ignoreRoundingParams?: boolean|((name: string) => boolean)
   returnDecimal?: boolean,
   nullAsZero?: boolean,
   nullIfParamNotFound?: boolean,
   eval?: null|((expr: string, dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any),
-  onTrace?: (item: IFormulaValue, value: any) => void,
+  /** The optional third argument preserves exact values and records actual conversions and rounding. */
+  onTrace?: (item: IFormulaValue, value: any, details?: FormulaTraceDetails) => void,
 }
 
 type FormulaCustomFunctionItem = {
+  /** Apply global stepPrecision to numeric results. Defaults to true, independently of arithmetic. */
+  useStepPrecision?: boolean,
   preExecute?: true,
   arithmetic?: boolean,
   mayChange?: boolean,
@@ -222,6 +241,7 @@ type FormulaCustomFunctionItem = {
   execute: (params: any[], dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean) => any
 } | {
   preExecute: false,
+  useStepPrecision?: boolean,
   arithmetic?: boolean,
   mayChange?: boolean,
   argMin: number
@@ -240,6 +260,7 @@ interface IFormulaValue {
   readonly arithmetic: boolean,
   readonly tokenType: TokenType,
   readonly mayChange: boolean,
+  readonly useStepPrecision?: boolean,
   execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions, forArithmetic?: boolean): any;
 }
 
@@ -296,6 +317,8 @@ export type {
   IFormulaParam,
   IFormulaDataSource,
   FormulaValueOptions,
+  FormulaValueTransformation,
+  FormulaTraceDetails,
   FormulaCustomFunctionItem,
   RoundingType,
 };

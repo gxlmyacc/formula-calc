@@ -16,7 +16,9 @@ class FormulaFunctionAVG extends AbsFormulaFunction {
       dataSource,
       options,
       (itemValue, i, isArray) => {
-        if (isArray) paramCount += (itemValue.length - 1);
+        if (isArray) {
+          paramCount += (itemValue.length - 1);
+        }
       },
       true
     );

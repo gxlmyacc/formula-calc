@@ -408,7 +408,9 @@ class Formula {
           if (isDecimal(result, options)) {
             if (!options.returnDecimal) {
               result = result.toNumber();
-              if (Object.is(result, -0)) result = 0;
+              if (Object.is(result, -0)) {
+                result = 0;
+              }
             }
           } else if (isDecimalValue(result, options)) {
             if (options.returnDecimal) {

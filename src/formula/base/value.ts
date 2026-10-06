@@ -1,47 +1,59 @@
 import Decimal from 'decimal.js';
-import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions, Token } from '../type';
+import type { IFormulaValue, IFormulaDataSource, FormulaValueOptions, FormulaValueTransformation, Token } from '../type';
 import { FormulaExecuteState, TokenType } from '../type';
 import { isDecimal, isFunction, isNumber, isPromise, isStringNumber, toDecimal, toRound } from '../utils';
 import { DEFAULT_DECIMAL_PLACES } from '../constant';
-import FormulaParam from '../values/param';
 import { enterExecution, saveExecutionResult } from '../execution';
 
-function resolveValue(value: any, options: FormulaValueOptions, item: IFormulaValue, forArithmetic?: boolean) {
+function resolveValue(
+  value: any,
+  options: FormulaValueOptions,
+  item: IFormulaValue,
+  forArithmetic?: boolean,
+  transformations?: FormulaValueTransformation[],
+) {
   if (!item || item.arithmetic || forArithmetic || options.tryStringToNumber) {
-    let precision = options.precision ?? DEFAULT_DECIMAL_PLACES;
-    const _stepPrecision = isFunction(options.stepPrecision)
-      ? options.stepPrecision(item, value)
-      : options.stepPrecision;
-    const stepPrecision = isNumber(_stepPrecision) || _stepPrecision;
-    if (stepPrecision && isNumber(_stepPrecision)) {
-      precision =  _stepPrecision;
-    }
     if (isNumber(value) || (options.tryStringToNumber && isStringNumber(value))) {
       value = toDecimal(value, options);
     }
     if (isDecimal(value, options)) {
-      const { ignoreRoundingOriginalValue, ignoreRoundingParams, stepPrecisionIgnorePercent } = options;
-      const shouldStepPrecision = (stepPrecision && value.decimalPlaces() > precision)
-       && (!stepPrecisionIgnorePercent || item.tokenType !== TokenType.ttPercent)
-       && (!ignoreRoundingOriginalValue || !item || item.mayChange)
-       && (
-         !(item as FormulaParam)?.isParam || (
-           ignoreRoundingParams
-             ? !(isFunction(ignoreRoundingParams) ? ignoreRoundingParams((item as FormulaParam).name) : true)
-             : true
-         )
-       );
-      if (shouldStepPrecision) {
-        value = toRound(value, precision, options.rounding);
-      } else if (options.nullAsZero && value.isNaN()) {
+      if (options.nullAsZero && value.isNaN()) {
+        const before = value;
         value = new Decimal(0);
+        transformations?.push({ type: 'nullAsZero', before, after: value });
+      }
+    }
+  }
+  // Parameters have their own policy; the original-value switch must not override its callback.
+  const param = item as IFormulaValue & { isParam?: boolean };
+  const ignoreParam = options.ignoreRoundingParams ?? true;
+  const eligible = (isNumber(options.stepPrecision) || options.stepPrecision) && item && (param.isParam
+    ? !(isFunction(ignoreParam) ? ignoreParam(item.name) : ignoreParam)
+    : item.useStepPrecision || (item.tokenType === TokenType.ttNumber && options.ignoreRoundingOriginalValue === false));
+  if (eligible && !(options.stepPrecisionIgnorePercent && item.tokenType === TokenType.ttPercent)) {
+    const step = isFunction(options.stepPrecision) ? options.stepPrecision(item, value) : options.stepPrecision;
+    if (isNumber(step) || step) {
+      let precision = isNumber(step) ? step : options.precision ?? DEFAULT_DECIMAL_PLACES;
+      // A percent is stored as a ratio: rounding its numerator needs two extra decimal places.
+      if (item.tokenType === TokenType.ttPercent) {
+        precision += 2;
+      }
+      if (isNumber(value) || (options.tryStringToNumber && isStringNumber(value))) {
+        value = toDecimal(value, options);
+      }
+      if (isDecimal(value, options) && value.decimalPlaces() > precision) {
+        const before = value;
+        value = toRound(value, precision, options.rounding);
+        transformations?.push({ type: 'stepPrecision', before, after: value, precision });
       }
     }
   }
   if (options.nullAsZero && (value == null || value === '' || (
     isNumber(value) && isNaN(value)
   ))) {
+    const before = value;
     value = new Decimal(0);
+    transformations?.push({ type: 'nullAsZero', before, after: value });
   }
   return value;
 }
@@ -51,7 +63,9 @@ abstract class FormulaValue implements IFormulaValue {
   public token: Token;
 
   public get origText() {
-    if (this.token.origText !== undefined) return this.token.origText;
+    if (this.token.origText !== undefined) {
+      return this.token.origText;
+    }
     return this.token.quoteChar
       ? `${this.token.quoteChar}${this.token.token}${this.token.quoteChar}`
       : this.token.token;
@@ -83,20 +97,28 @@ abstract class FormulaValue implements IFormulaValue {
 
   public mayChange: boolean = false;
 
-  protected abstract _execute(dataSource?: IFormulaDataSource, options?: FormulaValueOptions, forArithmetic?: boolean): any;
+  public useStepPrecision: boolean = false;
+
+  protected abstract _execute(
+    dataSource?: IFormulaDataSource, options?: FormulaValueOptions, forArithmetic?: boolean,
+    transformations?: FormulaValueTransformation[],
+  ): any;
 
   public execute(dataSource: IFormulaDataSource, options: FormulaValueOptions, forArithmetic?: boolean): any {
     options = enterExecution(this, options);
     this.state = FormulaExecuteState.fesExecuting;
     let prom = false;
     try {
-      const value = this._execute(dataSource, options);
+      const transformations: FormulaValueTransformation[] | undefined = options.onTrace ? [] : undefined;
+      const value = this._execute(dataSource, options, undefined, transformations);
       prom = isPromise(value);
       const _next = (value: any) => {
-        this.value = resolveValue(value, options, this, forArithmetic);
+        this.value = resolveValue(value, options, this, forArithmetic, transformations);
         this.state = FormulaExecuteState.fesExecuted;
         if (options.onTrace) {
-          options.onTrace(this, isDecimal(this.value, options) ? this.value.toNumber() : this.value);
+          options.onTrace(this, isDecimal(this.value, options) ? this.value.toNumber() : this.value, {
+            originalValue: value, value: this.value, transformations: transformations!,
+          });
         }
         return this.value;
       };

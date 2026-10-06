@@ -12,8 +12,12 @@ function eqExecute(params: FormulaValues, dataSource: IFormulaDataSource, option
       params[1].execute(dataSource, options, forArithmetic),
     ],
     (a, b) => {
-      if (a === undefined) a = null;
-      if (b === undefined) b = null;
+      if (a === undefined) {
+        a = null;
+      }
+      if (b === undefined) {
+        b = null;
+      }
       return String(a) === String(b);
     }
   );

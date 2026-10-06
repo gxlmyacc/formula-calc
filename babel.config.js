@@ -31,7 +31,7 @@ module.exports = process.env.BUILD_ENV === 'es'
           modules: false,
           useBuiltIns: 'usage',
           corejs: '3.0',
-          targets: { browsers: ['chrome >= 122'] }
+          targets: { browsers: ['chrome >= 86'] }
         }
       ],
       '@babel/preset-typescript',

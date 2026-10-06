@@ -44,6 +44,13 @@ yarn add formula-calc
 
 ## Usage
 
+The default entry is the Chrome 49 compatible ESM build. Modern browsers (Chrome 86+) can use `formula-calc/es`. Both entries share TypeScript declarations and are loaded through your project's bundler.
+
+```js
+import formulaCalc from 'formula-calc';
+const { default: modernFormulaCalc } = await import('formula-calc/es');
+```
+
 1. basic
 
 ```js
@@ -318,8 +325,8 @@ console.log(result); // 6.67
 const result = formulaCalc('3.3334 + 3.3315', {
   precision: 2,
   stepPrecision: 3,
-};
-console.log(result); // 6.67
+});
+console.log(result); // 6.66
 
 ```
 
@@ -465,11 +472,11 @@ The following is a tabular description of the parameters supported by options in
 | Decimal | typeof Decimal | - | Custom instance of Decimal.js used for numerical calculations. |
 | precision | number | 2 | Sets the precision of the calculation results. |
 | rounding | RoundingType | 'HALF_UP' | Sets the rounding type. Optional values include: UP, DOWN, CEIL, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, HALF_CEIL, HALF_FLOOR, EUCLID. |
-| stepPrecision | boolean \| number | - | Whether to round at each step of the operation, or set the precision for each step. |
+| stepPrecision | boolean \| number \| (item, value) => boolean \| number | - | Round eligible computation results; true follows precision (default 2), numeric 0 rounds to integers. |
 | stepPrecisionIgnorePercent | boolean | false | Whether to ignore percentage operations in step-by-step rounding. Percentage numbers are often very small and have a significant impact on precision. In certain cases, you can set this to true to ignore the effect of stepPrecision on percentage operations. |
 | tryStringToNumber | boolean | false | Whether to attempt to convert strings to numbers. |
-| ignoreRoundingOriginalValue | boolean | false | Whether to ignore rounding of primitive values (number, string, boolean, params, ref). |
-| ignoreRoundingParams | boolean \|(name) => boolean | false | Whether to ignore rounding of parameters. |
+| ignoreRoundingOriginalValue | boolean | true | Skip step rounding for numeric literals; false enables literal rounding. |
+| ignoreRoundingParams | boolean \| (name) => boolean | true | Skip parameter rounding by default; the callback decides each parameter independently. |
 | returnDecimal | boolean | false | Whether to return the number type as Decimal type. |
 | nullAsZero | boolean | false | Whether to treat null, undefined, NaN, and empty strings as zero in calculations. |
 | nullIfParamNotFound | boolean | false | Whether to return null if a parameter is not found. If false, an exception will be thrown when a parameter is not found. |
@@ -883,3 +890,60 @@ const result = await formulaCalc('confirm("some prompt", 1, 2) + 1', {
 
 [MIT](./LICENSE)
 
+
+## Computation precision and playground
+
+Numeric literals and parameters retain their precision by default. `stepPrecision` rounds eligible computation results
+(multiply/divide/power, percent, average, roots, logarithms and trigonometric functions).
+Addition/subtraction, remainder, sum, max/min, selection/reference nodes and explicitly rounded functions do not add step rounding.
+Percent values round in percentage units: `2.015%` with `stepPrecision: 2` becomes `0.0202`.
+Final `precision` is independent. Decimal's own significant-digit precision still applies.
+
+`ignoreRoundingOriginalValue` and `ignoreRoundingParams` now default to `true`; set either to `false` to enable operand rounding.
+The parameter callback decides each parameter independently of the original-value switch.
+Custom functions accept `useStepPrecision?: boolean` (default `true`), separately from `arithmetic`.
+`getFormulaFunctionDefinitions(customFunctions?)` lists effective function names and argument count ranges.
+
+See [website/README.md](website/README.md) for the React 16 formula playground and GitHub Pages setup.
+
+## Trace conversion details
+
+`onTrace(item, value, details?)` preserves its first two arguments. The third supplies exact values and actual transformations.
+`originalValue` is the node's execution result before common value processing; `value` is the processed value, retaining Decimal instances.
+`transformations` records `{ type, before, after, precision? }` in order, with types `nullAsZero`, `stepPrecision` or `round`.
+Decimal construction alone and rounding that does not change the value are omitted. Precision is in stored-value decimal places,
+including two additional places for percentage ratios. Final `precision` applies after node execution and is outside node trace events;
+the playground displays it as a separate step based on the returned result.
+
+## Financial functions
+
+| Function | Arguments | Purpose |
+| --- | --- | --- |
+| `fv` | `rate, nper, pmt, pv?, type?` | Future value |
+| `pv` | `rate, nper, pmt, fv?, type?` | Present value |
+| `pmt` | `rate, nper, pv, fv?, type?` | Fixed payment per period |
+| `nper` | `rate, pmt, pv, fv?, type?` | Number of periods, possibly fractional |
+| `ipmt` | `rate, per, nper, pv, fv?, type?` | Interest portion for a period |
+| `ppmt` | `rate, per, nper, pv, fv?, type?` | Principal portion for a period |
+| `npv` | `rate, values` | Net present value of periodic cash flows |
+
+Argument order and cash-flow signs follow [Excel financial function conventions](https://support.microsoft.com/en-us/excel/financial-functions-reference).
+The rate is per period, finite and greater than -1. For monthly payments, divide the annual rate by 12 and use months for `nper`.
+Outflows are negative and inflows positive. Optional `pv` / `fv` default to 0; `type` defaults to 0 (end of period), or 1 for beginning.
+`fv` / `pv` allow zero periods; `pmt` / `ipmt` / `ppmt` require positive periods. `per` must be an integer from 1 through `nper`.
+Invalid inputs, indeterminate payments, non-finite results and absence of a finite non-negative `nper` solution produce named errors.
+
+`npv` requires a non-empty, one-dimensional array. Each item is one period, starting at the end of period 1.
+Add any initial investment at time zero separately. Zero entries retain their periods; strings and null values follow
+`tryStringToNumber` / `nullAsZero`, while other non-numeric entries produce errors.
+Calculations use Decimal with guard digits and support a custom Decimal constructor, promises, batches and traces.
+Internal calculations do not apply step rounding. Function results participate in `stepPrecision`; argument expressions retain their own
+rounding rules, and final `precision` is independent.
+
+```js
+formulaCalc('abs(pmt(6% / 12, 30 * 12, 1000000))', { precision: 2 }); // 5995.51
+formulaCalc('fv(0, 10, -100, -500)'); // 1500
+formulaCalc('initial + npv(10%, flows)', {
+  params: { initial: -10000, flows: [3000, 4200, 6800] }, precision: 2,
+}); // 1307.29
+```

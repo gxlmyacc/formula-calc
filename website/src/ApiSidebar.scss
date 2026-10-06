@@ -1,0 +1,21 @@
+.api-sidebar:scope {
+  .ant-drawer-content-wrapper { max-width: 100%; }
+  .ant-drawer-body { padding: 0; height: 100%; }
+  .api-content { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid #e4eaf3; flex-shrink: 0; }
+  h2 { margin: 0; font-size: 18px; }
+  header button { border: 0; background: none; color: #758199; font-size: 25px; padding: 0 5px; }
+  .api-tools { padding: 16px 22px 0; flex-shrink: 0; }
+  input { width: 100%; border: 1px solid #dce3ee; border-radius: 5px; padding: 9px 12px; font-size: 13px; }
+  .api-tabs { display: flex; margin-top: 16px; border-bottom: 1px solid #e4eaf3; }
+  .api-tabs button { width: 50%; border: 0; border-bottom: 2px solid transparent; padding: 10px; color: #758199; background: none; }
+  .api-tabs [aria-selected='true'] { color: #245edb; border-bottom-color: #245edb; }
+  .api-entries { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 22px; }
+  h3 { font-size: 13px; margin: 0 0 12px; color: #758199; }
+  .api-category { margin-bottom: 24px; }
+  article { border: 1px solid #e4eaf3; border-radius: 6px; padding: 12px; margin-bottom: 10px; }
+  article > code { font-size: 15px; font-weight: bold; color: #245edb; }
+  p { font-size: 12px; color: #758199; line-height: 1.8; margin: 6px 0; }
+  pre { margin: 8px 0 0; background: #f4f7fc; padding: 8px; border-radius: 4px; white-space: pre-wrap; overflow-wrap: break-word; font-size: 12px; }
+  .api-notes { border-top: 1px solid #e4eaf3; padding-top: 18px; }
+}

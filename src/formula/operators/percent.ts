@@ -11,6 +11,8 @@ class FormulaOperatorPERCENT extends AbsFormulaOperator {
 
   public arithmetic = true;
 
+  public useStepPrecision = true;
+
   public _execute(dataSource: IFormulaDataSource, options: FormulaValueOptions) {
     const result = nextWithPromise(
       [
